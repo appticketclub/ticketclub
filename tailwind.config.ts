@@ -44,7 +44,6 @@ const config: Config = {
         profit: "#34d399",
         loss: "#f87171",
         warning: "#fbbf24",
-        muted: "#525252",
         primary: {
           DEFAULT: "var(--primary)",
           foreground: "var(--primary-foreground)",
@@ -58,10 +57,13 @@ const config: Config = {
           foreground: "var(--destructive-foreground)",
         },
         muted: {
-          DEFAULT: "var(--muted)",
+          DEFAULT: "#525252",
           foreground: "var(--muted-foreground)",
         },
         accent: {
+          silver: "#c0c0c0",
+          white: "#ffffff",
+          glow: "#ffffff15",
           DEFAULT: "var(--accent)",
           foreground: "var(--accent-foreground)",
         },
