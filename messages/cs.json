@@ -1,0 +1,54 @@
+{
+  "nav": {
+    "dashboard": "Přehled",
+    "purchases": "Nákupy",
+    "sales": "Prodeje",
+    "statistics": "Statistiky",
+    "settings": "Nastavení",
+    "logout": "Odhlásit se"
+  },
+  "auth": {
+    "login": "Přihlásit se",
+    "register": "Registrovat se",
+    "email": "E-mail",
+    "password": "Heslo",
+    "forgotPassword": "Zapomněli jste heslo?",
+    "noAccount": "Nemáte účet?",
+    "hasAccount": "Již máte účet?"
+  },
+  "dashboard": {
+    "title": "Přehled",
+    "totalProfit": "Celkový zisk",
+    "activeInvestment": "Aktivní investice",
+    "totalSales": "Celkové prodeje",
+    "roi": "Průměrné ROI"
+  },
+  "purchases": {
+    "title": "Nákupy",
+    "add": "Přidat nákup",
+    "eventName": "Název akce",
+    "eventDate": "Datum akce",
+    "quantity": "Počet lístků",
+    "buyPrice": "Nákupní cena",
+    "platform": "Platforma",
+    "notes": "Poznámky"
+  },
+  "sales": {
+    "title": "Prodeje",
+    "add": "Přidat prodej",
+    "sellPrice": "Prodejní cena",
+    "soldAt": "Datum prodeje",
+    "fees": "Poplatky",
+    "profit": "Zisk"
+  },
+  "statistics": {
+    "title": "Statistiky"
+  },
+  "common": {
+    "loading": "Načítání...",
+    "save": "Uložit",
+    "cancel": "Zrušit",
+    "delete": "Smazat",
+    "edit": "Upravit"
+  }
+}

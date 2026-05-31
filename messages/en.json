@@ -1,0 +1,54 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "purchases": "Purchases",
+    "sales": "Sales",
+    "statistics": "Statistics",
+    "settings": "Settings",
+    "logout": "Log out"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "totalProfit": "Total profit",
+    "activeInvestment": "Active investment",
+    "totalSales": "Total sales",
+    "roi": "Average ROI"
+  },
+  "purchases": {
+    "title": "Purchases",
+    "add": "Add purchase",
+    "eventName": "Event name",
+    "eventDate": "Event date",
+    "quantity": "Quantity",
+    "buyPrice": "Buy price",
+    "platform": "Platform",
+    "notes": "Notes"
+  },
+  "sales": {
+    "title": "Sales",
+    "add": "Add sale",
+    "sellPrice": "Sell price",
+    "soldAt": "Sold at",
+    "fees": "Fees",
+    "profit": "Profit"
+  },
+  "statistics": {
+    "title": "Statistics"
+  },
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit"
+  }
+}
