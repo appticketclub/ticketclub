@@ -206,7 +206,7 @@ export default function NakupyTab() {
     const supabase = createClient();
     const [{ data: p }, { data: a }] = await Promise.all([
       supabase.from("purchases").select("*").order("created_at", { ascending: false }),
-      supabase.from("accounts").select("id, name").order("name"),
+      supabase.from("accounts").select("id, name").eq("type", "purchase").order("name"),
     ]);
     setPurchases(p ?? []);
     setAccounts(a ?? []);
