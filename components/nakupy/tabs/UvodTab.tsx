@@ -15,7 +15,7 @@ export default function UvodTab() {
   const { format, currency: displayCurrency, convert, setCurrency } = useCurrency();
   const [loading, setLoading] = useState(true);
   const [input, setInput] = useState("");
-  const [selectedCurrency, setSelectedCurrency] = useState("EUR");
+  const [selectedCurrency, setSelectedCurrency] = useState<"EUR" | "CZK">("EUR");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [chartData, setChartData] = useState<any[]>([]);
