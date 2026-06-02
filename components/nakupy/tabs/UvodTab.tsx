@@ -157,7 +157,7 @@ export default function UvodTab() {
             />
             <select
               value={selectedCurrency}
-              onChange={(e) => setSelectedCurrency(e.target.value)}
+              onChange={(e) => setSelectedCurrency(e.target.value as "EUR" | "CZK")}
               style={{
                 padding: "0.875rem 1rem",
                 background: "#0a0a0a", border: "1px solid #2a2a2a",
