@@ -6,15 +6,16 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer
 } from "recharts";
+import { useCurrency } from "@/lib/context/CurrencyContext";
 
-const currencies = ["CZK", "EUR", "USD", "GBP"];
+const currencies = ["EUR", "CZK"];
 
 export default function UvodTab() {
   const [capital, setCapitalState] = useState<number | null>(null);
-  const [currency, setCurrency] = useState("CZK");
+  const { format, currency: displayCurrency, convert } = useCurrency();
   const [loading, setLoading] = useState(true);
   const [input, setInput] = useState("");
-  const [selectedCurrency, setSelectedCurrency] = useState("CZK");
+  const [selectedCurrency, setSelectedCurrency] = useState("EUR");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [chartData, setChartData] = useState<any[]>([]);
@@ -22,15 +23,17 @@ export default function UvodTab() {
   const [initialCapital, setInitialCapital] = useState(0);
   const [currentBalance, setCurrentBalance] = useState(0);
 
+  const [baseCurrency, setBaseCurrency] = useState<"EUR" | "CZK">("EUR");
+
   useEffect(() => {
     getCapital().then(async (data) => {
       if (data?.capital_initial && data.capital_initial > 0) {
         setCapitalState(data.capital_initial);
         setCurrentBalance(data.capital ?? data.capital_initial);
-        setCurrency(data.capital_currency ?? "CZK");
+        setBaseCurrency((data.capital_currency ?? "EUR") as "EUR" | "CZK");
         setInitialCapital(data.capital_initial);
 
-        // Build chart from capital_history — show balance over time 
+        // Load capital history for chart
         const supabase = createClient();
         const { data: history } = await supabase 
           .from("capital_history") 
@@ -58,7 +61,7 @@ export default function UvodTab() {
         // Build chart data
         const initialCap = data.capital_initial ?? data.capital ?? 0; 
         const currentBal = data.capital ?? initialCap; 
- 
+
         if (history && history.length > 0) { 
           // Always start with initial capital as first point 
           const points = [ 
@@ -214,10 +217,10 @@ export default function UvodTab() {
       {/* Stat cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "1.75rem" }}>
         {[
-          { label: "Počáteční kapitál", value: `${initialCapital.toLocaleString("cs-CZ")} ${currency}`, color: "#c0c0c0", icon: "💰" },
-          { label: "Aktuální zůstatek", value: `${Math.round(currentBalance).toLocaleString("cs-CZ")} ${currency}`, color: "#ffffff", icon: "📊" },
-          { label: "Investováno", value: `${Math.round(stats.invested).toLocaleString("cs-CZ")} ${currency}`, color: "#fbbf24", icon: "🎟️" },
-          { label: "Celkový zisk", value: `${isProfit ? "+" : ""}${Math.round(currentBalance - initialCapital).toLocaleString("cs-CZ")} ${currency}`, color: isProfit ? "#34d399" : "#f87171", icon: isProfit ? "📈" : "📉" },
+          { label: "Počáteční kapitál", value: format(initialCapital, baseCurrency), color: "#c0c0c0", icon: "💰" },
+          { label: "Aktuální zůstatek", value: format(currentBalance, baseCurrency), color: "#ffffff", icon: "📊" },
+          { label: "Investováno", value: format(stats.invested, baseCurrency), color: "#fbbf24", icon: "🎟️" },
+          { label: "Celkový zisk", value: `${isProfit ? "+" : ""}${format(Math.abs(currentBalance - initialCapital), baseCurrency)}`, color: isProfit ? "#34d399" : "#f87171", icon: isProfit ? "📈" : "📉" },
         ].map((card) => (
           <div key={card.label} style={{
             background: "#111111",
@@ -256,7 +259,7 @@ export default function UvodTab() {
           <div>
             <div style={{ fontSize: 13, fontWeight: 600, color: "#525252", marginBottom: 4 }}>EQUITY KŘIVKA</div>
             <div style={{ fontSize: "1.5rem", fontWeight: 700, color: isProfit ? "#34d399" : "#f87171" }}>
-              {isProfit ? "+" : ""}{Math.round(currentBalance - initialCapital).toLocaleString("cs-CZ")} {currency}
+              {isProfit ? "+" : ""}{format(Math.abs(currentBalance - initialCapital), baseCurrency)}
             </div>
           </div>
           <div style={{
@@ -290,7 +293,7 @@ export default function UvodTab() {
             <Tooltip
               contentStyle={{ background: "#111111", border: "1px solid #2a2a2a", borderRadius: 10, color: "#fff", fontSize: 13 }}
               labelStyle={{ color: "#525252" }}
-              formatter={(value: any) => [`${Number(value).toLocaleString("cs-CZ")} ${currency}`, "Hodnota"]}
+              formatter={(value: any) => [format(Number(value), baseCurrency), "Hodnota"]}
             />
             <Area
               type="monotone" dataKey="hodnota"

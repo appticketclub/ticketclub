@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useCurrency } from "@/lib/context/CurrencyContext";
 
 type Banner = {
   id: string;
@@ -18,6 +19,7 @@ type Banner = {
 
 function BannerCard({ banner }: { banner: Banner }) {
   const isProfit = banner.profit >= 0;
+  const { format } = useCurrency();
   const cardRef = useRef<HTMLDivElement>(null);
 
   async function handleShare() {
@@ -49,7 +51,8 @@ function BannerCard({ banner }: { banner: Banner }) {
       <div ref={cardRef} style={{
         background: "linear-gradient(145deg, #0f0f0f, #080808)",
         padding: "1.25rem 1.5rem",
-        position: "relative", overflow: "hidden",
+        position: "relative",
+        overflow: "hidden",
         borderBottom: "1px solid #1a1a1a",
       }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, rgba(192,192,192,0.6), transparent)" }} />
@@ -64,7 +67,7 @@ function BannerCard({ banner }: { banner: Banner }) {
           <div style={{ textAlign: "right" }}>
             <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.08em", color: isProfit ? "rgba(52,211,153,0.6)" : "rgba(248,113,113,0.6)", marginBottom: 4 }}>ZISK</div>
             <div style={{ fontSize: 20, fontWeight: 800, color: isProfit ? "#34d399" : "#f87171" }}>
-              {isProfit ? "+" : ""}{banner.profit.toLocaleString("cs-CZ")} {banner.currency}
+              {isProfit ? "+" : ""}{format(banner.profit, banner.currency as "EUR" | "CZK")}
             </div>
             <div style={{ fontSize: 12, fontWeight: 600, color: isProfit ? "rgba(52,211,153,0.7)" : "rgba(248,113,113,0.7)" }}>
               ROI {isProfit ? "+" : ""}{banner.roi.toFixed(1)}%
@@ -75,8 +78,8 @@ function BannerCard({ banner }: { banner: Banner }) {
         <div style={{ display: "flex", gap: 8, marginTop: "1rem" }}>
           {[
             { label: "Koupeno", value: `${banner.quantity}×` },
-            { label: "Nákup/ks", value: `${banner.buy_price.toLocaleString("cs-CZ")} ${banner.currency}` },
-            { label: "Prodej/ks", value: `${banner.sell_price.toLocaleString("cs-CZ")} ${banner.currency}` },
+            { label: "Nákup/ks", value: format(banner.buy_price, banner.currency as "EUR" | "CZK") },
+            { label: "Prodej/ks", value: format(banner.sell_price, banner.currency as "EUR" | "CZK") },
           ].map(s => (
             <div key={s.label} style={{ flex: 1, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, padding: "6px 8px", textAlign: "center" }}>
               <div style={{ fontSize: 9, color: "#3a3a3a", marginBottom: 3 }}>{s.label}</div>

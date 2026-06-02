@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import SellModal from "@/components/nakupy/SellModal";
+import { useCurrency } from "@/lib/context/CurrencyContext";
 
 type Purchase = {
   id: string;
@@ -35,7 +36,7 @@ function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Account[]; 
   const [accountRef, setAccountRef] = useState("");
   const [buyPrice, setBuyPrice] = useState("");
   const [quantity, setQuantity] = useState("1");
-  const [currency, setCurrency] = useState("CZK");
+  const { currency } = useCurrency();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -145,7 +146,7 @@ function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Account[]; 
             )}
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 80px", gap: "0.75rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
             <div>
               <label style={labelStyle}>CENA LÍSTKU *</label>
               <input type="text" placeholder="0" value={buyPrice} onChange={e => setBuyPrice(e.target.value)} style={inputStyle} />
@@ -153,12 +154,6 @@ function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Account[]; 
             <div>
               <label style={labelStyle}>POČET LÍSTKŮ *</label>
               <input type="number" min="1" max="100" value={quantity} onChange={e => setQuantity(e.target.value)} style={inputStyle} />
-            </div>
-            <div>
-              <label style={labelStyle}>MĚNA</label>
-              <select value={currency} onChange={e => setCurrency(e.target.value)} style={{ ...inputStyle, cursor: "pointer" }}>
-                {["CZK","EUR","USD","GBP"].map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
             </div>
           </div>
 

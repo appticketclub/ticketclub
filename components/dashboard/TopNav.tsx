@@ -1,9 +1,11 @@
 "use client";
 import { useState } from "react";
 import { signOut } from "@/lib/auth/actions";
+import { useCurrency } from "@/lib/context/CurrencyContext";
 
 export default function TopNav({ user, profile }: { user: any; profile: any }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { currency, setCurrency } = useCurrency();
 
   const initials = profile?.full_name
     ? profile.full_name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)
@@ -81,6 +83,29 @@ export default function TopNav({ user, profile }: { user: any; profile: any }) {
             >
               ⭐ Můj plán
             </a>
+
+            {/* Currency switcher */}
+            <div style={{ padding: "8px 16px", borderBottom: "1px solid #1f1f1f" }}>
+              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#3a3a3a", marginBottom: 8 }}>MĚNA</div>
+              <div style={{ display: "flex", gap: 6 }}>
+                {(["EUR", "CZK"] as const).map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setCurrency(c)}
+                    style={{
+                      flex: 1, padding: "6px 0", fontSize: 13, fontWeight: 700,
+                      borderRadius: 8, cursor: "pointer",
+                      background: currency === c ? "linear-gradient(135deg, #ffffff, #a0a0a0)" : "transparent",
+                      border: currency === c ? "none" : "1px solid #2a2a2a",
+                      color: currency === c ? "#000" : "#525252",
+                      transition: "all 0.15s",
+                    }}
+                  >
+                    {c === "EUR" ? "€ EUR" : "Kč CZK"}
+                  </button>
+                ))}
+              </div>
+            </div>
 
             <button
               onClick={() => signOut()}

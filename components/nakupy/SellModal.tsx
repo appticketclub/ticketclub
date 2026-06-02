@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useCurrency } from "@/lib/context/CurrencyContext";
 
 const PLATFORMS = ["Viagogo", "StubHub", "TickPick", "Ticketmaster", "SeatGeek"];
 
@@ -32,6 +33,7 @@ type BannerData = {
 
 function PnlBanner({ data, currency }: { data: any; currency: string }) {
   const isProfit = data.profit >= 0;
+  const { format } = useCurrency();
   return (
     <div id="pnl-banner" style={{
       width: "100%", maxWidth: 480,
@@ -87,8 +89,8 @@ function PnlBanner({ data, currency }: { data: any; currency: string }) {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: "1.5rem" }}>
         {[
           { label: "KOUPENO", value: `${data.quantity}×` },
-          { label: "NÁKUP / KS", value: `${data.buy_price.toLocaleString("cs-CZ")} ${currency}` },
-          { label: "PRODEJ / KS", value: `${data.sell_price.toLocaleString("cs-CZ")} ${currency}` },
+          { label: "NÁKUP / KS", value: format(data.buy_price, currency as "EUR" | "CZK") },
+          { label: "PRODEJ / KS", value: format(data.sell_price, currency as "EUR" | "CZK") },
         ].map(stat => (
           <div key={stat.label} style={{
             background: "rgba(255,255,255,0.03)",
@@ -114,7 +116,7 @@ function PnlBanner({ data, currency }: { data: any; currency: string }) {
         <div>
           <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: isProfit ? "rgba(52,211,153,0.6)" : "rgba(248,113,113,0.6)", marginBottom: 6 }}>ČISTÝ ZISK</div>
           <div style={{ fontSize: 30, fontWeight: 800, color: isProfit ? "#34d399" : "#f87171", letterSpacing: "-0.02em" }}>
-            {isProfit ? "+" : ""}{data.profit.toLocaleString("cs-CZ")} {currency}
+            {isProfit ? "+" : ""}{format(data.profit, currency as "EUR" | "CZK")}
           </div>
         </div>
         <div style={{
@@ -148,6 +150,7 @@ export default function SellModal({ purchase, onClose, onSave }: {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [bannerData, setBannerData] = useState<BannerData | null>(null);
+  const { format } = useCurrency();
 
   const qtyNum = parseInt(qty) || 0;
   const sellNum = parseFloat(sellPrice.replace(",", ".")) || 0;
@@ -405,9 +408,9 @@ export default function SellModal({ purchase, onClose, onSave }: {
               <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#3a3a3a", marginBottom: "0.75rem" }}>NÁHLED P&L</div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
                 {[
-                  { label: "Příjem", value: `${totalRevenue.toLocaleString("cs-CZ")} ${purchase.currency}`, color: "#c0c0c0" },
-                  { label: "Poplatky", value: `-${totalFees.toLocaleString("cs-CZ")} ${purchase.currency}`, color: "#f87171" },
-                  { label: "Zisk", value: `${profit >= 0 ? "+" : ""}${Math.round(profit).toLocaleString("cs-CZ")} ${purchase.currency}`, color: profit >= 0 ? "#34d399" : "#f87171" },
+                  { label: "Příjem", value: format(totalRevenue, purchase.currency as "EUR" | "CZK"), color: "#c0c0c0" },
+                  { label: "Poplatky", value: `-${format(totalFees, purchase.currency as "EUR" | "CZK")}`, color: "#f87171" },
+                  { label: "Zisk", value: `${profit >= 0 ? "+" : ""}${format(Math.abs(profit), purchase.currency as "EUR" | "CZK")}`, color: profit >= 0 ? "#34d399" : "#f87171" },
                 ].map(item => (
                   <div key={item.label} style={{ textAlign: "center" }}>
                     <div style={{ fontSize: 11, color: "#3a3a3a", marginBottom: 4 }}>{item.label}</div>
