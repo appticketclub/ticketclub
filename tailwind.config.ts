@@ -36,11 +36,6 @@ const config: Config = {
           500: "#707070",
           600: "#404040",
         },
-        accent: {
-          silver: "#c0c0c0",
-          white: "#ffffff",
-          glow: "#ffffff15",
-        },
         profit: "#34d399",
         loss: "#f87171",
         warning: "#fbbf24",
