@@ -6,13 +6,11 @@ export async function getCapital() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
-
   const { data } = await supabase
     .from("profiles")
-    .select("capital, capital_currency")
+    .select("capital, capital_initial, capital_currency")
     .eq("id", user.id)
     .single();
-
   return data;
 }
 
@@ -21,14 +19,18 @@ export async function setCapital(amount: number, currency: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Nepřihlášen" };
 
+  // Set BOTH initial and current capital — only on first setup
   const { error } = await supabase
     .from("profiles")
-    .update({ capital: amount, capital_currency: currency })
+    .update({
+      capital: amount,
+      capital_initial: amount,
+      capital_currency: currency,
+    })
     .eq("id", user.id);
 
   if (error) return { error: error.message };
 
-  // Log to capital_history
   await supabase.from("capital_history").insert({
     user_id: user.id,
     amount: amount,

@@ -19,12 +19,16 @@ export default function UvodTab() {
   const [error, setError] = useState("");
   const [chartData, setChartData] = useState<any[]>([]);
   const [stats, setStats] = useState({ invested: 0, profit: 0, balance: 0 });
+  const [initialCapital, setInitialCapital] = useState(0);
+  const [currentBalance, setCurrentBalance] = useState(0);
 
   useEffect(() => {
     getCapital().then(async (data) => {
-      if (data?.capital && data.capital > 0) {
-        setCapitalState(data.capital);
+      if (data?.capital_initial && data.capital_initial > 0) {
+        setCapitalState(data.capital_initial);
+        setCurrentBalance(data.capital ?? data.capital_initial);
         setCurrency(data.capital_currency ?? "CZK");
+        setInitialCapital(data.capital_initial);
 
         // Load capital history for chart
         const supabase = createClient();
@@ -35,29 +39,20 @@ export default function UvodTab() {
 
         // Load purchases and sales for stats (if tables exist)
         let invested = 0;
-        let revenue = 0;
-        let fees = 0;
         
         try {
           const { data: purchases } = await supabase
             .from("purchases")
             .select("total_cost, status");
             
-          const { data: sales } = await supabase
-            .from("sales")
-            .select("total_revenue, fees_total");
-
           invested = purchases?.reduce((sum, p) => sum + (p.total_cost ?? 0), 0) ?? 0;
-          revenue = sales?.reduce((sum, s) => sum + (s.total_revenue ?? 0), 0) ?? 0;
-          fees = sales?.reduce((sum, s) => sum + (s.fees_total ?? 0), 0) ?? 0;
         } catch {
           // Tables might not exist yet
         }
         
-        const profit = revenue - fees - invested;
-        const balance = (data.capital ?? 0) - invested + revenue - fees;
+        const profit = currentBalance - initialCapital;
 
-        setStats({ invested, profit, balance });
+        setStats({ invested, profit, balance: currentBalance });
 
         // Build chart data
         if (history && history.length > 0) {
@@ -69,8 +64,8 @@ export default function UvodTab() {
         } else {
           // Show flat line with just starting capital
           setChartData([
-            { date: "Start", hodnota: Math.round(data.capital) },
-            { date: "Dnes", hodnota: Math.round(data.capital) },
+            { date: "Start", hodnota: Math.round(data.capital_initial) },
+            { date: "Dnes", hodnota: Math.round(data.capital ?? data.capital_initial) },
           ]);
         }
       }
@@ -88,6 +83,8 @@ export default function UvodTab() {
     else {
       setCapitalState(amount);
       setCurrency(selectedCurrency);
+      setInitialCapital(amount);
+      setCurrentBalance(amount);
       setStats({ invested: 0, profit: 0, balance: amount });
       setChartData([
         { date: "Start", hodnota: Math.round(amount) },
@@ -180,7 +177,7 @@ export default function UvodTab() {
   }
 
   // MAIN DASHBOARD
-  const isProfit = stats.profit >= 0;
+  const isProfit = (currentBalance - initialCapital) >= 0;
 
   return (
     <div>
@@ -208,10 +205,10 @@ export default function UvodTab() {
       {/* Stat cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "1.75rem" }}>
         {[
-          { label: "Počáteční kapitál", value: `${capital.toLocaleString("cs-CZ")} ${currency}`, color: "#c0c0c0", icon: "💰" },
-          { label: "Aktuální zůstatek", value: `${Math.round(stats.balance).toLocaleString("cs-CZ")} ${currency}`, color: "#ffffff", icon: "📊" },
+          { label: "Počáteční kapitál", value: `${initialCapital.toLocaleString("cs-CZ")} ${currency}`, color: "#c0c0c0", icon: "💰" },
+          { label: "Aktuální zůstatek", value: `${Math.round(currentBalance).toLocaleString("cs-CZ")} ${currency}`, color: "#ffffff", icon: "📊" },
           { label: "Investováno", value: `${Math.round(stats.invested).toLocaleString("cs-CZ")} ${currency}`, color: "#fbbf24", icon: "🎟️" },
-          { label: "Celkový zisk", value: `${isProfit ? "+" : ""}${Math.round(stats.profit).toLocaleString("cs-CZ")} ${currency}`, color: isProfit ? "#34d399" : "#f87171", icon: isProfit ? "📈" : "📉" },
+          { label: "Celkový zisk", value: `${isProfit ? "+" : ""}${Math.round(currentBalance - initialCapital).toLocaleString("cs-CZ")} ${currency}`, color: isProfit ? "#34d399" : "#f87171", icon: isProfit ? "📈" : "📉" },
         ].map((card) => (
           <div key={card.label} style={{
             background: "#111111",
@@ -250,7 +247,7 @@ export default function UvodTab() {
           <div>
             <div style={{ fontSize: 13, fontWeight: 600, color: "#525252", marginBottom: 4 }}>EQUITY KŘIVKA</div>
             <div style={{ fontSize: "1.5rem", fontWeight: 700, color: isProfit ? "#34d399" : "#f87171" }}>
-              {isProfit ? "+" : ""}{Math.round(stats.profit).toLocaleString("cs-CZ")} {currency}
+              {isProfit ? "+" : ""}{Math.round(currentBalance - initialCapital).toLocaleString("cs-CZ")} {currency}
             </div>
           </div>
           <div style={{
@@ -259,7 +256,7 @@ export default function UvodTab() {
             border: `1px solid ${isProfit ? "#34d39944" : "#f8717144"}`,
             color: isProfit ? "#34d399" : "#f87171",
           }}>
-            {isProfit ? "▲" : "▼"} {capital > 0 ? Math.abs(Math.round((stats.profit / capital) * 100)) : 0}% ROI
+            {isProfit ? "▲" : "▼"} {initialCapital > 0 ? Math.abs(Math.round(((currentBalance - initialCapital) / initialCapital) * 100)) : 0}% ROI
           </div>
         </div>
 
