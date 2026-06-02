@@ -1,19 +1,35 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import createIntlMiddleware from "next-intl/middleware";
-import { updateSession } from "@/lib/supabase/middleware";
+import createMiddleware from "next-intl/middleware";
+import { routing } from "./i18n/routing";
 
-const intlMiddleware = createIntlMiddleware({
-  locales: ["cs", "en"],
-  defaultLocale: "cs",
-});
+const intlMiddleware = createMiddleware(routing);
 
-export async function middleware(request: NextRequest) {
-  let response = intlMiddleware(request);
-  response = await updateSession(request);
-  return response;
+const protectedRoutes = ["/dashboard", "/purchases", "/sales", "/statistics", "/settings"];
+
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  const isProtected = protectedRoutes.some((route) =>
+    pathname.includes(route)
+  );
+
+  if (isProtected) {
+    const token =
+      request.cookies.get("sb-access-token") ||
+      request.cookies.get("sb-eoeiuohwxulkgppjaogk-auth-token");
+
+    if (!token) {
+      const loginUrl = new URL("/login", request.url);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  return intlMiddleware(request);
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)",
+  ],
 };
