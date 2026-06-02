@@ -6,7 +6,7 @@ export async function signInWithEmail(email: string, password: string) {
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { error: error.message };
-  redirect("/dashboard");
+  redirect("/dostupne-sluzby");
 }
 
 export async function signUpWithEmail(email: string, password: string, fullName: string) {

@@ -5,7 +5,7 @@ import { routing } from "./i18n/routing";
 
 const intlMiddleware = createMiddleware(routing);
 
-const protectedRoutes = ["/dashboard", "/nakupy", "/prodeje", "/statistiky", "/nastaveni"];
+const protectedRoutes = ["/dashboard", "/nakupy", "/prodeje", "/statistiky", "/nastaveni", "/dostupne-sluzby"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
