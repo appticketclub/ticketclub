@@ -14,7 +14,7 @@ export async function getCapital() {
   return data;
 }
 
-export async function setCapital(amount: number, currency: string) {
+export async function setCapital(amount: number, currency: "EUR" | "CZK") {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Nepřihlášen" };
