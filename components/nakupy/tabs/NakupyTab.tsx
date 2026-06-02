@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import SellModal from "@/components/nakupy/SellModal";
 
 type Purchase = {
   id: string;
@@ -9,6 +10,7 @@ type Purchase = {
   venue: string | null;
   city: string | null;
   quantity: number;
+  quantity_remaining: number;
   buy_price: number;
   total_cost: number;
   currency: string;
@@ -56,6 +58,7 @@ function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Account[]; 
       venue: artistName.trim() || null,
       buy_price: priceNum,
       quantity: qtyNum,
+      quantity_remaining: qtyNum,
       currency,
       account_ref: accountRef || null,
       status: "active",
@@ -202,6 +205,7 @@ export default function NakupyTab() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [sellPurchase, setSellPurchase] = useState<Purchase | null>(null);
 
   async function loadData() {
     const supabase = createClient();
@@ -226,6 +230,7 @@ export default function NakupyTab() {
   return (
     <div>
       {showModal && <AddPurchaseModal accounts={accounts} onClose={() => setShowModal(false)} onSave={loadData} />}
+      {sellPurchase && <SellModal purchase={sellPurchase as any} onClose={() => setSellPurchase(null)} onSave={loadData} />}
 
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.75rem" }}>
@@ -327,10 +332,20 @@ export default function NakupyTab() {
                 </div>
 
                 {/* Actions */}
-                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <div style={{ display: "flex", justifyContent: "flex-end", gap: 6 }}>
+                  <button
+                    onClick={() => setSellPurchase(purchase)}
+                    title="Zaznamenat prodej"
+                    style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 16, padding: 4 }}
+                    onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#34d399"}
+                    onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"}
+                  >
+                    💰
+                  </button>
                   <button
                     onClick={() => deletePurchase(purchase.id)}
-                    style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 18, padding: 4 }}
+                    title="Smazat"
+                    style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 16, padding: 4 }}
                     onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#f87171"}
                     onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"}
                   >
