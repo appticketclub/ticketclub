@@ -55,17 +55,27 @@ export default function UvodTab() {
         setStats({ invested, profit, balance: currentBalance });
 
         // Build chart data
-        if (history && history.length > 0) {
-          const chartPoints = history.map((h: any) => ({
-            date: new Date(h.created_at).toLocaleDateString("cs-CZ", { day: "numeric", month: "short" }),
+        const balance = currentBalance; // Local variable for clarity
+        // Filter out extreme outliers — keep only reasonable values
+        const filtered = (history ?? []).filter((h: any) => {
+          return Math.abs(h.balance_after) < 10_000_000;
+        });
+
+        if (filtered.length > 0) {
+          const chartPoints = filtered.map((h: any) => ({
+            date: new Date(h.created_at).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" }),
             hodnota: Math.round(h.balance_after),
           }));
+          // Always add current balance as last point
+          chartPoints.push({
+            date: "Nyní",
+            hodnota: Math.round(balance),
+          });
           setChartData(chartPoints);
         } else {
-          // Show flat line with just starting capital
           setChartData([
-            { date: "Start", hodnota: Math.round(data.capital_initial) },
-            { date: "Dnes", hodnota: Math.round(data.capital ?? data.capital_initial) },
+            { date: "Start", hodnota: Math.round(data.capital_initial ?? data.capital) },
+            { date: "Nyní", hodnota: Math.round(balance) },
           ]);
         }
       }
@@ -88,7 +98,7 @@ export default function UvodTab() {
       setStats({ invested: 0, profit: 0, balance: amount });
       setChartData([
         { date: "Start", hodnota: Math.round(amount) },
-        { date: "Dnes", hodnota: Math.round(amount) },
+        { date: "Nyní", hodnota: Math.round(amount) },
       ]);
     }
     setSaving(false);
