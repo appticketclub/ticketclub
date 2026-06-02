@@ -30,73 +30,110 @@ type BannerData = {
   currency: string;
 };
 
-function PnlBanner({ data, currency }: { data: BannerData; currency: string }) {
+function PnlBanner({ data, currency }: { data: any; currency: string }) {
   const isProfit = data.profit >= 0;
   return (
     <div id="pnl-banner" style={{
-      background: "linear-gradient(135deg, #0d0b1a 0%, #111111 100%)",
-      border: "1px solid #2a2a2a",
+      width: "100%", maxWidth: 480,
+      background: "linear-gradient(145deg, #0f0f0f 0%, #080808 100%)",
       borderRadius: 20,
-      padding: "1.5rem",
-      textAlign: "center",
-      boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
+      padding: "2rem",
+      position: "relative",
+      overflow: "hidden",
+      margin: "0 auto",
+      boxShadow: `0 0 0 1px rgba(192,192,192,0.15), 0 0 40px rgba(192,192,192,0.06), 0 0 80px rgba(192,192,192,0.03)`,
     }}>
-      <div style={{
-        background: "linear-gradient(135deg, rgba(201, 201, 201, 0.1)",
-        borderRadius: 16,
-        padding: "1rem",
-        marginBottom: "1rem",
-      }}>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 8, marginBottom: "0.5rem" }}>
-          <span style={{ fontSize: 14, color: "#c0c0c0", fontWeight: 800, letterSpacing: "0.2em" }}>TICKETCLUB</span>
+      {/* Animated corner glows */}
+      <div style={{ position: "absolute", top: -40, left: -40, width: 120, height: 120, borderRadius: "50%", background: "radial-gradient(circle, rgba(192,192,192,0.08) 0%, transparent 70%)" }} />
+      <div style={{ position: "absolute", bottom: -40, right: -40, width: 120, height: 120, borderRadius: "50%", background: `radial-gradient(circle, ${isProfit ? "rgba(52,211,153,0.1)" : "rgba(248,113,113,0.1)"} 0%, transparent 70%)` }} />
+
+      {/* Chrome border top */}
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 30%, rgba(192,192,192,0.8) 50%, rgba(255,255,255,0.4) 70%, transparent 100%)" }} />
+      {/* Chrome border bottom */}
+      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, rgba(192,192,192,0.2), transparent)" }} />
+      {/* Chrome border left */}
+      <div style={{ position: "absolute", top: 0, left: 0, bottom: 0, width: 1, background: "linear-gradient(180deg, rgba(192,192,192,0.4), rgba(192,192,192,0.1), transparent)" }} />
+      {/* Chrome border right */}
+      <div style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: 1, background: "linear-gradient(180deg, rgba(192,192,192,0.4), rgba(192,192,192,0.1), transparent)" }} />
+
+      {/* Brand */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{
+            width: 28, height: 28, borderRadius: 7,
+            background: "linear-gradient(135deg, #ffffff, #808080)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 10, fontWeight: 800, color: "#000",
+          }}>TC</div>
+          <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.15em", color: "#c0c0c0" }}>TICKETCLUB</span>
         </div>
-        <p style={{ color: "#c0c0c0", fontSize: 13, margin: 0 }}>{data.event_name}</p>
+        <span style={{ fontSize: 11, color: "#3a3a3a", letterSpacing: "0.05em" }}>UZAVŘENÝ FLIP</span>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginTop: "1rem" }}>
-        <div style={{
-          padding: "0.75rem",
-          background: "#0a0a0a",
-          border: "1px solid #1a1a1a",
-          borderRadius: 12,
-        }}>
-          <div style={{ fontSize: 11, color: "#3a3a3a", marginBottom: 4 }}>NÁKUP</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: "#fff" }}>
-            {(data.buy_price * data.quantity).toLocaleString("cs-CZ")} {currency}
+
+      {/* Event */}
+      <div style={{ marginBottom: "1.5rem" }}>
+        <div style={{ fontSize: 20, fontWeight: 700, color: "#fff", marginBottom: 4, letterSpacing: "-0.01em" }}>{data.event_name}</div>
+        {data.platform && (
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "3px 10px", borderRadius: 6, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <span style={{ fontSize: 11, color: "#525252" }}>{data.platform}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Divider */}
+      <div style={{ height: 1, background: "linear-gradient(90deg, rgba(192,192,192,0.2), rgba(192,192,192,0.05), transparent)", marginBottom: "1.5rem" }} />
+
+      {/* Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: "1.5rem" }}>
+        {[
+          { label: "KOUPENO", value: `${data.quantity}×` },
+          { label: "NÁKUP / KS", value: `${data.buy_price.toLocaleString("cs-CZ")} ${currency}` },
+          { label: "PRODEJ / KS", value: `${data.sell_price.toLocaleString("cs-CZ")} ${currency}` },
+        ].map(stat => (
+          <div key={stat.label} style={{
+            background: "rgba(255,255,255,0.03)",
+            border: "1px solid rgba(255,255,255,0.07)",
+            borderRadius: 10, padding: "10px 12px", textAlign: "center",
+          }}>
+            <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", color: "#3a3a3a", marginBottom: 6 }}>{stat.label}</div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: "#c0c0c0" }}>{stat.value}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Profit box */}
+      <div style={{
+        background: isProfit ? "linear-gradient(135deg, rgba(52,211,153,0.08), rgba(52,211,153,0.04))" : "linear-gradient(135deg, rgba(248,113,113,0.08), rgba(248,113,113,0.04))",
+        border: `1px solid ${isProfit ? "rgba(52,211,153,0.2)" : "rgba(248,113,113,0.2)"}`,
+        borderRadius: 14, padding: "1.25rem 1.5rem",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        marginBottom: "1.25rem",
+        position: "relative", overflow: "hidden",
+      }}>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg, transparent, ${isProfit ? "rgba(52,211,153,0.4)" : "rgba(248,113,113,0.4)"}, transparent)` }} />
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: isProfit ? "rgba(52,211,153,0.6)" : "rgba(248,113,113,0.6)", marginBottom: 6 }}>ČISTÝ ZISK</div>
+          <div style={{ fontSize: 30, fontWeight: 800, color: isProfit ? "#34d399" : "#f87171", letterSpacing: "-0.02em" }}>
+            {isProfit ? "+" : ""}{data.profit.toLocaleString("cs-CZ")} {currency}
           </div>
         </div>
         <div style={{
-          padding: "0.75rem",
-          background: "#0a0a0a",
-          border: "1px solid #1a1a1a",
-          borderRadius: 12,
+          padding: "8px 16px", borderRadius: 10,
+          background: isProfit ? "rgba(52,211,153,0.12)" : "rgba(248,113,113,0.12)",
+          border: `1px solid ${isProfit ? "rgba(52,211,153,0.25)" : "rgba(248,113,113,0.25)"}`,
         }}>
-          <div style={{ fontSize: 11, color: "#3a3a3a", marginBottom: 4 }}>PRODEJ</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: "#c0c0c0" }}>
-            {(data.sell_price * data.quantity).toLocaleString("cs-CZ")} {currency}
+          <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.08em", color: isProfit ? "rgba(52,211,153,0.6)" : "rgba(248,113,113,0.6)", marginBottom: 3 }}>ROI</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: isProfit ? "#34d399" : "#f87171" }}>
+            {isProfit ? "+" : ""}{data.roi.toFixed(1)}%
           </div>
         </div>
       </div>
-      <div style={{
-        marginTop: "1rem",
-        padding: "1.25rem",
-        background: isProfit ? "linear-gradient(135deg, #052e1a, #0d0b1a)" : "linear-gradient(135deg, #2a0a0a, #0d0b1a)",
-        border: `1px solid ${isProfit ? "#34d39944" : "#f8717144"}`,
-        borderRadius: 16,
-      }}>
-        <div style={{ fontSize: 12, color: "#3a3a3a", marginBottom: 4 }}>ZISK</div>
-        <div style={{ fontSize: 32, fontWeight: 900, color: isProfit ? "#34d399" : "#f87171" }}>
-          {isProfit ? "+" : ""}{data.profit.toLocaleString("cs-CZ")} {currency}
-        </div>
-        <div style={{ fontSize: 14, fontWeight: 700, color: isProfit ? "#34d399" : "#f87171", marginTop: 4 }}>
-          ROI: {isProfit ? "+" : ""}{data.roi.toFixed(1)}%
-        </div>
+
+      {/* Footer */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span style={{ fontSize: 11, color: "#2a2a2a", letterSpacing: "0.05em" }}>ticketclub.cz</span>
+        <span style={{ fontSize: 11, color: "#2a2a2a" }}>{new Date().toLocaleDateString("cs-CZ")}</span>
       </div>
-      {data.platform && (
-        <div style={{
-          marginTop: "0.75rem", fontSize: 12, color: "#3a3a3a" }}>
-          {data.platform} • {data.quantity}×
-        </div>
-      )}
     </div>
   );
 }

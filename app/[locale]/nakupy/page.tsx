@@ -4,6 +4,7 @@ import Sidebar from "@/components/nakupy/Sidebar";
 import UvodTab from "@/components/nakupy/tabs/UvodTab";
 import NakupniUctyTab from "@/components/nakupy/tabs/NakupniUctyTab";
 import NakupyTab from "@/components/nakupy/tabs/NakupyTab";
+import BanneryTab from "@/components/nakupy/tabs/BanneryTab";
 
 function KalendarTab() {
   return (
@@ -28,15 +29,6 @@ function KalkulackaTab() {
     <div>
       <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>Kalkulačka profitů</h1>
       <p style={{ color: "#525252" }}>Výpočet break-even a minimální prodejní ceny — připravujeme...</p>
-    </div>
-  );
-}
-
-function BanneryTab() {
-  return (
-    <div>
-      <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>P&L bannery</h1>
-      <p style={{ color: "#525252" }}>Generování sdílitelných bannerů po uzavření flipu — připravujeme...</p>
     </div>
   );
 }
