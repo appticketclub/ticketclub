@@ -169,10 +169,15 @@ export default function SellModal({ purchase, onClose, onSave }: {
     const { error: err } = await supabase.from("sales").insert({
       user_id: user.id,
       purchase_id: purchase.id,
-      quantity: qtyNum,
+      quantity_sold: qtyNum,
       sell_price: sellNum,
-      fees: totalFees,
+      currency: purchase.currency,
       platform: platform || null,
+      fee_percent: feeNum,
+      fees: Math.round(totalFees * 100) / 100,
+      quantity: qtyNum,
+      payout_amount: Math.round((totalRevenue - totalFees) * 100) / 100,
+      sold_at: new Date().toISOString(),
     });
 
     if (err) {
