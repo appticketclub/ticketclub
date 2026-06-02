@@ -35,6 +35,7 @@ function Modal({ onClose, onSave }: { onClose: () => void; onSave: () => void })
       url: url.trim() || null,
       email: email.trim() || null,
       password_encrypted: password || null,
+      type: "purchase",
     });
 
     if (error) setError(error.message);
@@ -169,7 +170,7 @@ export default function NakupniUctyTab() {
 
   async function loadAccounts() {
     const supabase = createClient();
-    const { data } = await supabase.from("accounts").select("*").order("created_at", { ascending: false });
+    const { data } = await supabase.from("accounts").select("*").eq("type", "purchase").order("created_at", { ascending: false });
     setAccounts(data ?? []);
     setLoading(false);
   }

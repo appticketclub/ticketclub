@@ -4,6 +4,7 @@ import Link from "next/link";
 const navItems = [
   { id: "uvod", label: "Úvod", icon: "⬜" },
   { id: "nakupni-ucty", label: "Nákupní účty", icon: "🔐" },
+  { id: "ucty-hesla", label: "Účty a hesla", icon: "🔑" },
   { id: "nakupy", label: "Nákupy", icon: "🎟️" },
   { id: "kalendar", label: "Kalendář", icon: "📅" },
   { id: "ai-statistiky", label: "AI statistiky", icon: "🤖" },

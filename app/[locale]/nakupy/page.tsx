@@ -5,6 +5,7 @@ import UvodTab from "@/components/nakupy/tabs/UvodTab";
 import NakupniUctyTab from "@/components/nakupy/tabs/NakupniUctyTab";
 import NakupyTab from "@/components/nakupy/tabs/NakupyTab";
 import BanneryTab from "@/components/nakupy/tabs/BanneryTab";
+import UctyHeslaTab from "@/components/nakupy/tabs/UctyHeslaTab";
 
 function KalendarTab() {
   return (
@@ -36,6 +37,7 @@ function KalkulackaTab() {
 const tabs: Record<string, React.ReactNode> = {
   uvod: <UvodTab />,
   "nakupni-ucty": <NakupniUctyTab />,
+  "ucty-hesla": <UctyHeslaTab />,
   nakupy: <NakupyTab />,
   kalendar: <KalendarTab />,
   "ai-statistiky": <AiStatistikyTab />,
