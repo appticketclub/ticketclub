@@ -5,7 +5,7 @@ import { routing } from "./i18n/routing";
 
 const intlMiddleware = createMiddleware(routing);
 
-const protectedRoutes = ["/dashboard", "/purchases", "/sales", "/statistics", "/settings"];
+const protectedRoutes = ["/dashboard", "/nakupy", "/prodeje", "/statistiky", "/nastaveni"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -20,7 +20,7 @@ export function middleware(request: NextRequest) {
       request.cookies.get("sb-eoeiuohwxulkgppjaogk-auth-token");
 
     if (!token) {
-      const loginUrl = new URL("/login", request.url);
+      const loginUrl = new URL("/prihlaseni", request.url);
       return NextResponse.redirect(loginUrl);
     }
   }
