@@ -3,6 +3,7 @@ import Link from "next/link";
 
 const navItems = [
   { id: "uvod", label: "Úvod", icon: "⬜" },
+  { id: "nakupni-ucty", label: "Nákupní účty", icon: "🔐" },
   { id: "kalendar", label: "Kalendář", icon: "📅" },
   { id: "ai-statistiky", label: "AI statistiky", icon: "🤖" },
   { id: "kalkulacka", label: "Kalkulačka profitů", icon: "🧮" },
