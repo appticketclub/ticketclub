@@ -3,6 +3,7 @@ import { useState } from "react";
 import Sidebar from "@/components/nakupy/Sidebar";
 import UvodTab from "@/components/nakupy/tabs/UvodTab";
 import NakupniUctyTab from "@/components/nakupy/tabs/NakupniUctyTab";
+import NakupyTab from "@/components/nakupy/tabs/NakupyTab";
 
 function KalendarTab() {
   return (
@@ -43,6 +44,7 @@ function BanneryTab() {
 const tabs: Record<string, React.ReactNode> = {
   uvod: <UvodTab />,
   "nakupni-ucty": <NakupniUctyTab />,
+  nakupy: <NakupyTab />,
   kalendar: <KalendarTab />,
   "ai-statistiky": <AiStatistikyTab />,
   kalkulacka: <KalkulackaTab />,
