@@ -30,12 +30,13 @@ export default function UvodTab() {
         setCurrency(data.capital_currency ?? "CZK");
         setInitialCapital(data.capital_initial);
 
-        // Load capital history for chart
+        // Build chart from capital_history — show balance over time 
         const supabase = createClient();
-        const { data: history } = await supabase
-          .from("capital_history")
-          .select("*")
-          .order("created_at", { ascending: true });
+        const { data: history } = await supabase 
+          .from("capital_history") 
+          .select("balance_after, created_at") 
+          .order("created_at", { ascending: true }) 
+          .limit(100);
 
         // Load purchases and sales for stats (if tables exist)
         let invested = 0;
@@ -55,28 +56,26 @@ export default function UvodTab() {
         setStats({ invested, profit, balance: currentBalance });
 
         // Build chart data
-        const balance = currentBalance; // Local variable for clarity
-        // Filter out extreme outliers — keep only reasonable values
-        const filtered = (history ?? []).filter((h: any) => {
-          return Math.abs(h.balance_after) < 10_000_000;
-        });
-
-        if (filtered.length > 0) {
-          const chartPoints = filtered.map((h: any) => ({
-            date: new Date(h.created_at).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" }),
-            hodnota: Math.round(h.balance_after),
-          }));
-          // Always add current balance as last point
-          chartPoints.push({
-            date: "Nyní",
-            hodnota: Math.round(balance),
-          });
-          setChartData(chartPoints);
-        } else {
-          setChartData([
-            { date: "Start", hodnota: Math.round(data.capital_initial ?? data.capital) },
-            { date: "Nyní", hodnota: Math.round(balance) },
-          ]);
+        const initialCap = data.capital_initial ?? data.capital ?? 0; 
+        const currentBal = data.capital ?? initialCap; 
+ 
+        if (history && history.length > 0) { 
+          // Always start with initial capital as first point 
+          const points = [ 
+            { date: "Start", hodnota: Math.round(initialCap) }, 
+            ...history.map((h: any) => ({ 
+              date: new Date(h.created_at).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" }), 
+              hodnota: Math.round(h.balance_after), 
+            })), 
+          ]; 
+          // Remove duplicate "Nyní" — last point is already current balance 
+          setChartData(points); 
+        } else { 
+          // No history yet — flat line at initial capital 
+          setChartData([ 
+            { date: "Start", hodnota: Math.round(initialCap) }, 
+            { date: "Nyní", hodnota: Math.round(currentBal) }, 
+          ]); 
         }
       }
       setLoading(false);
@@ -280,8 +279,14 @@ export default function UvodTab() {
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a" vertical={false} />
             <XAxis dataKey="date" tick={{ fill: "#3a3a3a", fontSize: 11 }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fill: "#3a3a3a", fontSize: 11 }} axisLine={false} tickLine={false} width={70}
-              tickFormatter={(v) => `${v.toLocaleString("cs-CZ")}`} />
+            <YAxis 
+              tick={{ fill: "#3a3a3a", fontSize: 11 }} 
+              axisLine={false} 
+              tickLine={false} 
+              width={70} 
+              domain={['auto', 'auto']} 
+              tickFormatter={(v) => `${v.toLocaleString("cs-CZ")}`} 
+            />
             <Tooltip
               contentStyle={{ background: "#111111", border: "1px solid #2a2a2a", borderRadius: 10, color: "#fff", fontSize: 13 }}
               labelStyle={{ color: "#525252" }}
