@@ -6,6 +6,8 @@ type Purchase = {
   id: string;
   event_name: string;
   event_date: string | null;
+  venue: string | null;
+  city: string | null;
   quantity: number;
   buy_price: number;
   total_cost: number;
