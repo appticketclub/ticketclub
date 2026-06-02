@@ -12,7 +12,7 @@ const currencies = ["EUR", "CZK"];
 
 export default function UvodTab() {
   const [capital, setCapitalState] = useState<number | null>(null);
-  const { format, currency: displayCurrency, convert } = useCurrency();
+  const { format, currency: displayCurrency, convert, setCurrency } = useCurrency();
   const [loading, setLoading] = useState(true);
   const [input, setInput] = useState("");
   const [selectedCurrency, setSelectedCurrency] = useState("EUR");
