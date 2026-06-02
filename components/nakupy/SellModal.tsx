@@ -161,7 +161,7 @@ export default function SellModal({ purchase, onClose, onSave }: {
         user_id: user.id,
         amount: payout,
         type: "sale",
-        description: `Prodej: ${purchase.event_name}",
+        description: `Prodej: ${purchase.event_name}`,
         balance_after: newBalance,
       });
     }
@@ -221,7 +221,8 @@ export default function SellModal({ purchase, onClose, onSave }: {
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
-          a.download = `ticketclub-${purchase.event_name.replace(/\s+/g, "-").toLowerCase()}.png`;
+          const safeName = purchase.event_name.replace(/\s+/g, "-").toLowerCase();
+          a.download = "ticketclub-" + safeName + ".png";
           a.click();
           URL.revokeObjectURL(url);
         }
