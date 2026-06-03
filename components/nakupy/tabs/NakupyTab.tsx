@@ -33,6 +33,8 @@ const statusColors: Record<string, { bg: string; color: string; label: string }>
 function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Account[]; onClose: () => void; onSave: () => void }) {
   const [eventName, setEventName] = useState("");
   const [artistName, setArtistName] = useState("");
+  const today = new Date().toISOString().split("T")[0];
+  const [eventDate, setEventDate] = useState(today);
   const [accountRef, setAccountRef] = useState("");
   const [buyPrice, setBuyPrice] = useState("");
   const [quantity, setQuantity] = useState("1");
@@ -57,6 +59,7 @@ function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Account[]; 
       user_id: user.id,
       event_name: eventName.trim(),
       venue: artistName.trim() || null,
+      event_date: eventDate,
       buy_price: priceNum,
       quantity: qtyNum,
       quantity_remaining: qtyNum,
@@ -130,6 +133,19 @@ function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Account[]; 
           <div>
             <label style={labelStyle}>JMÉNO INTERPRETA</label>
             <input type="text" placeholder="např. Coldplay" value={artistName} onChange={e => setArtistName(e.target.value)} style={inputStyle} />
+          </div>
+
+          <div>
+            <label style={labelStyle}>DATUM NÁKUPU</label>
+            <input
+              type="date"
+              value={eventDate}
+              onChange={e => setEventDate(e.target.value)}
+              style={{
+                ...inputStyle,
+                colorScheme: "dark",
+              }}
+            />
           </div>
 
           <div>
@@ -268,12 +284,12 @@ export default function NakupyTab() {
           {/* Table header */}
           <div style={{
             display: "grid",
-            gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr 80px",
+            gridTemplateColumns: "2fr 120px 1fr 1fr 1fr 1fr 80px",
             padding: "0.875rem 1.5rem",
             borderBottom: "1px solid #1a1a1a",
             background: "#0d0d0d",
           }}>
-            {["NÁZEV AKCE", "ÚČET", "CENA/KS", "POČET", "CELKEM", ""].map((h) => (
+            {["NÁZEV AKCE", "DATUM", "ÚČET", "CENA/KS", "POČET", "CELKEM", ""].map((h) => (
               <div key={h} style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#3a3a3a" }}>{h}</div>
             ))}
           </div>
@@ -286,7 +302,7 @@ export default function NakupyTab() {
                 key={purchase.id}
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr 80px",
+                  gridTemplateColumns: "2fr 120px 1fr 1fr 1fr 1fr 80px",
                   padding: "1rem 1.5rem",
                   borderBottom: i < purchases.length - 1 ? "1px solid #141414" : "none",
                   alignItems: "center",
@@ -308,6 +324,13 @@ export default function NakupyTab() {
                     </span>
                     {purchase.venue && <span style={{ fontSize: 11, color: "#3a3a3a" }}>{purchase.venue}</span>}
                   </div>
+                </div>
+
+                {/* Date */}
+                <div style={{ fontSize: 13, color: "#525252" }}>
+                  {purchase.event_date
+                    ? new Date(purchase.event_date).toLocaleDateString("cs-CZ")
+                    : "—"}
                 </div>
 
                 {/* Account */}

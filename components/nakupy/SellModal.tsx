@@ -147,6 +147,8 @@ export default function SellModal({ purchase, onClose, onSave }: {
   const [sellPrice, setSellPrice] = useState("");
   const [platform, setPlatform] = useState("");
   const [feePercent, setFeePercent] = useState("10");
+  const todaySale = new Date().toISOString().split("T")[0];
+  const [soldAt, setSoldAt] = useState(todaySale);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [bannerData, setBannerData] = useState<BannerData | null>(null);
@@ -180,7 +182,7 @@ export default function SellModal({ purchase, onClose, onSave }: {
       fees: Math.round(totalFees * 100) / 100,
       quantity: qtyNum,
       payout_amount: Math.round((totalRevenue - totalFees) * 100) / 100,
-      sold_at: new Date().toISOString(),
+      sold_at: new Date(soldAt).toISOString(),
     });
 
     if (err) {
@@ -396,6 +398,23 @@ export default function SellModal({ purchase, onClose, onSave }: {
                 {PLATFORMS.map(p => <option key={p} value={p}>{p}</option>)}
               </select>
             </div>
+            <div>
+              <label style={labelStyle}>DATUM PRODEJE</label>
+              <input
+                type="date"
+                value={soldAt}
+                onChange={e => setSoldAt(e.target.value)}
+                style={{
+                  width: "100%", padding: "0.75rem 1rem",
+                  background: "#0a0a0a", border: "1px solid #2a2a2a",
+                  borderRadius: 10, color: "#fff", fontSize: 14,
+                  outline: "none", colorScheme: "dark",
+                  boxSizing: "border-box" as const,
+                }}
+              />
+            </div>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "0.75rem" }}>
             <div>
               <label style={labelStyle}>POPLATEK PLATFORMY (%)</label>
               <input type="text" placeholder="0" value={feePercent} onChange={e => setFeePercent(e.target.value)} style={inputStyle} />
