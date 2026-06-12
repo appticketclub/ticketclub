@@ -351,6 +351,7 @@ export default function EvidenceTab() {
             >
               <option value="">— Vyberte —</option>
               {options.map(o => <option key={o} value={o}>{o}</option>)}
+              <option value="Jiné">Jiné</option>
             </select>
             {showCustom && (
               <input
@@ -895,7 +896,7 @@ export default function EvidenceTab() {
                     />
 
                     {/* Druh lístků — DROPDOWN */}
-                    <DropdownCell rowId={row.id} field="ticket_type_custom" value={row.ticket_type_custom} width={120} options={["Mobile Transfer", "E-Ticket", "Jiné"]} />
+                    <DropdownCell rowId={row.id} field="ticket_type_custom" value={row.ticket_type_custom} width={120} options={["Mobile Transfer", "E-Ticket"]} />
 
                     {/* Datum prodeje */}
                     <DateCell rowId={row.id} field="sold_at" value={row.sold_at ? row.sold_at.split("T")[0] : null} width={100} table="sales" />

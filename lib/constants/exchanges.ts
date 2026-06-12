@@ -4,5 +4,4 @@ export const EXCHANGES = [
   "Ticketmaster Resale",
   "Bazoš",
   "We-list",
-  "Jiné",
 ];
