@@ -17,6 +17,7 @@ type EvidenceRow = {
   account_ref: string | null;
   ticket_type_custom: string | null;
   paid_out: boolean;
+  delivered: boolean;
   notes: string | null;
   quantity_remaining: number | null;
   // From sales
@@ -42,6 +43,7 @@ const COLS = [
   { key: "ticket_type_custom", label: "Druh\nlístků", width: 120 },
   { key: "sold_at", label: "Datum\nprodeje", width: 100 },
   { key: "paid_out", label: "Vyplaceno", width: 90 },
+  { key: "delivered", label: "Doručeno", width: 90 },
   { key: "notes", label: "Poznámky", width: 160 },
 ];
 
@@ -73,7 +75,7 @@ export default function EvidenceTab() {
 
     const [{ data: purchases }, { data: sales }, { data: accs }] = await Promise.all([
       supabase.from("purchases")
-        .select("id, event_name, event_date, event_actual_date, city, quantity, quantity_remaining, buy_price, currency, status, exchange, account_ref, ticket_type_custom, paid_out, notes")
+        .select("id, event_name, event_date, event_actual_date, city, quantity, quantity_remaining, buy_price, currency, status, exchange, account_ref, ticket_type_custom, paid_out, delivered, notes")
         .eq("user_id", user.id)
         .order("event_date", { ascending: false }),
       supabase.from("sales")
@@ -105,6 +107,7 @@ export default function EvidenceTab() {
         account_ref: p.account_ref,
         ticket_type_custom: p.ticket_type_custom,
         paid_out: p.paid_out,
+        delivered: p.delivered ?? false,
         notes: p.notes,
         quantity_remaining: p.quantity_remaining,
         sell_price_total: sellTotal,
@@ -126,8 +129,8 @@ export default function EvidenceTab() {
     .filter(r => {
       if (search && !r.event_name.toLowerCase().includes(search.toLowerCase()) && !r.city?.toLowerCase().includes(search.toLowerCase())) return false;
       if (statusFilter !== "all" && r.status !== statusFilter) return false;
-      if (deliveredFilter === "yes" && !r.paid_out) return false;
-      if (deliveredFilter === "no" && r.paid_out) return false;
+      if (deliveredFilter === "yes" && !r.delivered) return false;
+      if (deliveredFilter === "no" && r.delivered) return false;
       if (exchangeFilter && r.exchange !== exchangeFilter) return false;
       if (cityFilter && !r.city?.toLowerCase().includes(cityFilter.toLowerCase())) return false;
       if (dateFrom && r.event_date && r.event_date < dateFrom) return false;
@@ -297,7 +300,8 @@ export default function EvidenceTab() {
 
     return (
       <td onClick={() => { setEditing(true); setVal(value ?? ""); }}
-        style={{ ...cellStyle(width), cursor: "text" }} title="Klikněte pro úpravu">
+        style={{ ...cellStyle(width), cursor: "text" }} title="Klikněte pro úpravu"
+      >
         {value ? new Date(value).toLocaleDateString("cs-CZ") : "—"}
       </td>
     );
@@ -342,7 +346,8 @@ export default function EvidenceTab() {
 
     return (
       <td onClick={() => { setEditing(true); setVal(value ?? ""); }}
-        style={{ ...cellStyle(width), cursor: "pointer" }} title="Klikněte pro úpravu">
+        style={{ ...cellStyle(width), cursor: "pointer" }} title="Klikněte pro úpravu"
+      >
         {value ?? "—"}
       </td>
     );
@@ -386,7 +391,8 @@ export default function EvidenceTab() {
 
     return (
       <td onClick={() => { setEditing(true); setVal(String(value)); }}
-        style={{ ...cellStyle(width), textAlign: "right", cursor: "text" }} title="Klikněte pro úpravu">
+        style={{ ...cellStyle(width), textAlign: "right", cursor: "text" }} title="Klikněte pro úpravu"
+      >
         {value}{suffix}
       </td>
     );
@@ -569,7 +575,8 @@ export default function EvidenceTab() {
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
                 <div style={{ background: "#0a0a0a", border: "1px solid #2a2a2a", borderRadius: 10, padding: "0.75rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer" }}
-                  onClick={() => setDelivered(!delivered)}>
+                  onClick={() => setDelivered(!delivered)}
+                >
                   <div>
                     <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 2 }}>DORUČENO</div>
                     <div style={{ fontSize: 13, fontWeight: 600, color: delivered ? "#34d399" : "#3a3a3a" }}>{delivered ? "ANO" : "NIE"}</div>
@@ -579,7 +586,8 @@ export default function EvidenceTab() {
                   </div>
                 </div>
                 <div style={{ background: "#0a0a0a", border: "1px solid #2a2a2a", borderRadius: 10, padding: "0.75rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer" }}
-                  onClick={() => setPaidOut(!paidOut)}>
+                  onClick={() => setPaidOut(!paidOut)}
+                >
                   <div>
                     <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 2 }}>VYPLACENO</div>
                     <div style={{ fontSize: 13, fontWeight: 600, color: paidOut ? "#34d399" : "#3a3a3a" }}>{paidOut ? "ANO" : "NIE"}</div>
@@ -686,11 +694,11 @@ export default function EvidenceTab() {
       {showFilters && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "0.75rem", marginBottom: "1rem", padding: "1rem", background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: 12 }}>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 6 }}>VYPLACENO</div>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 6 }}>DORUČENO</div>
             <select value={deliveredFilter} onChange={e => setDeliveredFilter(e.target.value)} style={{ width: "100%", padding: "0.6rem 0.75rem", background: "#111111", border: "1px solid #1f1f1f", borderRadius: 8, color: "#fff", fontSize: 13, outline: "none", cursor: "pointer", boxSizing: "border-box" }}>
               <option value="all">Vše</option>
-              <option value="yes">✓ Vyplaceno</option>
-              <option value="no">✗ Nevyplaceno</option>
+              <option value="yes">✓ Doručeno</option>
+              <option value="no">✗ Nedoručeno</option>
             </select>
           </div>
           <div>
@@ -715,12 +723,48 @@ export default function EvidenceTab() {
         </div>
       )}
 
-      {/* Table wrapper */}
-      <div style={{ overflowX: "auto", borderRadius: 16, border: "1px solid #1a1a1a" }}>
-        <table style={{ borderCollapse: "collapse", width: "max-content", minWidth: "100%" }}>
+      {/* Sticky summary bar — always visible above table */}
+      <div style={{
+        background: "#0a0a0a",
+        border: "1px solid #1a1a1a",
+        borderRadius: 12,
+        padding: "0.75rem 1.25rem",
+        marginBottom: "0.75rem",
+        display: "flex",
+        gap: "2rem",
+        alignItems: "center",
+        flexWrap: "wrap" as const,
+      }}>
+        {[
+          { label: "Nákupů", value: `${filtered.length}` },
+          { label: "Lístků celkem", value: `${filtered.reduce((s, r) => s + r.quantity, 0)}×` },
+          { label: "Nákup celkem", value: fmt(totalBuy), color: "#c0c0c0" },
+          { label: "Prodej celkem", value: fmt(totalSell), color: "#34d399" },
+          { label: "Zisk celkem", value: `${totalProfit >= 0 ? "+" : ""}${fmt(totalProfit)}`, color: totalProfit >= 0 ? "#34d399" : "#f87171" },
+          { label: "Průměrná ziskovost", value: `${avgRoi >= 0 ? "+" : ""}${avgRoi.toFixed(1)}%`, color: avgRoi >= 0 ? "#34d399" : "#f87171" },
+          { label: "Lístky v prodeji", value: `${ticketsActive}×`, color: "#fbbf24" },
+          { label: "Peníze na cestě", value: fmt(moneyOnWay), color: "#a78bfa" },
+        ].map(s => (
+          <div key={s.label} style={{ textAlign: "center" as const }}>
+            <div style={{ fontSize: 11, color: "#525252", letterSpacing: "0.08em", marginBottom: 3 }}>{s.label.toUpperCase()}</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: (s as any).color ?? "#fff" }}>{s.value}</div>
+          </div>
+        ))}
+      </div>
 
+      {/* Table with own scrollbar */}
+      <div style={{
+        overflowX: "auto",
+        overflowY: "auto",
+        maxHeight: "calc(100vh - 320px)",
+        borderRadius: 16,
+        border: "1px solid #1a1a1a",
+        scrollbarWidth: "thin" as const,
+        scrollbarColor: "#2a2a2a #0a0a0a",
+      }}>
+        <table style={{ borderCollapse: "collapse", width: "max-content", minWidth: "100%" }}>
           {/* Header */}
-          <thead>
+          <thead style={{ position: "sticky", top: 0, zIndex: 10 }}>
             <tr style={{ background: "#0a0a0a", borderBottom: "1px solid #1f1f1f" }}>
               {COLS.map(col => (
                 <th key={col.key} style={{
@@ -833,6 +877,17 @@ export default function EvidenceTab() {
                       </span>
                     </td>
 
+                    {/* Doručeno — TOGGLE */}
+                    <td onClick={async () => {
+                      const supabase = createClient();
+                      await supabase.from("purchases").update({ delivered: !row.delivered }).eq("id", row.id);
+                      loadData();
+                    }} style={{ ...cellStyle(90), textAlign: "center", cursor: "pointer" }}>
+                      <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 4, background: row.delivered ? "#0a2a1a" : "#1a1a1a", color: row.delivered ? "#34d399" : "#3a3a3a", fontWeight: 600 }}>
+                        {row.delivered ? "ANO" : "NIE"}
+                      </span>
+                    </td>
+
                     {/* Poznámky */}
                     <EditableCell rowId={row.id} field="notes" value={row.notes} width={160} color="#525252" />
                   </tr>
@@ -840,39 +895,6 @@ export default function EvidenceTab() {
               })
             )}
           </tbody>
-
-          {/* Footer totals */}
-          <tfoot>
-            <tr style={{ background: "#0a0a0a", borderTop: "2px solid #2a2a2a" }}>
-              <td style={{ ...cellStyle(100), color: "#707070", fontWeight: 700, fontSize: 10 }}>CELKEM</td>
-              <td style={cellStyle(200)} />
-              <td style={cellStyle(140)} />
-              <td style={cellStyle(100)} />
-              <td style={{ ...cellStyle(80), textAlign: "center", color: "#c0c0c0", fontWeight: 700 }}>{filtered.reduce((s, r) => s + r.quantity, 0)}×</td>
-              <td style={{ ...cellStyle(130), textAlign: "right", color: "#c0c0c0", fontWeight: 700 }}>{fmt(totalBuy)}</td>
-              <td style={{ ...cellStyle(130), textAlign: "right", color: "#34d399", fontWeight: 700 }}>{fmt(totalSell)}</td>
-              <td style={{ ...cellStyle(120), textAlign: "right", color: totalProfit >= 0 ? "#34d399" : "#f87171", fontWeight: 800 }}>
-                {totalProfit >= 0 ? "+" : ""}{fmt(totalProfit)}
-              </td>
-              <td style={{ ...cellStyle(90), textAlign: "right", color: avgRoi >= 0 ? "#34d399" : "#f87171", fontWeight: 700 }}>
-                {avgRoi >= 0 ? "+" : ""}{avgRoi.toFixed(1)}%
-              </td>
-              <td style={cellStyle(120)} />
-              <td style={cellStyle(120)} />
-              <td style={cellStyle(120)} />
-              <td style={cellStyle(100)} />
-              <td style={cellStyle(90)} />
-              <td style={cellStyle(160)} />
-            </tr>
-            {/* Extra summary row */}
-            <tr style={{ background: "#0d0d0d", borderTop: "1px solid #1a1a1a" }}>
-              <td colSpan={4} style={{ padding: "0.75rem", fontSize: 11, color: "#525252" }}>
-                Lístky v prodeji: <strong style={{ color: "#fbbf24" }}>{ticketsActive}×</strong>
-                <span style={{ marginLeft: "1.5rem" }}>Peníze na cestě: <strong style={{ color: "#a78bfa" }}>{fmt(moneyOnWay)}</strong></span>
-              </td>
-              <td colSpan={11} />
-            </tr>
-          </tfoot>
         </table>
       </div>
 
