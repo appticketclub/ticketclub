@@ -16,9 +16,8 @@ export default function Sidebar({
   const navItems = [
     { id: "uvod", label: "Úvod", icon: null },
     { id: "ucty", label: "Účty hesla", icon: null },
-    { id: "nakupy", label: "Nákupy", icon: null },
-    { id: "prodeje", label: "Prodeje", icon: null },
     { id: "evidence", label: "Evidence", icon: null },
+    { id: "detaily", label: "Detaily N&P", icon: null },
     { id: "kalendar", label: "Kalendář", icon: null },
     { id: "ai-statistiky", label: "AI statistiky", icon: null },
     { id: "doporucene-akce", label: "Nadcházející akce", icon: null },

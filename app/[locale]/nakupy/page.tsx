@@ -13,6 +13,7 @@ import AiStatistikyTab from "@/components/nakupy/tabs/AiStatistikyTab";
 import DoporuceneAkceTab from "@/components/nakupy/tabs/DoporuceneAkceTab";
 import TymStatistikyTab from "@/components/nakupy/tabs/TymStatistikyTab";
 import EvidenceTab from "@/components/nakupy/tabs/EvidenceTab";
+import DetailyTab from "@/components/nakupy/tabs/DetailyTab";
 
 export default function NakupyPage() {
   const [activeTab, setActiveTab] = useState("uvod");
@@ -37,9 +38,8 @@ export default function NakupyPage() {
   const tabs: Record<string, React.ReactNode> = {
     uvod: <UvodTab />,
     ucty: <UctyTab />,
-    nakupy: <NakupyTab />,
-    prodeje: <ProdejeTab />,
     evidence: <EvidenceTab />,
+    detaily: <DetailyTab />,
     kalendar: <KalendarTab />,
     "ai-statistiky": <AiStatistikyTab />,
     "doporucene-akce": <DoporuceneAkceTab />,
