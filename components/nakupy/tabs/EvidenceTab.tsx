@@ -314,6 +314,8 @@ export default function EvidenceTab() {
   }) {
     const [editing, setEditing] = useState(false);
     const [val, setVal] = useState(value ?? "");
+    const [customVal, setCustomVal] = useState("");
+    const [showCustom, setShowCustom] = useState(false);
 
     async function save(newVal: string) {
       const supabase = createClient();
@@ -324,28 +326,54 @@ export default function EvidenceTab() {
         if (sales?.[0]) await supabase.from("sales").update({ [field]: newVal || null }).eq("id", sales[0].id);
       }
       setEditing(false);
+      setShowCustom(false);
       loadData();
     }
 
     if (editing) {
       return (
-        <td style={{ ...cellStyle(width), padding: 0, background: "#1a1a2e" }}>
-          <select
-            autoFocus
-            value={val}
-            onChange={e => { setVal(e.target.value); save(e.target.value); }}
-            onBlur={() => setEditing(false)}
-            style={{ width: "100%", padding: "0.6rem 0.75rem", background: "#0d0d2a", border: "2px solid #7c3aed", borderRadius: 0, color: "#fff", fontSize: 12, outline: "none", boxSizing: "border-box" }}
-          >
-            <option value="">— Vyberte —</option>
-            {options.map(o => <option key={o} value={o}>{o}</option>)}
-          </select>
+        <td style={{ ...cellStyle(width), padding: 0, background: "#1a1a2e", minWidth: width }}>
+          <div style={{ display: "flex", flexDirection: "column" as const }}>
+            <select
+              autoFocus
+              value={showCustom ? "Jiné" : val}
+              onChange={e => {
+                if (e.target.value === "Jiné") {
+                  setShowCustom(true);
+                  setVal("Jiné");
+                } else {
+                  setShowCustom(false);
+                  setVal(e.target.value);
+                  save(e.target.value);
+                }
+              }}
+              style={{ width: "100%", padding: "0.5rem", background: "#0d0d2a", border: "2px solid #7c3aed", borderBottom: showCustom ? "1px solid #3a3a3a" : "2px solid #7c3aed", color: "#fff", fontSize: 12, outline: "none", boxSizing: "border-box" as const }}
+            >
+              <option value="">— Vyberte —</option>
+              {options.map(o => <option key={o} value={o}>{o}</option>)}
+            </select>
+            {showCustom && (
+              <input
+                autoFocus
+                type="text"
+                placeholder="Napište vlastní..."
+                value={customVal}
+                onChange={e => setCustomVal(e.target.value)}
+                onBlur={() => save(customVal || "Jiné")}
+                onKeyDown={e => {
+                  if (e.key === "Enter") save(customVal || "Jiné");
+                  if (e.key === "Escape") { setEditing(false); setShowCustom(false); }
+                }}
+                style={{ width: "100%", padding: "0.5rem", background: "#0d0d2a", border: "2px solid #7c3aed", borderTop: "none", color: "#fff", fontSize: 12, outline: "none", boxSizing: "border-box" as const }}
+              />
+            )}
+          </div>
         </td>
       );
     }
 
     return (
-      <td onClick={() => { setEditing(true); setVal(value ?? ""); }}
+      <td onClick={() => { setEditing(true); setVal(value ?? ""); setShowCustom(false); setCustomVal(""); }}
         style={{ ...cellStyle(width), cursor: "pointer" }} title="Klikněte pro úpravu"
       >
         {value ?? "—"}
@@ -855,10 +883,16 @@ export default function EvidenceTab() {
                     </td>
 
                     {/* Burza — DROPDOWN */}
-                    <DropdownCell rowId={row.id} field="exchange" value={row.exchange} width={120} options={EXCHANGES} />
+                    <DropdownCell rowId={row.id} field="exchange" value={row.exchange} width={120} options={[...EXCHANGES, "Jiné"]} />
 
-                    {/* Účet — EDITABLE text */}
-                    <EditableCell rowId={row.id} field="account_ref" value={row.account_ref} width={120} />
+                    {/* Účet — DROPDOWN from nákupní účty */}
+                    <DropdownCell
+                      rowId={row.id}
+                      field="account_ref"
+                      value={row.account_ref}
+                      width={120}
+                      options={accounts.map(a => a.name)}
+                    />
 
                     {/* Druh lístků — DROPDOWN */}
                     <DropdownCell rowId={row.id} field="ticket_type_custom" value={row.ticket_type_custom} width={120} options={["Mobile Transfer", "E-Ticket", "Jiné"]} />
