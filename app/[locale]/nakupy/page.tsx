@@ -1,57 +1,57 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 import Sidebar from "@/components/nakupy/Sidebar";
 import UvodTab from "@/components/nakupy/tabs/UvodTab";
-import NakupniUctyTab from "@/components/nakupy/tabs/NakupniUctyTab";
+import UctyTab from "@/components/nakupy/tabs/UctyTab";
 import NakupyTab from "@/components/nakupy/tabs/NakupyTab";
+import ProdejeTab from "@/components/nakupy/tabs/ProdejeTab";
 import BanneryTab from "@/components/nakupy/tabs/BanneryTab";
-import UctyHeslaTab from "@/components/nakupy/tabs/UctyHeslaTab";
-
-function KalendarTab() {
-  return (
-    <div>
-      <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>Kalendář</h1>
-      <p style={{ color: "#525252" }}>Přehled vašich eventů podle data — připravujeme...</p>
-    </div>
-  );
-}
-
-function AiStatistikyTab() {
-  return (
-    <div>
-      <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>AI statistiky</h1>
-      <p style={{ color: "#525252" }}>AI analýza vašich zisků a doporučení — připravujeme...</p>
-    </div>
-  );
-}
-
-function KalkulackaTab() {
-  return (
-    <div>
-      <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>Kalkulačka profitů</h1>
-      <p style={{ color: "#525252" }}>Výpočet break-even a minimální prodejní ceny — připravujeme...</p>
-    </div>
-  );
-}
-
-const tabs: Record<string, React.ReactNode> = {
-  uvod: <UvodTab />,
-  "nakupni-ucty": <NakupniUctyTab />,
-  "ucty-hesla": <UctyHeslaTab />,
-  nakupy: <NakupyTab />,
-  kalendar: <KalendarTab />,
-  "ai-statistiky": <AiStatistikyTab />,
-  kalkulacka: <KalkulackaTab />,
-  bannery: <BanneryTab />,
-};
+import KalendarTab from "@/components/nakupy/tabs/KalendarTab";
+import KalkulackaTab from "@/components/nakupy/tabs/KalkulackaTab";
+import AiStatistikyTab from "@/components/nakupy/tabs/AiStatistikyTab";
+import DoporuceneAkceTab from "@/components/nakupy/tabs/DoporuceneAkceTab";
+import TymStatistikyTab from "@/components/nakupy/tabs/TymStatistikyTab";
+import EvidenceTab from "@/components/nakupy/tabs/EvidenceTab";
 
 export default function NakupyPage() {
   const [activeTab, setActiveTab] = useState("uvod");
+  const [isAdmin, setIsAdmin] = useState(false);
+  const supabase = createClient();
+
+  useEffect(() => {
+    async function fetchProfile() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+        setIsAdmin(profile?.role === "admin");
+      }
+    }
+    fetchProfile();
+  }, [supabase]);
+
+  const tabs: Record<string, React.ReactNode> = {
+    uvod: <UvodTab />,
+    ucty: <UctyTab />,
+    nakupy: <NakupyTab />,
+    prodeje: <ProdejeTab />,
+    evidence: <EvidenceTab />,
+    kalendar: <KalendarTab />,
+    "ai-statistiky": <AiStatistikyTab />,
+    "doporucene-akce": <DoporuceneAkceTab />,
+    kalkulacka: <KalkulackaTab />,
+    bannery: <BanneryTab />,
+    ...(isAdmin ? { "tym-statistiky": <TymStatistikyTab /> } : {}),
+  };
 
   return (
-    <div style={{ display: "flex", minHeight: "calc(100vh - 65px)" }}>
-      <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
-      <main style={{ flex: 1, padding: "2rem 2.5rem" }}>
+    <div style={{ display: "flex", minHeight: "calc(100vh - 65px)", flexDirection: "row" }}>
+      <Sidebar activeTab={activeTab} onTabChange={setActiveTab} isAdmin={isAdmin} />
+      <main style={{ flex: 1, padding: "1.5rem clamp(1rem, 3vw, 2.5rem)", overflowY: "auto", minWidth: 0 }}>
         {tabs[activeTab]}
       </main>
     </div>

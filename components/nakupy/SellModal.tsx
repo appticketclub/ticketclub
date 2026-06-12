@@ -2,8 +2,10 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useCurrency } from "@/lib/context/CurrencyContext";
+import { EXCHANGES } from "@/lib/constants/exchanges";
+import { clearCache } from "@/lib/hooks/useDataCache";
 
-const PLATFORMS = ["Viagogo", "StubHub", "TickPick", "Ticketmaster", "SeatGeek"];
+const PLATFORMS = EXCHANGES;
 
 type Purchase = {
   id: string;
@@ -59,27 +61,20 @@ function PnlBanner({ data, currency }: { data: any; currency: string }) {
       <div style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: 1, background: "linear-gradient(180deg, rgba(192,192,192,0.4), rgba(192,192,192,0.1), transparent)" }} />
 
       {/* Brand */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div style={{
-            width: 28, height: 28, borderRadius: 7,
-            background: "linear-gradient(135deg, #ffffff, #808080)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 10, fontWeight: 800, color: "#000",
-          }}>TC</div>
-          <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.15em", color: "#c0c0c0" }}>TICKETCLUB</span>
+          <img src="/logo.png" alt="TicketClub" style={{ height: 22, width: "auto", objectFit: "contain" }} />
+          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", color: "#3a3a3a" }}>UZAVŘENÝ FLIP</span>
         </div>
-        <span style={{ fontSize: 11, color: "#3a3a3a", letterSpacing: "0.05em" }}>UZAVŘENÝ FLIP</span>
+        <span style={{ fontSize: 12, color: "#3a3a3a" }}>{new Date().toLocaleDateString("cs-CZ")}</span>
       </div>
 
       {/* Event */}
-      <div style={{ marginBottom: "1.5rem" }}>
+      <div style={{ marginBottom: "1.25rem" }}>
         <div style={{ fontSize: 20, fontWeight: 700, color: "#fff", marginBottom: 4, letterSpacing: "-0.01em" }}>{data.event_name}</div>
-        {data.platform && (
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "3px 10px", borderRadius: 6, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
-            <span style={{ fontSize: 11, color: "#525252" }}>{data.platform}</span>
-          </div>
-        )}
+        <div style={{ fontSize: 13, color: "#525252", marginBottom: "0.5rem" }}>
+          {data.quantity}× lístků{data.platform && ` · ${data.platform}`}
+        </div>
       </div>
 
       {/* Divider */}
@@ -132,9 +127,7 @@ function PnlBanner({ data, currency }: { data: any; currency: string }) {
       </div>
 
       {/* Footer */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ fontSize: 11, color: "#2a2a2a", letterSpacing: "0.05em" }}>ticketclub.cz</span>
-        <span style={{ fontSize: 11, color: "#2a2a2a" }}>{new Date().toLocaleDateString("cs-CZ")}</span>
+      <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
       </div>
     </div>
   );
@@ -145,8 +138,10 @@ export default function SellModal({ purchase, onClose, onSave }: {
   const [step, setStep] = useState<"form" | "success">("form");
   const [qty, setQty] = useState(purchase.quantity_remaining?.toString() || "1");
   const [sellPrice, setSellPrice] = useState("");
+  const [priceMode, setPriceMode] = useState<"per_ticket" | "total">("per_ticket");
+  const [totalSellPrice, setTotalSellPrice] = useState("");
   const [platform, setPlatform] = useState("");
-  const [feePercent, setFeePercent] = useState("10");
+  const [customPlatform, setCustomPlatform] = useState("");
   const todaySale = new Date().toISOString().split("T")[0];
   const [soldAt, setSoldAt] = useState(todaySale);
   const [saving, setSaving] = useState(false);
@@ -155,12 +150,14 @@ export default function SellModal({ purchase, onClose, onSave }: {
   const { format } = useCurrency();
 
   const qtyNum = parseInt(qty) || 0;
-  const sellNum = parseFloat(sellPrice.replace(",", ".")) || 0;
-  const feeNum = parseFloat(feePercent.replace(",", ".")) || 0;
+  const sellNum = priceMode === "per_ticket"
+    ? parseFloat(sellPrice.replace(",", ".")) || 0
+    : (parseFloat(totalSellPrice.replace(",", ".")) || 0) / (parseInt(qty) || 1);
+  const feeNum = 0;
   const totalRevenue = sellNum * qtyNum;
-  const totalFees = totalRevenue * (feeNum / 100);
+  const totalFees = 0;
   const totalBuy = purchase.buy_price * qtyNum;
-  const profit = totalRevenue - totalFees - totalBuy;
+  const profit = totalRevenue - totalBuy;
   const roi = totalBuy > 0 ? (profit / totalBuy) * 100 : 0;
 
   async function handleSell() {
@@ -177,11 +174,11 @@ export default function SellModal({ purchase, onClose, onSave }: {
       quantity_sold: qtyNum,
       sell_price: sellNum,
       currency: purchase.currency,
-      platform: platform || null,
-      fee_percent: feeNum,
-      fees: Math.round(totalFees * 100) / 100,
+      platform: platform === "Jiné" ? (customPlatform || "Jiné") : (platform || null),
+      fee_percent: 0,
+      fees: 0,
       quantity: qtyNum,
-      payout_amount: Math.round((totalRevenue - totalFees) * 100) / 100,
+      payout_amount: totalRevenue,
       sold_at: new Date(soldAt).toISOString(),
     });
 
@@ -192,14 +189,19 @@ export default function SellModal({ purchase, onClose, onSave }: {
     }
 
     // Update purchase remaining quantity and status
-    const newRemaining = purchase.quantity_remaining - qtyNum;
+    const newQuantityRemaining = Math.max(0, (purchase.quantity_remaining ?? purchase.quantity) - qtyNum);
     await supabase.from("purchases").update({
-      quantity_remaining: newRemaining,
-      status: newRemaining <= 0 ? "sold" : "partial",
+      quantity_remaining: newQuantityRemaining,
+      status: newQuantityRemaining === 0 ? "sold" : "partial",
     }).eq("id", purchase.id);
 
+    // Clear cache after sale
+    clearCache(`nakupy_${user.id}`);
+    clearCache(`uvod_${user.id}`);
+    clearCache(`kalendar_${user.id}`);
+
     // Update capital balance
-    const payout = totalRevenue - totalFees;
+    const payout = totalRevenue;
     const { data: profile } = await supabase.from("profiles").select("capital").eq("id", user.id).single();
     if (profile) {
       const newBalance = (profile.capital ?? 0) + payout;
@@ -211,6 +213,24 @@ export default function SellModal({ purchase, onClose, onSave }: {
         description: `Prodej: ${purchase.event_name}`,
         balance_after: newBalance,
       });
+
+      // After inserting, check count and delete oldest if over 100
+      const { count } = await supabase
+        .from("capital_history")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user.id);
+
+      if ((count ?? 0) > 100) {
+        const { data: oldest } = await supabase
+          .from("capital_history")
+          .select("id")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: true })
+          .limit(10);
+        if (oldest?.length) {
+          await supabase.from("capital_history").delete().in("id", oldest.map(r => r.id));
+        }
+      }
     }
 
     // Save banner to DB
@@ -221,11 +241,11 @@ export default function SellModal({ purchase, onClose, onSave }: {
       buy_price: purchase.buy_price,
       sell_price: sellNum,
       quantity: qtyNum,
-      fees: totalFees,
+      fees: 0,
       profit: Math.round(profit * 100) / 100,
       roi: Math.round(roi * 100) / 100,
       currency: purchase.currency,
-      platform: platform || null,
+      platform: platform === "Jiné" ? (customPlatform || "Jiné") : (platform || null),
     };
     await supabase.from("banners").insert(banner);
 
@@ -234,10 +254,10 @@ export default function SellModal({ purchase, onClose, onSave }: {
       buy_price: purchase.buy_price,
       sell_price: sellNum,
       quantity: qtyNum,
-      fees: totalFees,
+      fees: 0,
       profit: Math.round(profit * 100) / 100,
       roi: Math.round(roi * 100) / 100,
-      platform: platform || null,
+      platform: platform === "Jiné" ? (customPlatform || "Jiné") : (platform || null),
       currency: purchase.currency,
     });
 
@@ -384,9 +404,70 @@ export default function SellModal({ purchase, onClose, onSave }: {
               <input type="number" min="1" max={purchase.quantity_remaining} value={qty} onChange={e => setQty(e.target.value)} style={inputStyle} />
               <div style={{ fontSize: 11, color: "#3a3a3a", marginTop: 4 }}>Max: {purchase.quantity_remaining}</div>
             </div>
-            <div>
-              <label style={labelStyle}>PRODEJNÍ CENA / KS</label>
-              <input type="text" placeholder="0" value={sellPrice} onChange={e => setSellPrice(e.target.value)} style={inputStyle} />
+            <div style={{ gridColumn: "1 / -1" }}>
+              {/* Price mode toggle */}
+              <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem" }}>
+                {[
+                  { id: "per_ticket", label: "Cena za lístek" },
+                  { id: "total", label: "Cena celkem" },
+                ].map(mode => (
+                  <button
+                    key={mode.id}
+                    onClick={() => setPriceMode(mode.id as "per_ticket" | "total")}
+                    style={{
+                      padding: "5px 14px", fontSize: 12, fontWeight: 600,
+                      background: priceMode === mode.id ? "linear-gradient(135deg, #ffffff, #a0a0a0)" : "transparent",
+                      border: priceMode === mode.id ? "none" : "1px solid #2a2a2a",
+                      borderRadius: 8,
+                      color: priceMode === mode.id ? "#000" : "#525252",
+                      cursor: "pointer", transition: "all 0.15s",
+                    }}
+                  >
+                    {mode.label}
+                  </button>
+                ))}
+              </div>
+
+              {priceMode === "per_ticket" ? (
+                <div>
+                  <label style={labelStyle}>PRODEJNÍ CENA / KS *</label>
+                  <div style={{ position: "relative" }}>
+                    <input
+                      type="text"
+                      placeholder="0"
+                      value={sellPrice}
+                      onChange={e => setSellPrice(e.target.value)}
+                      style={{ ...inputStyle, paddingRight: "3rem" }}
+                    />
+                    <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#525252", fontWeight: 600 }}>
+                      {purchase.currency}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <label style={labelStyle}>PRODEJNÍ CENA CELKEM *</label>
+                  <div style={{ position: "relative" }}>
+                    <input
+                      type="text"
+                      placeholder="0"
+                      value={totalSellPrice}
+                      onChange={e => setTotalSellPrice(e.target.value)}
+                      style={{ ...inputStyle, paddingRight: "3rem" }}
+                    />
+                    <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#525252", fontWeight: 600 }}>
+                      {purchase.currency}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Price preview for total mode */}
+              {priceMode === "total" && sellNum > 0 && (
+                <div style={{ fontSize: 12, color: "#525252", marginTop: 4 }}>
+                  = {sellNum.toLocaleString("cs-CZ")} {purchase.currency} / lístek
+                </div>
+              )}
             </div>
           </div>
 
@@ -397,6 +478,9 @@ export default function SellModal({ purchase, onClose, onSave }: {
                 <option value="">— Vyberte —</option>
                 {PLATFORMS.map(p => <option key={p} value={p}>{p}</option>)}
               </select>
+              {platform === "Jiné" && (
+                <input type="text" placeholder="Zadejte název platformy..." value={customPlatform} onChange={e => setCustomPlatform(e.target.value)} style={{ ...inputStyle, marginTop: "0.5rem" }} />
+              )}
             </div>
             <div>
               <label style={labelStyle}>DATUM PRODEJE</label>
@@ -414,12 +498,7 @@ export default function SellModal({ purchase, onClose, onSave }: {
               />
             </div>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "0.75rem" }}>
-            <div>
-              <label style={labelStyle}>POPLATEK PLATFORMY (%)</label>
-              <input type="text" placeholder="0" value={feePercent} onChange={e => setFeePercent(e.target.value)} style={inputStyle} />
-            </div>
-          </div>
+
 
           {/* Live P&L preview */}
           {sellNum > 0 && (
@@ -428,7 +507,7 @@ export default function SellModal({ purchase, onClose, onSave }: {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
                 {[
                   { label: "Příjem", value: format(totalRevenue, purchase.currency as "EUR" | "CZK"), color: "#c0c0c0" },
-                  { label: "Poplatky", value: `-${format(totalFees, purchase.currency as "EUR" | "CZK")}`, color: "#f87171" },
+                  { label: "Nákupní náklady", value: `-${format(totalBuy, purchase.currency as "EUR" | "CZK")}`, color: "#f87171" },
                   { label: "Zisk", value: `${profit >= 0 ? "+" : ""}${format(Math.abs(profit), purchase.currency as "EUR" | "CZK")}`, color: profit >= 0 ? "#34d399" : "#f87171" },
                 ].map(item => (
                   <div key={item.label} style={{ textAlign: "center" }}>

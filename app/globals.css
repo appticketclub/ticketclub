@@ -101,3 +101,27 @@ body {
   background: linear-gradient(#111111, #111111) padding-box,
               linear-gradient(135deg, #c0c0c0, #404040, #c0c0c0) border-box;
 }
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .mobile-hamburger {
+    display: block !important;
+  }
+
+  .sidebar {
+    position: fixed !important;
+    left: -240px !important;
+    top: 65px !important;
+    height: calc(100vh - 65px) !important;
+    z-index: 160 !important;
+    transition: left 0.25s ease !important;
+  }
+
+  .sidebar-open {
+    left: 0 !important;
+  }
+
+  .login-image-panel {
+    display: none !important;
+  }
+}

@@ -5,14 +5,23 @@ export type Purchase = {
   event_date: string;
   venue: string | null;
   city: string | null;
+  event_actual_date: string | null;
+  sector: string | null;
+  exchange: string | null;
+  delivered: boolean;
+  paid_out: boolean;
+  notes: string | null;
+  tags: string[];
   quantity: number;
+  quantity_remaining: number;
   buy_price: number;
+  total_cost: number;
   currency: string;
   platform_id: string | null;
   account_ref: string | null;
-  notes: string | null;
-  tags: string[];
+  status: string;
   created_at: string;
+  platforms?: { name: string } | null;
 };
 
 export type Sale = {

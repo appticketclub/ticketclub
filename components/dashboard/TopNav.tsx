@@ -16,27 +16,17 @@ export default function TopNav({ user, profile }: { user: any; profile: any }) {
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
-      padding: "1rem 3rem",
+      padding: "1rem clamp(1rem, 4vw, 3rem)",
       borderBottom: "1px solid #1f1f1f",
       background: "#080808",
       position: "sticky",
       top: 0,
       zIndex: 50,
     }}>
-      {/* LEFT — Logo placeholder */}
-      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-        <div style={{
-          width: 36, height: 36,
-          background: "linear-gradient(135deg, #ffffff, #808080)",
-          borderRadius: 8,
-          display: "flex", alignItems: "center", justifyContent: "center",
-        }}>
-          <span style={{ fontSize: 14, fontWeight: 800, color: "#000" }}>TC</span>
-        </div>
-        <span style={{ fontSize: "1.1rem", fontWeight: 700, letterSpacing: "0.1em", color: "#fff" }}>
-          TICKETCLUB
-        </span>
-      </div>
+      {/* LEFT — Logo */}
+      <a href="/dostupne-sluzby" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.75rem" }}>
+        <img src="/logo.png" alt="TicketClub" style={{ height: 36, width: "auto", objectFit: "contain" }} />
+      </a>
 
       {/* RIGHT — User menu */}
       <div style={{ position: "relative" }}>
@@ -72,7 +62,7 @@ export default function TopNav({ user, profile }: { user: any; profile: any }) {
             </div>
 
             {/* Menu items */}
-            <a href="/nastaveni/plan" style={{
+            <a href="/ucet" style={{
               display: "flex", alignItems: "center", gap: 10,
               padding: "11px 16px", color: "#c0c0c0",
               textDecoration: "none", fontSize: 14,
@@ -81,7 +71,7 @@ export default function TopNav({ user, profile }: { user: any; profile: any }) {
             onMouseEnter={e => (e.currentTarget.style.background = "#1a1a1a")}
             onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
             >
-              ⭐ Můj plán
+              👤 Můj účet
             </a>
 
             {/* Currency switcher */}

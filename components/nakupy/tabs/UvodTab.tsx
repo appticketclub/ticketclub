@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getCapital, setCapital } from "@/lib/actions/capital";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -7,12 +7,22 @@ import {
   Tooltip, ResponsiveContainer
 } from "recharts";
 import { useCurrency } from "@/lib/context/CurrencyContext";
+import { getCached, setCached } from "@/lib/hooks/useDataCache";
 
 const currencies = ["EUR", "CZK"];
+const timeRangeOptions = [
+  { id: "week", label: "Týden" },
+  { id: "month", label: "Měsíc" },
+  { id: "half_year", label: "Půl roku" },
+  { id: "year", label: "Rok" },
+  { id: "custom", label: "Vlastní" },
+] as const;
+
+type TimeRange = (typeof timeRangeOptions)[number]["id"];
 
 export default function UvodTab() {
   const [capital, setCapitalState] = useState<number | null>(null);
-  const { format, currency: displayCurrency, convert, setCurrency } = useCurrency();
+  const { format, setCurrency } = useCurrency();
   const [loading, setLoading] = useState(true);
   const [input, setInput] = useState("");
   const [selectedCurrency, setSelectedCurrency] = useState<"EUR" | "CZK">("EUR");
@@ -22,68 +32,159 @@ export default function UvodTab() {
   const [stats, setStats] = useState({ invested: 0, profit: 0, balance: 0 });
   const [initialCapital, setInitialCapital] = useState(0);
   const [currentBalance, setCurrentBalance] = useState(0);
+  const [timeRange, setTimeRange] = useState<TimeRange>("month");
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
 
   const [baseCurrency, setBaseCurrency] = useState<"EUR" | "CZK">("EUR");
+  const lastLoadRef = useRef<number>(0);
 
-  useEffect(() => {
+  function getDateRange() {
+    const now = new Date();
+    const from = new Date();
+
+    if (timeRange === "week") from.setDate(now.getDate() - 7);
+    else if (timeRange === "month") from.setMonth(now.getMonth() - 1);
+    else if (timeRange === "half_year") from.setMonth(now.getMonth() - 6);
+    else if (timeRange === "year") from.setFullYear(now.getFullYear() - 1);
+    else if (timeRange === "custom") return { from: customFrom, to: customTo };
+
+    return {
+      from: from.toISOString().split("T")[0],
+      to: now.toISOString().split("T")[0],
+    };
+  }
+
+  async function loadData(force = false) {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
+    const cacheKey = `uvod_${user.id}`;
+    if (!force) {
+      const cached = getCached(cacheKey, 60000);
+      if (cached) {
+        setCapitalState(cached.capitalState);
+        setCurrentBalance(cached.currentBalance);
+        setBaseCurrency(cached.baseCurrency);
+        setInitialCapital(cached.initialCapital);
+        setStats(cached.stats);
+        setChartData(cached.chartData);
+        setLoading(false);
+        return;
+      }
+    }
+
     getCapital().then(async (data) => {
       if (data?.capital_initial && data.capital_initial > 0) {
         setCapitalState(data.capital_initial);
         setCurrentBalance(data.capital ?? data.capital_initial);
         setBaseCurrency((data.capital_currency ?? "EUR") as "EUR" | "CZK");
         setInitialCapital(data.capital_initial);
+        const currentBal = data.capital ?? data.capital_initial;
+        const { from, to } = getDateRange();
 
         // Load capital history for chart
-        const supabase = createClient();
         const { data: history } = await supabase 
           .from("capital_history") 
           .select("balance_after, created_at") 
+          .eq("user_id", user.id)
           .order("created_at", { ascending: true }) 
-          .limit(100);
+          .limit(50);
 
         // Load purchases and sales for stats (if tables exist)
         let invested = 0;
+        let profit = 0;
+        let purchases: any[] = [];
+        let sales: any[] = [];
         
         try {
-          const { data: purchases } = await supabase
+          const purchasesQuery = supabase
             .from("purchases")
-            .select("total_cost, status");
-            
-          invested = purchases?.reduce((sum, p) => sum + (p.total_cost ?? 0), 0) ?? 0;
+            .select("id, event_name, buy_price, quantity, quantity_remaining, status, currency, created_at")
+            .eq("user_id", user.id);
+
+          let salesQuery = supabase
+            .from("sales")
+            .select("sell_price, quantity_sold, fees, purchases(buy_price)")
+            .eq("user_id", user.id);
+
+          if (from) salesQuery = salesQuery.gte("created_at", from);
+          if (to) salesQuery = salesQuery.lte("created_at", to);
+
+          const [{ data: p }, { data: s }] = await Promise.all([
+            purchasesQuery,
+            salesQuery,
+          ]);
+
+          purchases = p ?? [];
+          sales = s ?? [];
+
+          // Calculate total invested
+          const totalInvested = purchases 
+            .filter(p => p.status === "active" || p.status === "partial") 
+            .reduce((sum, p) => { 
+              const remaining = p.quantity_remaining ?? p.quantity; 
+              return sum + (p.buy_price * Math.max(0, remaining)); 
+            }, 0);
+          invested = totalInvested;
+          profit = sales.reduce((sum, sale: any) => {
+            const purchase = Array.isArray(sale.purchases) ? sale.purchases[0] : sale.purchases;
+            const buyCost = (purchase?.buy_price ?? 0) * (sale.quantity_sold ?? 0);
+            const revenue = (sale.sell_price ?? 0) * (sale.quantity_sold ?? 0);
+            const fees = sale.fees ?? 0;
+            return sum + (revenue - buyCost - fees);
+          }, 0) ?? 0;
         } catch {
           // Tables might not exist yet
         }
-        
-        const profit = currentBalance - initialCapital;
 
-        setStats({ invested, profit, balance: currentBalance });
+        const stats = { invested, profit, balance: currentBal };
+        setStats(stats);
 
         // Build chart data
         const initialCap = data.capital_initial ?? data.capital ?? 0; 
-        const currentBal = data.capital ?? initialCap; 
+        const chartCurrentBal = data.capital ?? initialCap; 
+        let chartData: any[] = [];
 
         if (history && history.length > 0) { 
           // Always start with initial capital as first point 
-          const points = [ 
+          chartData = [ 
             { date: "Start", hodnota: Math.round(initialCap) }, 
             ...history.map((h: any) => ({ 
               date: new Date(h.created_at).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" }), 
               hodnota: Math.round(h.balance_after), 
             })), 
           ]; 
-          // Remove duplicate "Nyní" — last point is already current balance 
-          setChartData(points); 
         } else { 
           // No history yet — flat line at initial capital 
-          setChartData([ 
+          chartData = [ 
             { date: "Start", hodnota: Math.round(initialCap) }, 
-            { date: "Nyní", hodnota: Math.round(currentBal) }, 
-          ]); 
+            { date: "Nyní", hodnota: Math.round(chartCurrentBal) }, 
+          ]; 
         }
+
+        setChartData(chartData);
+
+        // Cache the data
+        setCached(cacheKey, {
+          capitalState: data.capital_initial,
+          currentBalance,
+          baseCurrency: (data.capital_currency ?? "EUR") as "EUR" | "CZK",
+          initialCapital: data.capital_initial,
+          stats,
+          chartData,
+        });
       }
       setLoading(false);
     });
-  }, []);
+  }
+
+  useEffect(() => { loadData(); }, []);
+  useEffect(() => { loadData(true); }, [timeRange, customFrom, customTo]);
 
   async function handleSave() {
     const amount = parseFloat(input.replace(",", ".").replace(/\s/g, ""));
@@ -189,7 +290,7 @@ export default function UvodTab() {
   }
 
   // MAIN DASHBOARD
-  const isProfit = (currentBalance - initialCapital) >= 0;
+  const isProfit = stats.profit >= 0;
 
   return (
     <div>
@@ -214,13 +315,50 @@ export default function UvodTab() {
         </button>
       </div>
 
+      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.25rem", flexWrap: "wrap" as const }}>
+        {timeRangeOptions.map((r) => (
+          <button
+            key={r.id}
+            onClick={() => setTimeRange(r.id)}
+            style={{
+              padding: "5px 14px", fontSize: 12, fontWeight: 600,
+              background: timeRange === r.id ? "linear-gradient(135deg, #ffffff, #a0a0a0)" : "transparent",
+              border: timeRange === r.id ? "none" : "1px solid #2a2a2a",
+              borderRadius: 8,
+              color: timeRange === r.id ? "#000" : "#525252",
+              cursor: "pointer",
+            }}
+          >
+            {r.label}
+          </button>
+        ))}
+      </div>
+
+      {timeRange === "custom" && (
+        <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1.25rem", alignItems: "center" }}>
+          <input
+            type="date"
+            value={customFrom}
+            onChange={e => setCustomFrom(e.target.value)}
+            style={{ padding: "6px 10px", background: "#111", border: "1px solid #2a2a2a", borderRadius: 8, color: "#fff", fontSize: 12, outline: "none", colorScheme: "dark" }}
+          />
+          <span style={{ color: "#525252", fontSize: 12 }}>—</span>
+          <input
+            type="date"
+            value={customTo}
+            onChange={e => setCustomTo(e.target.value)}
+            style={{ padding: "6px 10px", background: "#111", border: "1px solid #2a2a2a", borderRadius: 8, color: "#fff", fontSize: 12, outline: "none", colorScheme: "dark" }}
+          />
+        </div>
+      )}
+
       {/* Stat cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "1.75rem" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "1rem", marginBottom: "1.75rem" }}>
         {[
           { label: "Počáteční kapitál", value: format(initialCapital, baseCurrency), color: "#c0c0c0", icon: "💰" },
           { label: "Aktuální zůstatek", value: format(currentBalance, baseCurrency), color: "#ffffff", icon: "📊" },
           { label: "Investováno", value: format(stats.invested, baseCurrency), color: "#fbbf24", icon: "🎟️" },
-          { label: "Celkový zisk", value: `${isProfit ? "+" : ""}${format(Math.abs(currentBalance - initialCapital), baseCurrency)}`, color: isProfit ? "#34d399" : "#f87171", icon: isProfit ? "📈" : "📉" },
+          { label: "Celkový zisk", value: `${isProfit ? "+" : ""}${format(Math.abs(stats.profit), baseCurrency)}`, color: isProfit ? "#34d399" : "#f87171", icon: isProfit ? "📈" : "📉" },
         ].map((card) => (
           <div key={card.label} style={{
             background: "#111111",
@@ -259,7 +397,7 @@ export default function UvodTab() {
           <div>
             <div style={{ fontSize: 13, fontWeight: 600, color: "#525252", marginBottom: 4 }}>EQUITY KŘIVKA</div>
             <div style={{ fontSize: "1.5rem", fontWeight: 700, color: isProfit ? "#34d399" : "#f87171" }}>
-              {isProfit ? "+" : ""}{format(Math.abs(currentBalance - initialCapital), baseCurrency)}
+              {isProfit ? "+" : ""}{format(Math.abs(stats.profit), baseCurrency)}
             </div>
           </div>
           <div style={{
@@ -268,7 +406,7 @@ export default function UvodTab() {
             border: `1px solid ${isProfit ? "#34d39944" : "#f8717144"}`,
             color: isProfit ? "#34d399" : "#f87171",
           }}>
-            {isProfit ? "▲" : "▼"} {initialCapital > 0 ? Math.abs(Math.round(((currentBalance - initialCapital) / initialCapital) * 100)) : 0}% ROI
+            {isProfit ? "▲" : "▼"} {stats.invested > 0 ? Math.abs(Math.round((stats.profit / stats.invested) * 100)) : 0}% ROI
           </div>
         </div>
 
