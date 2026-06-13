@@ -47,6 +47,18 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button>
         </div>
 
+        {/* Info text */}
+        <div style={{
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid rgba(255,255,255,0.06)",
+          borderRadius: 12, padding: "1rem 1.25rem",
+          marginBottom: "1.5rem",
+        }}>
+          <p style={{ fontSize: 13, color: "#e8e8e8", lineHeight: 1.7, margin: 0, fontStyle: "italic" }}>
+            ✓ Předplatné obsahuje všechny přidané doplňky jako Chrome Extension, Refresh Bot a Pre-Sale Bot... Pokud v budoucnosti přidáme další doplňky <span style={{ color: "#a78bfa" }}>(což určitě přidáme)</span>, tak pokud máte předplatné, automaticky je budete mít odemčené.
+          </p>
+        </div>
+
         {/* Plans — side by side on desktop */}
         <div style={{
           display: "grid",
