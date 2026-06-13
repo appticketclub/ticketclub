@@ -48,9 +48,12 @@ export async function POST(request: NextRequest) {
         const periodEnd =  periodEndRaw 
           ? new Date(typeof periodEndRaw === 'number' ? periodEndRaw * 1000 : periodEndRaw).toISOString() 
           : null;
+        const interval = sub.items?.data?.[0]?.plan?.interval ?? "month";
+        const planInterval = interval === "year" ? "yearly" : "monthly";
         await supabase.from("subscriptions").upsert({
           user_id: userId,
           plan: "pro",
+          plan_interval: planInterval,
           status: "active",
           stripe_customer_id: customerId,
           stripe_subscription_id: subscriptionId,
@@ -76,10 +79,16 @@ export async function POST(request: NextRequest) {
         const sub = (await stripe.subscriptions.retrieve(subscriptionId)) as any;
         const userId = sub.metadata?.supabase_user_id;
         if (!userId) break;
-        const periodEnd = new Date(sub.current_period_end * 1000).toISOString();
+        const periodEndRaw = sub.current_period_end;
+        const periodEnd =  periodEndRaw 
+          ? new Date(typeof periodEndRaw === 'number' ? periodEndRaw * 1000 : periodEndRaw).toISOString() 
+          : null;
+        const interval = sub.items?.data?.[0]?.plan?.interval ?? "month";
+        const planInterval = interval === "year" ? "yearly" : "monthly";
         await supabase.from("subscriptions").upsert({
           user_id: userId,
           plan: "pro",
+          plan_interval: planInterval,
           status: "active",
           stripe_customer_id: invoice.customer as string,
           stripe_subscription_id: subscriptionId,
@@ -129,8 +138,11 @@ export async function POST(request: NextRequest) {
         const periodEnd =  periodEndRaw 
           ? new Date(typeof periodEndRaw === 'number' ? periodEndRaw * 1000 : periodEndRaw).toISOString() 
           : null;
+        const interval = sub.items?.data?.[0]?.plan?.interval ?? "month";
+        const planInterval = interval === "year" ? "yearly" : "monthly";
         await supabase.from("subscriptions").update({
           status: sub.status,
+          plan_interval: planInterval,
           current_period_end: periodEnd,
           updated_at: new Date().toISOString(),
         }).eq("user_id", userId);

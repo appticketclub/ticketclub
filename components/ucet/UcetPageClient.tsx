@@ -214,7 +214,9 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
             color: subscription?.plan === "pro" ? "#fff" : "#525252",
             border: subscription?.plan === "pro" ? "none" : "1px solid #2a2a2a",
           }}>
-            {subscription?.plan === "pro" ? "⭐ PRO" : "FREE"}
+            {subscription?.plan === "pro"
+              ? subscription?.plan_interval === "yearly" ? "⭐ PRO Roční" : "⭐ PRO Měsíční"
+              : "FREE"}
           </div>
           <span style={{ fontSize: 13, color: "#525252" }}>
             {subscription?.plan === "pro"
