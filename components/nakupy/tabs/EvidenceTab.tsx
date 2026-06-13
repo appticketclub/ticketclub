@@ -56,7 +56,7 @@ const COLS = [
 ];
 
 export default function EvidenceTab() {
-  const { format, currency, convert } = useCurrency();
+  const { format, convert } = useCurrency();
   const [rows, setRows] = useState<EvidenceRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [accounts, setAccounts] = useState<any[]>([]);
@@ -171,11 +171,6 @@ export default function EvidenceTab() {
   const avgRoi = filtered.length > 0 ? filtered.reduce((s, r) => s + r.roi, 0) / filtered.length : 0;
   const ticketsActive = filtered.filter(r => r.status === "active" || r.status === "partial").reduce((s, r) => s + (r.quantity_remaining ?? r.quantity), 0);
   const moneyOnWay = filtered.filter(r => r.status === "sold" && !r.paid_out).reduce((s, r) => s + convert(r.sell_price_total, r.currency as "EUR" | "CZK"), 0);
-
-  const fmt = (n: number, cur?: string) => {
-    const validCur = cur as "EUR" | "CZK" || "EUR";
-    return format(n, validCur);
-  };
 
   const cellStyle = (width: number, isNum = false): React.CSSProperties => ({
     minWidth: width, maxWidth: width, width,
@@ -845,12 +840,12 @@ export default function EvidenceTab() {
         {[
           { label: "Nákupů", value: `${filtered.length}` },
           { label: "Lístků celkem", value: `${filtered.reduce((s, r) => s + r.quantity, 0)}×` },
-          { label: "Nákup celkem", value: fmt(totalBuy), color: "#c0c0c0" },
-          { label: "Prodej celkem", value: fmt(totalSell), color: "#34d399" },
-          { label: "Zisk celkem", value: `${totalProfit >= 0 ? "+" : ""}${fmt(totalProfit)}`, color: totalProfit >= 0 ? "#34d399" : "#f87171" },
+          { label: "Nákup celkem", value: format(totalBuy), color: "#c0c0c0" },
+          { label: "Prodej celkem", value: format(totalSell), color: "#34d399" },
+          { label: "Zisk celkem", value: `${totalProfit >= 0 ? "+" : ""}${format(totalProfit)}`, color: totalProfit >= 0 ? "#34d399" : "#f87171" },
           { label: "Průměrná ziskovost", value: `${avgRoi >= 0 ? "+" : ""}${avgRoi.toFixed(1)}%`, color: avgRoi >= 0 ? "#34d399" : "#f87171" },
           { label: "Lístky v prodeji", value: `${ticketsActive}×`, color: "#fbbf24" },
-          { label: "Peníze na cestě", value: fmt(moneyOnWay), color: "#a78bfa" },
+          { label: "Peníze na cestě", value: format(moneyOnWay), color: "#a78bfa" },
         ].map(s => (
           <div key={s.label} style={{ textAlign: "center" as const }}>
             <div style={{ fontSize: 11, color: "#525252", letterSpacing: "0.08em", marginBottom: 3 }}>{s.label.toUpperCase()}</div>
@@ -953,7 +948,7 @@ export default function EvidenceTab() {
 
                     {/* Celkový zisk — READ ONLY */}
                     <td style={{ ...cellStyle(120), textAlign: "right", color: row.profit >= 0 ? "#34d399" : "#f87171", fontWeight: 700, cursor: "default" }} title="Pouze pro čtení">
-                      {row.sell_price_total > 0 ? `${row.profit >= 0 ? "+" : ""}${fmt(row.profit, row.currency)}` : "—"}
+                      {row.sell_price_total > 0 ? `${row.profit >= 0 ? "+" : ""}${format(row.profit, row.currency as "EUR" | "CZK")}` : "—"}
                     </td>
 
                     {/* Ziskovost — READ ONLY */}
