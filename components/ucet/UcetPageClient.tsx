@@ -242,24 +242,9 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
           </button>
         ) : (
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: "1rem" }}>
-              <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#fff" }}>€19.95</div>
-              <div style={{ fontSize: 13, color: "#525252" }}>/ měsíc</div>
-            </div>
-            <ul style={{ listStyle: "none", marginBottom: "1.25rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-              {[
-                "Neomezené nákupy",
-                "AI Statistiky",
-                "Chrome Launcher",
-                "Extension licence",
-                "Doporučené akce",
-                "P&L Bannery ∞",
-              ].map(f => (
-                <li key={f} style={{ fontSize: 13, color: "#c0c0c0", display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ color: "#34d399", fontWeight: 700 }}>✓</span> {f}
-                </li>
-              ))}
-            </ul>
+            <p style={{ fontSize: 13, color: "#525252", marginBottom: "1rem" }}>
+              Základní plán — odemkněte všechny funkce
+            </p>
             <button
               onClick={() => setShowUpgradeModal(true)}
               style={{
