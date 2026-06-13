@@ -17,9 +17,11 @@ export default async function DostupneSluzbyPage() {
 
   const { data: subscription } = await supabase
     .from("subscriptions")
-    .select("*")
+    .select("plan, status, current_period_end")
     .eq("user_id", user.id)
     .single();
+
+  const isPro = subscription?.plan === "pro" && subscription?.status === "active";
 
   return (
     <div style={{ minHeight: "100vh", background: "#080808" }}>
@@ -31,7 +33,7 @@ export default async function DostupneSluzbyPage() {
           </h1>
           <p style={{ color: "#525252" }}>Vyberte si nástroj, se kterým chcete pracovat.</p>
         </div>
-        <ServicesGrid subscription={subscription} />
+        <ServicesGrid isPro={isPro} />
       </main>
     </div>
   );

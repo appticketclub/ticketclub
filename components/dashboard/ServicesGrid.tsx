@@ -1,33 +1,31 @@
 "use client";
 import { useRouter } from "next/navigation";
 
-export default function ServicesGrid({ subscription }: { subscription: any }) {
+export default function ServicesGrid({ isPro }: { isPro: boolean }) {
   const router = useRouter();
 
   const services = [
     {
       id: "nakupy",
       title: "Seznam nákupů",
-      description: "Sledujte nákupy, prodeje a zisky z ticket resellingu. P&L přehledy, statistiky a AI analýza.",
+      description: "P&L tracker pro ticket resellery.",
       icon: "🎟️",
       href: "/nakupy",
-      available: true,
-      badge: "AKTIVNÍ",
+      free: true,
     },
     {
       id: "chrome-launcher",
       title: "Chrome Launcher",
-      description: "Spusťte všechny vaše Chrome profily najednou. Ideální pro správu více reseller účtů.",
+      description: "Spusťte všechny Chrome profily najednou.",
       icon: "🚀",
       href: "/chrome-launcher",
-      available: true,
-      badge: null,
+      free: false,
     },
   ];
 
   return (
     <div>
-      {subscription?.plan !== "pro" && (
+      {!isPro && (
         <div style={{
           background: "linear-gradient(135deg, #0f0a1f, #0a0a1f)",
           border: "1px solid rgba(124,58,237,0.3)",
@@ -55,82 +53,76 @@ export default function ServicesGrid({ subscription }: { subscription: any }) {
           </a>
         </div>
       )}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1.25rem" }}>
-      {services.map(service => (
-        <div
-          key={service.id}
-          onClick={() => service.available && router.push(service.href)}
-          style={{
-            background: "linear-gradient(135deg, #161616 0%, #111111 100%)",
-            border: "1px solid #3a3a3a",
-            borderRadius: 20,
-            padding: "2rem",
-            cursor: service.available ? "pointer" : "default",
-            position: "relative",
-            overflow: "hidden",
-            transition: "transform 0.2s, border-color 0.2s",
-            opacity: service.available ? 1 : 0.5,
-          }}
-          onMouseEnter={e => {
-            if (service.available) {
-              (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)";
-              (e.currentTarget as HTMLDivElement).style.borderColor = "#c0c0c0";
-            }
-          }}
-          onMouseLeave={e => {
-            if (service.available) {
-              (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
-              (e.currentTarget as HTMLDivElement).style.borderColor = "#3a3a3a";
-            }
-          }}
-        >
-          {/* Chrome glow top */}
-          <div style={{
-            position: "absolute", top: 0, left: 0, right: 0, height: 1,
-            background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)",
-          }} />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
+        {services.map(service => {
+          const locked = !service.free && !isPro;
+          return (
+            <div
+              key={service.id}
+              onClick={() => { if (!locked) router.push(service.href); }}
+              style={{
+                background: "#111111",
+                border: `1px solid ${locked ? "#1a1a1a" : "#3a3a3a"}`,
+                borderRadius: 16, padding: "1.5rem",
+                cursor: locked ? "default" : "pointer",
+                opacity: locked ? 0.6 : 1,
+                position: "relative", overflow: "hidden",
+                transition: "border-color 0.2s, transform 0.2s",
+              }}
+              onMouseEnter={e => {
+                if (!locked) {
+                  (e.currentTarget as HTMLDivElement).style.borderColor = "#c0c0c0";
+                  (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)";
+                }
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLDivElement).style.borderColor = locked ? "#1a1a1a" : "#3a3a3a";
+                (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
+              }}
+            >
+              {/* Pro badge */}
+              {!service.free && (
+                <div style={{
+                  position: "absolute", top: 12, right: 12,
+                  padding: "3px 10px", borderRadius: 6, fontSize: 11, fontWeight: 700,
+                  background: isPro ? "linear-gradient(135deg, #7c3aed, #5b21b6)" : "#1a1a1a",
+                  color: isPro ? "#fff" : "#525252",
+                  border: isPro ? "none" : "1px solid #2a2a2a",
+                }}>
+                  {isPro ? "PRO" : "🔒 PRO"}
+                </div>
+              )}
 
-          {/* Icon */}
-          <div style={{
-            width: 52, height: 52, borderRadius: 14,
-            background: "linear-gradient(135deg, #2a2a2a, #1a1a1a)",
-            border: "1px solid #3a3a3a",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "1.5rem", marginBottom: "1.25rem",
-          }}>
-            {service.icon}
-          </div>
+              <div style={{
+                width: 52, height: 52, borderRadius: 14,
+                background: "linear-gradient(135deg, #2a2a2a, #1a1a1a)",
+                border: "1px solid #3a3a3a",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: "1.5rem", marginBottom: "1.25rem",
+              }}>
+                {service.icon}
+              </div>
 
-          {/* Badge */}
-          {service.badge && (
-            <span style={{
-              position: "absolute", top: 20, right: 20,
-              fontSize: 11, fontWeight: 600, letterSpacing: "0.05em",
-              background: "linear-gradient(135deg, #2a2a2a, #1f1f1f)",
-              color: "#c0c0c0", border: "1px solid #3a3a3a",
-              borderRadius: 6, padding: "3px 10px",
-            }}>
-              {service.badge}
-            </span>
-          )}
+              <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: locked ? "#525252" : "#fff", marginBottom: "0.5rem" }}>
+                {service.title}
+              </h3>
+              <p style={{ fontSize: "0.875rem", color: "#525252", lineHeight: 1.6, marginBottom: "1.5rem" }}>
+                {service.description}
+              </p>
 
-          <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>
-            {service.title}
-          </h3>
-          <p style={{ fontSize: "0.875rem", color: "#525252", lineHeight: 1.6, marginBottom: "1.5rem" }}>
-            {service.description}
-          </p>
-
-          <div style={{
-            display: "flex", alignItems: "center", gap: 6,
-            fontSize: 13, fontWeight: 600,
-            color: service.available ? "#c0c0c0" : "#525252",
-          }}>
-            {service.available ? "Otevřít aplikaci" : "Brzy dostupné"}
-            {service.available && <span style={{ fontSize: 16 }}>→</span>}
-          </div>
-        </div>
-      ))}
+              {locked ? (
+                <div style={{ fontSize: 13, color: "#525252", display: "flex", alignItems: "center", gap: 6 }}>
+                  🔒 Dostupné v Pro plánu
+                  <a href="/ucet" style={{ color: "#7c3aed", textDecoration: "none", fontWeight: 600, marginLeft: "auto" }}>Upgradovat →</a>
+                </div>
+              ) : (
+                <div style={{ fontSize: 13, color: "#c0c0c0", display: "flex", alignItems: "center", gap: 4 }}>
+                  Otevřít aplikaci →
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

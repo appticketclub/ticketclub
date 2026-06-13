@@ -275,62 +275,75 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
       </div>
 
       {/* Extension License */}
-      <div style={cardStyle}>
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #7c3aed, transparent)" }} />
-        <h2 style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>Extension licence</h2>
-        <p style={{ fontSize: 12, color: "#3a3a3a", marginBottom: "1.25rem" }}>
-          Použijte tento klíč pro aktivaci TicketClub Extension v Chrome.
-        </p>
+      {subscription?.plan === "pro" ? (
+        <div style={cardStyle}>
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #7c3aed, transparent)" }} />
+          <h2 style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>Extension licence</h2>
+          <p style={{ fontSize: 12, color: "#3a3a3a", marginBottom: "1.25rem" }}>
+            Použijte tento klíč pro aktivaci TicketClub Extension v Chrome.
+          </p>
 
-        {loadingKey ? (
-          <div style={{ fontSize: 13, color: "#525252" }}>Načítám klíč...</div>
-        ) : extensionKey ? (
-          <div>
-            <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", marginBottom: "0.75rem" }}>
-              <div
-                style={{
-                  flex: 1,
-                  padding: "0.75rem 1rem",
-                  background: "#0a0a0a",
-                  border: "1px solid #2a2a2a",
-                  borderRadius: 10,
-                  fontFamily: "monospace",
-                  fontSize: 15,
-                  fontWeight: 700,
-                  color: "#a78bfa",
-                  letterSpacing: "0.1em",
-                }}
-              >
-                {showKey ? extensionKey : "TC-••••-••••-••••"}
+          {loadingKey ? (
+            <div style={{ fontSize: 13, color: "#525252" }}>Načítám klíč...</div>
+          ) : extensionKey ? (
+            <div>
+              <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", marginBottom: "0.75rem" }}>
+                <div
+                  style={{
+                    flex: 1,
+                    padding: "0.75rem 1rem",
+                    background: "#0a0a0a",
+                    border: "1px solid #2a2a2a",
+                    borderRadius: 10,
+                    fontFamily: "monospace",
+                    fontSize: 15,
+                    fontWeight: 700,
+                    color: "#a78bfa",
+                    letterSpacing: "0.1em",
+                  }}
+                >
+                  {showKey ? extensionKey : "TC-••••-••••-••••"}
+                </div>
+                <button
+                  onClick={() => setShowKey(!showKey)}
+                  style={{ padding: "0.75rem 1rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#525252", cursor: "pointer", fontSize: 12, whiteSpace: "nowrap" as const }}
+                >
+                  {showKey ? "Skrýt" : "Zobrazit"}
+                </button>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(extensionKey);
+                  }}
+                  style={{ padding: "0.75rem 1rem", background: "linear-gradient(135deg, #7c3aed, #5b21b6)", border: "none", borderRadius: 10, color: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 700, whiteSpace: "nowrap" as const }}
+                >
+                  Kopírovat
+                </button>
               </div>
-              <button
-                onClick={() => setShowKey(!showKey)}
-                style={{ padding: "0.75rem 1rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#525252", cursor: "pointer", fontSize: 12, whiteSpace: "nowrap" as const }}
-              >
-                {showKey ? "Skrýt" : "Zobrazit"}
-              </button>
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(extensionKey);
-                }}
-                style={{ padding: "0.75rem 1rem", background: "linear-gradient(135deg, #7c3aed, #5b21b6)", border: "none", borderRadius: 10, color: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 700, whiteSpace: "nowrap" as const }}
-              >
-                Kopírovat
-              </button>
+              <p style={{ fontSize: 11, color: "#3a3a3a" }}>
+                Klíč je unikátní pro váš účet. Nesdílejte ho s nikým.
+              </p>
             </div>
-            <p style={{ fontSize: 11, color: "#3a3a3a" }}>
-              Klíč je unikátní pro váš účet. Nesdílejte ho s nikým.
-            </p>
-          </div>
-        ) : (
-          <button
-            onClick={getExtensionKey}
-            style={{ padding: "0.75rem 1.5rem", background: "linear-gradient(135deg, #7c3aed, #5b21b6)", border: "none", borderRadius: 10, color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer" }}
-          >
-            Vygenerovat klíč
-          </button>
-        )}
-      </div>
+          ) : (
+            <button
+              onClick={getExtensionKey}
+              style={{ padding: "0.75rem 1.5rem", background: "linear-gradient(135deg, #7c3aed, #5b21b6)", border: "none", borderRadius: 10, color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer" }}
+            >
+              Vygenerovat klíč
+            </button>
+          )}
+        </div>
+      ) : (
+        <div style={{ ...cardStyle, opacity: 0.6 }}>
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #7c3aed, transparent)" }} />
+          <h2 style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>Extension licence</h2>
+          <p style={{ fontSize: 13, color: "#525252", marginBottom: "1rem" }}>
+            Licenční klíč je dostupný pouze pro Pro uživatele.
+          </p>
+          <a href="/ucet" style={{ fontSize: 13, color: "#7c3aed", fontWeight: 600, textDecoration: "none" }}>
+            Upgradovat na Pro →
+          </a>
+        </div>
+      )}
 
       {/* Danger zone */}
       <div style={{ ...cardStyle, border: "1px solid rgba(248,113,113,0.2)", background: "#110a0a" }}>

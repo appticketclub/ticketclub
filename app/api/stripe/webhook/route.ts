@@ -115,6 +115,7 @@ export async function POST(request: NextRequest) {
           updated_at: new Date().toISOString(),
         }).eq("user_id", userId);
         await supabase.from("extension_licenses").update({ is_active: false }).eq("user_id", userId);
+        await supabase.from("extension_licenses").delete().eq("user_id", userId);
         await supabase.from("launcher_tokens").update({ is_active: false }).eq("user_id", userId);
         console.log("❌ Cancelled:", userId);
         break;

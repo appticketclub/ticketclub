@@ -8,6 +8,15 @@ export default async function ChromeLauncherPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/prihlaseni");
 
+  const { data: subscription } = await supabase
+    .from("subscriptions")
+    .select("plan, status")
+    .eq("user_id", user.id)
+    .single();
+
+  const isPro = subscription?.plan === "pro" && subscription?.status === "active";
+  if (!isPro) redirect("/ucet?upgrade=true");
+
   const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
   const { data: tokenData } = await supabase.from("launcher_tokens").select("*").eq("user_id", user.id).single();
 
