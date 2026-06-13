@@ -2,11 +2,13 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import UpgradeModal from "@/components/ucet/UpgradeModal";
 
 export default function UcetPageClient({ user, profile, subscription }: { user: any; profile: any; subscription: any }) {
   const router = useRouter();
   const supabase = createClient();
 
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [fullName, setFullName] = useState(profile?.full_name ?? "");
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
@@ -239,7 +241,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
         ) : (
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: "1rem" }}>
-              <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#fff" }}>€9.99</div>
+              <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#fff" }}>€19.95</div>
               <div style={{ fontSize: 13, color: "#525252" }}>/ měsíc</div>
             </div>
             <ul style={{ listStyle: "none", marginBottom: "1.25rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
@@ -257,19 +259,18 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
               ))}
             </ul>
             <button
-              onClick={handleUpgrade}
-              disabled={loadingCheckout}
+              onClick={() => setShowUpgradeModal(true)}
               style={{
                 width: "100%", padding: "0.875rem",
-                background: loadingCheckout ? "#2a2a2a" : "linear-gradient(135deg, #7c3aed, #5b21b6)",
+                background: "linear-gradient(135deg, #7c3aed, #5b21b6)",
                 border: "none", borderRadius: 12,
                 color: "#fff", fontWeight: 800, fontSize: 14,
-                letterSpacing: "0.05em",
-                cursor: loadingCheckout ? "default" : "pointer",
+                letterSpacing: "0.05em", cursor: "pointer",
               }}
             >
-              {loadingCheckout ? "Načítám..." : "⭐ Upgradovat na Pro →"}
+              ⭐ Upgradovat na Pro →
             </button>
+            {showUpgradeModal && <UpgradeModal onClose={() => setShowUpgradeModal(false)} />}
           </div>
         )}
       </div>

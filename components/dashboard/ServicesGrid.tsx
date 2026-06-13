@@ -1,5 +1,43 @@
 "use client";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import UpgradeModal from "@/components/ucet/UpgradeModal";
+
+function UpgradeButton() {
+  const [show, setShow] = useState(false);
+  return (
+    <>
+      <button onClick={() => setShow(true)} style={{
+        padding: "8px 20px", fontSize: 13, fontWeight: 700,
+        background: "linear-gradient(135deg, #7c3aed, #5b21b6)",
+        border: "none", borderRadius: 10, color: "#fff",
+        cursor: "pointer", whiteSpace: "nowrap" as const,
+      }}>
+        Upgradovat →
+      </button>
+      {show && <UpgradeModal onClose={() => setShow(false)} />}
+    </>
+  );
+}
+
+function UpgradeLink() {
+  const [show, setShow] = useState(false);
+  return (
+    <>
+      <button onClick={() => setShow(true)} style={{
+        color: "#7c3aed",
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+        fontWeight: 600,
+        fontSize: 13,
+      }}>
+        Upgradovat →
+      </button>
+      {show && <UpgradeModal onClose={() => setShow(false)} />}
+    </>
+  );
+}
 
 export default function ServicesGrid({ isPro }: { isPro: boolean }) {
   const router = useRouter();
@@ -27,7 +65,7 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
     <div>
       {!isPro && (
         <div style={{
-          background: "linear-gradient(135deg, #0f0a1f, #0a0a1f)",
+          background: "linear-gradient(135deg, #0f0a1f, #0a0a1a)",
           border: "1px solid rgba(124,58,237,0.3)",
           borderRadius: 16, padding: "1.25rem 1.5rem",
           marginBottom: "1.5rem",
@@ -43,14 +81,7 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
               AI štatistiky, Chrome Launcher, Extension a oveľa viac
             </div>
           </div>
-          <a href="/ucet" style={{
-            padding: "8px 20px", fontSize: 13, fontWeight: 700,
-            background: "linear-gradient(135deg, #7c3aed, #5b21b6)",
-            border: "none", borderRadius: 10, color: "#fff",
-            textDecoration: "none", whiteSpace: "nowrap" as const,
-          }}>
-            Upgradovat →
-          </a>
+          <UpgradeButton />
         </div>
       )}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
@@ -113,7 +144,9 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
               {locked ? (
                 <div style={{ fontSize: 13, color: "#525252", display: "flex", alignItems: "center", gap: 6 }}>
                   🔒 Dostupné v Pro plánu
-                  <a href="/ucet" style={{ color: "#7c3aed", textDecoration: "none", fontWeight: 600, marginLeft: "auto" }}>Upgradovat →</a>
+                  <div style={{ marginLeft: "auto" }}>
+                    <UpgradeLink />
+                  </div>
                 </div>
               ) : (
                 <div style={{ fontSize: 13, color: "#c0c0c0", display: "flex", alignItems: "center", gap: 4 }}>

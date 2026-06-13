@@ -33,13 +33,19 @@ export async function POST(request: NextRequest) {
       customerId = customer.id;
     }
 
+    const { plan } = await request.json().catch(() => ({ plan: "monthly" }));
+
+    const priceId = plan === "yearly"
+      ? process.env.STRIPE_PRO_YEARLY_PRICE_ID!
+      : process.env.STRIPE_PRO_PRICE_ID!;
+
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       payment_method_types: ["card"],
       line_items: [
         {
-          price: process.env.STRIPE_PRO_PRICE_ID!,
+          price: priceId,
           quantity: 1,
         },
       ],
