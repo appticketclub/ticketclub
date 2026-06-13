@@ -44,8 +44,8 @@ export async function POST(request: NextRequest) {
         },
       ],
       mode: "subscription",
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dostupne-sluzby?upgraded=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dostupne-sluzby?cancelled=true`,
+      success_url: `https://app.ticketclub.vip/dostupne-sluzby?upgraded=true`,
+      cancel_url: `https://app.ticketclub.vip/dostupne-sluzby?cancelled=true`,
       metadata: {
         supabase_user_id: user.id,
       },
