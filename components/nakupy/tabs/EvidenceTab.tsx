@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { EXCHANGES } from "@/lib/constants/exchanges";
+import { useCurrency } from "@/lib/context/CurrencyContext";
 
 function isThisMonth(dateStr: string | null): boolean {
   if (!dateStr) return false;
@@ -55,6 +56,7 @@ const COLS = [
 ];
 
 export default function EvidenceTab() {
+  const { format, currency, convert } = useCurrency();
   const [rows, setRows] = useState<EvidenceRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [accounts, setAccounts] = useState<any[]>([]);
@@ -163,14 +165,17 @@ export default function EvidenceTab() {
   }
 
   // Totals
-  const totalBuy = filtered.reduce((s, r) => s + (r.buy_price * r.quantity), 0);
-  const totalSell = filtered.reduce((s, r) => s + r.sell_price_total, 0);
-  const totalProfit = filtered.reduce((s, r) => s + r.profit, 0);
+  const totalBuy = filtered.reduce((s, r) => s + convert(r.buy_price * r.quantity, r.currency as "EUR" | "CZK"), 0);
+  const totalSell = filtered.reduce((s, r) => s + convert(r.sell_price_total, r.currency as "EUR" | "CZK"), 0);
+  const totalProfit = filtered.reduce((s, r) => s + convert(r.profit, r.currency as "EUR" | "CZK"), 0);
   const avgRoi = filtered.length > 0 ? filtered.reduce((s, r) => s + r.roi, 0) / filtered.length : 0;
   const ticketsActive = filtered.filter(r => r.status === "active" || r.status === "partial").reduce((s, r) => s + (r.quantity_remaining ?? r.quantity), 0);
-  const moneyOnWay = filtered.filter(r => r.status === "sold" && !r.paid_out).reduce((s, r) => s + r.sell_price_total, 0);
+  const moneyOnWay = filtered.filter(r => r.status === "sold" && !r.paid_out).reduce((s, r) => s + convert(r.sell_price_total, r.currency as "EUR" | "CZK"), 0);
 
-  const fmt = (n: number, cur = "EUR") => `${n.toLocaleString("cs-CZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${cur}`;
+  const fmt = (n: number, cur?: string) => {
+    const validCur = cur as "EUR" | "CZK" || "EUR";
+    return format(n, validCur);
+  };
 
   const cellStyle = (width: number, isNum = false): React.CSSProperties => ({
     minWidth: width, maxWidth: width, width,

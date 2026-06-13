@@ -36,7 +36,7 @@ export default function ProdejeTab() {
   const [search, setSearch] = useState("");
   const [editSale, setEditSale] = useState<Sale | null>(null);
   const [detailSale, setDetailSale] = useState<Sale | null>(null);
-  const { format, currency } = useCurrency();
+  const { format, currency, convert } = useCurrency();
 
   async function loadSales() {
     const supabase = createClient();
@@ -65,10 +65,16 @@ export default function ProdejeTab() {
     const revenue = s.sell_price * s.quantity_sold;
     const cost = (purchase?.buy_price ?? 0) * s.quantity_sold;
     const fees = s.fees ?? 0;
-    return sum + (revenue - cost - fees);
+    const profit = revenue - cost - fees;
+    const convertedProfit = convert(profit, s.currency as "EUR" | "CZK");
+    return sum + convertedProfit;
   }, 0);
 
-  const totalRevenue = sales.reduce((sum, s) => sum + (s.sell_price * s.quantity_sold), 0);
+  const totalRevenue = sales.reduce((sum, s) => {
+    const revenue = s.sell_price * s.quantity_sold;
+    const convertedRevenue = convert(revenue, s.currency as "EUR" | "CZK");
+    return sum + convertedRevenue;
+  }, 0);
 
   if (loading) return <div style={{ color: "#525252", fontSize: 14 }}>Načítání...</div>;
 
@@ -208,7 +214,7 @@ export default function ProdejeTab() {
                 {/* 8. Prodejní cena + ROI */}
                 <div>
                   <div style={{ fontSize: 15, fontWeight: 700, color: "#34d399" }}>
-                    {revenue.toLocaleString("cs-CZ")} {sale.currency}
+                    {format(revenue, sale.currency as "EUR" | "CZK")}
                   </div>
                   <div style={{ fontSize: 11, color: isProfit ? "#34d399" : "#f87171", marginTop: 2, fontWeight: 600 }}>
                     {isProfit ? "+" : ""}{roi.toFixed(1)}% ROI
@@ -284,9 +290,9 @@ export default function ProdejeTab() {
                     {/* Price highlight */}
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.75rem", marginBottom: "1.25rem" }}>
                       {[
-                        { label: "Prodejní cena/ks", value: `${detailSale.sell_price} ${detailSale.currency}`, color: "#34d399" },
+                        { label: "Prodejní cena/ks", value: format(detailSale.sell_price, detailSale.currency as "EUR" | "CZK"), color: "#34d399" },
                         { label: "Počet", value: `${detailSale.quantity_sold}×`, color: "#c0c0c0" },
-                        { label: "Celkem", value: `${revenue.toLocaleString("cs-CZ")} ${detailSale.currency}`, color: "#34d399" },
+                        { label: "Celkem", value: format(revenue, detailSale.currency as "EUR" | "CZK"), color: "#34d399" },
                       ].map(card => (
                         <div key={card.label} style={{ background: "#0a0a0a", border: "1px solid #1f1f1f", borderRadius: 10, padding: "0.875rem", textAlign: "center" as const }}>
                           <div style={{ fontSize: 10, color: "#525252", marginBottom: 4 }}>{card.label}</div>
@@ -300,7 +306,7 @@ export default function ProdejeTab() {
                       <div>
                         <div style={{ fontSize: 11, color: "#525252", marginBottom: 4 }}>ČISTÝ ZISK</div>
                         <div style={{ fontSize: 22, fontWeight: 800, color: isProfit ? "#34d399" : "#f87171" }}>
-                          {isProfit ? "+" : ""}{Math.round(profit).toLocaleString("cs-CZ")} {detailSale.currency}
+                          {isProfit ? "+" : ""}{format(profit, detailSale.currency as "EUR" | "CZK")}
                         </div>
                       </div>
                       <div style={{ textAlign: "right" as const }}>
@@ -314,13 +320,13 @@ export default function ProdejeTab() {
                     {/* Details */}
                     <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
                       {[
-                        { label: "Nákupní cena / ks", value: purchase?.buy_price ? `${purchase.buy_price} ${detailSale.currency}` : null },
+                        { label: "Nákupní cena / ks", value: purchase?.buy_price ? format(purchase.buy_price, detailSale.currency as "EUR" | "CZK") : null },
                         { label: "Místo akce", value: purchase?.city },
                         { label: "Datum akce", value: purchase?.event_actual_date ? new Date(purchase.event_actual_date).toLocaleDateString("cs-CZ") : null },
                         { label: "Datum prodeje", value: detailSale.sold_at ? new Date(detailSale.sold_at).toLocaleDateString("cs-CZ") : null },
                         { label: "Platforma", value: detailSale.platform },
                         { label: "Účet", value: purchase?.account_ref },
-                        { label: "Poplatky", value: detailSale.fees ? `${detailSale.fees} ${detailSale.currency}` : null },
+                        { label: "Poplatky", value: detailSale.fees ? format(detailSale.fees, detailSale.currency as "EUR" | "CZK") : null },
                         { label: "Poznámky", value: detailSale.notes },
                       ].filter(r => r.value).map((row, i, arr) => (
                         <div key={row.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "0.65rem 0", borderBottom: i < arr.length - 1 ? "1px solid #141414" : "none" }}>
