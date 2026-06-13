@@ -3,6 +3,13 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { EXCHANGES } from "@/lib/constants/exchanges";
 
+function isThisMonth(dateStr: string | null): boolean {
+  if (!dateStr) return false;
+  const date = new Date(dateStr);
+  const now = new Date();
+  return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+}
+
 type EvidenceRow = {
   id: string;
   event_date: string | null;
@@ -263,8 +270,8 @@ export default function EvidenceTab() {
   }
 
   // Date cell — opens date picker
-  function DateCell({ rowId, field, value, width, table = "purchases" }: {
-    rowId: string; field: string; value: string | null; width: number; table?: "purchases" | "sales";
+  function DateCell({ rowId, field, value, width, table = "purchases", color }: {
+    rowId: string; field: string; value: string | null; width: number; table?: "purchases" | "sales"; color?: string;
   }) {
     const [editing, setEditing] = useState(false);
     const [val, setVal] = useState(value ?? "");
@@ -300,7 +307,7 @@ export default function EvidenceTab() {
 
     return (
       <td onClick={() => { setEditing(true); setVal(value ?? ""); }}
-        style={{ ...cellStyle(width), cursor: "text" }} title="Klikněte pro úpravu"
+        style={{ ...cellStyle(width), cursor: "text", color: color ?? "#c0c0c0" }} title="Klikněte pro úpravu"
       >
         {value ? new Date(value).toLocaleDateString("cs-CZ") : "—"}
       </td>
@@ -448,6 +455,43 @@ export default function EvidenceTab() {
     const [paidOut, setPaidOut] = useState(false);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
+    const [aiLoading, setAiLoading] = useState(false);
+    const [aiError, setAiError] = useState("");
+
+    async function handleAiImport(e: React.ChangeEvent<HTMLInputElement>) {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      setAiLoading(true);
+      setAiError("");
+      try {
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve((reader.result as string).split(",")[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        const res = await fetch("/api/ai/import-purchase", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ imageBase64: base64, mimeType: file.type }),
+        });
+        const result = await res.json();
+        if (!result.success) throw new Error(result.error);
+        const d = result.data;
+        if (d.event_name) setEventName(d.event_name);
+        if (d.city) setCity(d.city);
+        if (d.buy_price) setBuyPrice(String(d.buy_price));
+        if (d.quantity) setQuantity(String(d.quantity));
+        if (d.event_date) setEventDate(d.event_date);
+        if (d.event_actual_date) setEventActualDate(d.event_actual_date);
+        if (d.ticket_type) setTicketType(d.ticket_type);
+        if (d.sector) setSector(d.sector);
+      } catch (err: any) {
+        setAiError(`AI chyba: ${err?.message ?? "Import selhal"}`);
+      }
+      setAiLoading(false);
+      e.target.value = "";
+    }
 
     const priceNum = priceMode === "per_ticket"
       ? parseFloat(buyPrice.replace(",", ".")) || 0
@@ -522,6 +566,35 @@ export default function EvidenceTab() {
           </div>
           <div style={{ overflowY: "auto", flex: 1, padding: "1.25rem 2rem" }}>
             {error && <div style={{ marginBottom: "1rem", padding: "10px 14px", borderRadius: 8, background: "#2a0a0a", border: "1px solid #7f1d1d", color: "#fca5a5", fontSize: 13 }}>{error}</div>}
+            
+            {/* AI Import Banner */}
+            <div style={{
+              background: "linear-gradient(135deg, #0f0a1f, #0a1520)",
+              border: "1px solid rgba(139,92,246,0.3)",
+              borderRadius: 12, padding: "0.875rem 1rem",
+              marginBottom: "1.25rem",
+              position: "relative", overflow: "hidden",
+            }}>
+              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, rgba(139,92,246,0.6), transparent)" }} />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "#a78bfa", marginBottom: 2 }}>📸 AI import ze screenshotu</div>
+                  <div style={{ fontSize: 12, color: "#525252" }}>Nahrajte potvrzení z Viagogo, Ticketmaster...</div>
+                </div>
+                <label style={{
+                  padding: "7px 14px", fontSize: 12, fontWeight: 700,
+                  background: aiLoading ? "#2a2a2a" : "linear-gradient(135deg, #7c3aed, #5b21b6)",
+                  border: "none", borderRadius: 8, color: "#fff",
+                  cursor: aiLoading ? "default" : "pointer",
+                  whiteSpace: "nowrap" as const,
+                }}>
+                  {aiLoading ? "⏳ Analyzuji..." : "📤 Nahrát"}
+                  <input type="file" accept="image/*" onChange={handleAiImport} style={{ display: "none" }} disabled={aiLoading} />
+                </label>
+              </div>
+              {aiError && <div style={{ marginTop: 8, fontSize: 12, color: "#f87171" }}>{aiError}</div>}
+            </div>
+
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               <div>
                 <label style={labelStyle}>NÁZEV AKCE *</label>
@@ -846,7 +919,7 @@ export default function EvidenceTab() {
                     <EditableCell rowId={row.id} field="city" value={row.city} width={140} />
 
                     {/* Datum koncertu */}
-                    <DateCell rowId={row.id} field="event_actual_date" value={row.event_actual_date} width={100} />
+                    <DateCell rowId={row.id} field="event_actual_date" value={row.event_actual_date} width={100} color={isThisMonth(row.event_actual_date) ? "#f87171" : undefined} />
 
                     {/* Počet lístků — EDITABLE */}
                     <NumberCell rowId={row.id} field="quantity" value={row.quantity} width={80} suffix="×" />

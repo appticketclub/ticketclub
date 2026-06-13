@@ -6,6 +6,13 @@ import { useCurrency } from "@/lib/context/CurrencyContext";
 import { EXCHANGES } from "@/lib/constants/exchanges";
 import { getCached, setCached, clearCache } from "@/lib/hooks/useDataCache";
 
+function isThisMonth(dateStr: string | null): boolean {
+  if (!dateStr) return false;
+  const date = new Date(dateStr);
+  const now = new Date();
+  return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+}
+
 type Purchase = {
   id: string;
   event_name: string;
@@ -1632,7 +1639,7 @@ export default function NakupyTab() {
                 </div>
 
                 {/* Event actual date */}
-                <div style={{ fontSize: 13, color: "#525252" }}>
+                <div style={{ fontSize: 13, color: isThisMonth(purchase.event_actual_date) ? "#f87171" : "#525252" }}>
                   {purchase.event_actual_date
                     ? new Date(purchase.event_actual_date).toLocaleDateString("cs-CZ")
                     : "—"}
