@@ -9,14 +9,11 @@ export async function GET(request: NextRequest) {
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+      return NextResponse.redirect(`https://app.ticketclub.vip${next}`);
     }
-
-    console.error("Auth callback error:", error);
+    console.error("Auth error:", error);
   }
 
-  // Return to login on error
-  return NextResponse.redirect(`${origin}/prihlaseni?error=auth`);
+  return NextResponse.redirect(`https://app.ticketclub.vip/prihlaseni?error=auth`);
 }
