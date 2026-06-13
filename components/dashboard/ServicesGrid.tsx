@@ -59,6 +59,23 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
       href: "/chrome-launcher",
       free: false,
     },
+    {
+      id: "refresh-bot",
+      title: "Refresh Bot",
+      description: "Automatické monitorování vstupenek na Ticketmaster.",
+      icon: "🔄",
+      href: "/refresh-bot",
+      free: false,
+    },
+    {
+      id: "presale-bot",
+      title: "Pre-sale Bot",
+      description: "Automatická registrace na pre-sale akce.",
+      icon: "⚡",
+      href: "/presale-bot",
+      free: false,
+      comingSoon: true,
+    },
   ];
 
   return (
@@ -90,18 +107,18 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
           return (
             <div
               key={service.id}
-              onClick={() => { if (!locked) router.push(service.href); }}
+              onClick={() => { if (!locked && !service.comingSoon) router.push(service.href); }}
               style={{
                 background: "#111111",
                 border: `1px solid ${locked ? "#1a1a1a" : "#3a3a3a"}`,
                 borderRadius: 16, padding: "1.5rem",
-                cursor: locked ? "default" : "pointer",
+                cursor: (locked || service.comingSoon) ? "default" : "pointer",
                 opacity: locked ? 0.6 : 1,
                 position: "relative", overflow: "hidden",
                 transition: "border-color 0.2s, transform 0.2s",
               }}
               onMouseEnter={e => {
-                if (!locked) {
+                if (!locked && !service.comingSoon) {
                   (e.currentTarget as HTMLDivElement).style.borderColor = "#c0c0c0";
                   (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)";
                 }
@@ -121,6 +138,27 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
                   border: isPro ? "none" : "1px solid #2a2a2a",
                 }}>
                   {isPro ? "PRO" : "🔒 PRO"}
+                </div>
+              )}
+
+              {/* Coming Soon overlay */}
+              {service.comingSoon && (
+                <div style={{
+                  position: "absolute", inset: 0,
+                  background: "rgba(8,8,8,0.85)",
+                  borderRadius: 16,
+                  display: "flex", flexDirection: "column" as const,
+                  alignItems: "center", justifyContent: "center",
+                  gap: 8, zIndex: 2,
+                  backdropFilter: "blur(2px)",
+                }}>
+                  <div style={{ fontSize: 24 }}>⚡</div>
+                  <p style={{ fontSize: 13, color: "#c0c0c0", fontWeight: 600, textAlign: "center" as const, padding: "0 1rem" }}>
+                    Pre-sale Bot bude dostupný při další pre-sale akci. O dostupnosti vás budeme informovat v Discordu TicketClub. Pokud máte informace o akci s velkým potenciálem, napište Jirkovi nebo do Discordu TicketClub — a pokud akce stojí za to, bota připravíme.
+                  </p>
+                  <a href="https://discord.gg/ticketclub" target="_blank" style={{ fontSize: 12, color: "#7c3aed", fontWeight: 600, textDecoration: "none" }}>
+                    Discord TicketClub →
+                  </a>
                 </div>
               )}
 
