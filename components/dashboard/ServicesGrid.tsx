@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 
-export default function ServicesGrid() {
+export default function ServicesGrid({ subscription }: { subscription: any }) {
   const router = useRouter();
 
   const services = [
@@ -26,7 +26,36 @@ export default function ServicesGrid() {
   ];
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1.25rem" }}>
+    <div>
+      {subscription?.plan !== "pro" && (
+        <div style={{
+          background: "linear-gradient(135deg, #0f0a1f, #0a0a1f)",
+          border: "1px solid rgba(124,58,237,0.3)",
+          borderRadius: 16, padding: "1.25rem 1.5rem",
+          marginBottom: "1.5rem",
+          position: "relative", overflow: "hidden",
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+        }}>
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #7c3aed, transparent)" }} />
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 4 }}>
+              ⭐ Upgrade na Pro
+            </div>
+            <div style={{ fontSize: 12, color: "#525252" }}>
+              AI štatistiky, Chrome Launcher, Extension a oveľa viac
+            </div>
+          </div>
+          <a href="/ucet" style={{
+            padding: "8px 20px", fontSize: 13, fontWeight: 700,
+            background: "linear-gradient(135deg, #7c3aed, #5b21b6)",
+            border: "none", borderRadius: 10, color: "#fff",
+            textDecoration: "none", whiteSpace: "nowrap" as const,
+          }}>
+            Upgradovat →
+          </a>
+        </div>
+      )}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1.25rem" }}>
       {services.map(service => (
         <div
           key={service.id}
@@ -102,6 +131,7 @@ export default function ServicesGrid() {
           </div>
         </div>
       ))}
+      </div>
     </div>
   );
 }

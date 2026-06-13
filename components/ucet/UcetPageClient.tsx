@@ -26,6 +26,33 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
   const [extensionKey, setExtensionKey] = useState<string | null>(null);
   const [loadingKey, setLoadingKey] = useState(false);
   const [showKey, setShowKey] = useState(false);
+  const [loadingCheckout, setLoadingCheckout] = useState(false);
+  const [loadingPortal, setLoadingPortal] = useState(false);
+
+  async function handleUpgrade() {
+    setLoadingCheckout(true);
+    try {
+      const res = await fetch("/api/stripe/create-checkout", { method: "POST" });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+      else alert("Chyba: " + data.error);
+    } catch (e) {
+      alert("Chyba pripojenia");
+    }
+    setLoadingCheckout(false);
+  }
+
+  async function handleManageSubscription() {
+    setLoadingPortal(true);
+    try {
+      const res = await fetch("/api/stripe/portal", { method: "POST" });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+    } catch (e) {
+      alert("Chyba pripojenia");
+    }
+    setLoadingPortal(false);
+  }
 
   const cardStyle = {
     background: "#111111",
@@ -177,7 +204,8 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
       {/* Subscription */}
       <div style={cardStyle}>
         <h2 style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", marginBottom: "1.25rem" }}>Můj plán</h2>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: "1.25rem" }}>
           <div style={{
             padding: "6px 16px", borderRadius: 8, fontSize: 13, fontWeight: 700,
             background: subscription?.plan === "pro" ? "linear-gradient(135deg, #7c3aed, #5b21b6)" : "#1a1a1a",
@@ -187,13 +215,62 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
             {subscription?.plan === "pro" ? "⭐ PRO" : "FREE"}
           </div>
           <span style={{ fontSize: 13, color: "#525252" }}>
-            {subscription?.plan === "pro" ? "Aktivní předplatné" : "Základní plán"}
+            {subscription?.plan === "pro"
+              ? `Aktivní do ${subscription.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString("cs-CZ") : "—"}`
+              : "Základní plán"}
           </span>
         </div>
-        {subscription?.plan === "free" && (
-          <p style={{ fontSize: 12, color: "#3a3a3a", marginTop: 12 }}>
-            Upgrade na Pro plán bude brzy dostupný.
-          </p>
+
+        {subscription?.plan === "pro" ? (
+          <button
+            onClick={handleManageSubscription}
+            disabled={loadingPortal}
+            style={{
+              padding: "0.75rem 1.5rem",
+              background: "transparent",
+              border: "1px solid #2a2a2a",
+              borderRadius: 10, color: "#c0c0c0",
+              fontWeight: 600, fontSize: 13,
+              cursor: loadingPortal ? "default" : "pointer",
+            }}
+          >
+            {loadingPortal ? "Načítám..." : "Spravovat předplatné"}
+          </button>
+        ) : (
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: "1rem" }}>
+              <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#fff" }}>€9.99</div>
+              <div style={{ fontSize: 13, color: "#525252" }}>/ měsíc</div>
+            </div>
+            <ul style={{ listStyle: "none", marginBottom: "1.25rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+              {[
+                "Neomezené nákupy",
+                "AI Statistiky",
+                "Chrome Launcher",
+                "Extension licence",
+                "Doporučené akce",
+                "P&L Bannery ∞",
+              ].map(f => (
+                <li key={f} style={{ fontSize: 13, color: "#c0c0c0", display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ color: "#34d399", fontWeight: 700 }}>✓</span> {f}
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={handleUpgrade}
+              disabled={loadingCheckout}
+              style={{
+                width: "100%", padding: "0.875rem",
+                background: loadingCheckout ? "#2a2a2a" : "linear-gradient(135deg, #7c3aed, #5b21b6)",
+                border: "none", borderRadius: 12,
+                color: "#fff", fontWeight: 800, fontSize: 14,
+                letterSpacing: "0.05em",
+                cursor: loadingCheckout ? "default" : "pointer",
+              }}
+            >
+              {loadingCheckout ? "Načítám..." : "⭐ Upgradovat na Pro →"}
+            </button>
+          </div>
         )}
       </div>
 

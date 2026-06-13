@@ -15,6 +15,12 @@ export default async function DostupneSluzbyPage() {
     .eq("id", user.id)
     .single();
 
+  const { data: subscription } = await supabase
+    .from("subscriptions")
+    .select("*")
+    .eq("user_id", user.id)
+    .single();
+
   return (
     <div style={{ minHeight: "100vh", background: "#080808" }}>
       <TopNav user={user} profile={profile} />
@@ -25,7 +31,7 @@ export default async function DostupneSluzbyPage() {
           </h1>
           <p style={{ color: "#525252" }}>Vyberte si nástroj, se kterým chcete pracovat.</p>
         </div>
-        <ServicesGrid />
+        <ServicesGrid subscription={subscription} />
       </main>
     </div>
   );
