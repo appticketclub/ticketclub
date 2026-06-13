@@ -10,6 +10,16 @@ const protectedRoutes = ["/dashboard", "/nakupy", "/dostupne-sluzby", "/ucet", "
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Bypass everything for auth callback
+  if (pathname === "/auth/callback" || pathname.startsWith("/auth/callback")) {
+    return NextResponse.next();
+  }
+
+  // Bypass API routes
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.next();
+  }
+
   const isProtected = protectedRoutes.some(route => pathname.startsWith(route));
 
   if (isProtected) {
@@ -27,5 +37,7 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|auth/callback|.*\\..*).*)"],
+  matcher: [
+    "/((?!auth/callback|_next/static|_next/image|favicon.ico|.*\\..*).*)",
+  ],
 };
