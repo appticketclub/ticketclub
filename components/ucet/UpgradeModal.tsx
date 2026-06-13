@@ -27,7 +27,7 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
       <div style={{
         position: "fixed", top: "50%", left: "50%",
         transform: "translate(-50%, -50%)",
-        width: "100%", maxWidth: 520,
+        width: "100%", maxWidth: 680,
         background: "#111111", border: "1px solid #2a2a2a",
         borderRadius: 24, padding: "2rem", zIndex: 201,
         overflow: "hidden",
@@ -47,61 +47,51 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button>
         </div>
 
-        {/* Features */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", marginBottom: "1.75rem" }}>
-          {[
-            "AI Statistiky", "Chrome Launcher",
-            "Extension licence", "Doporučené akce",
-            "Neomezené nákupy", "P&L Bannery ∞",
-          ].map(f => (
-            <div key={f} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#c0c0c0" }}>
-              <span style={{ color: "#34d399", fontWeight: 700 }}>✓</span> {f}
-            </div>
-          ))}
-        </div>
-
-        {/* Plans */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-
-          {/* Monthly */}
+        {/* Plans — side by side on desktop */}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          gap: "1rem",
+        }}>
+          {/* Monthly card */}
           <div style={{
-            background: "#0a0a0a", border: "1px solid #2a2a2a",
-            borderRadius: 16, padding: "1.25rem 1.5rem",
+            background: "#0a0a0a",
+            border: "1px solid #2a2a2a",
+            borderRadius: 16, padding: "1.5rem",
             cursor: "pointer", transition: "border-color 0.2s",
+            display: "flex", flexDirection: "column" as const,
           }}
           onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.borderColor = "#7c3aed"}
           onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.borderColor = "#2a2a2a"}
           onClick={() => handleCheckout("monthly")}
           >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-              <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>PRO Měsíční</span>
-              <div style={{ textAlign: "right" as const }}>
-                <div style={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>€19.95</div>
-                <div style={{ fontSize: 10, color: "#525252" }}>≈ 498 CZK / měsíc</div>
-              </div>
-            </div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: "#525252", marginBottom: "0.75rem", letterSpacing: "0.08em" }}>MĚSÍČNÍ</div>
+            <div style={{ fontSize: 36, fontWeight: 900, color: "#fff", letterSpacing: "-0.03em", marginBottom: 4 }}>€19.95</div>
+            <div style={{ fontSize: 12, color: "#525252", marginBottom: "1.5rem" }}>≈ 498 CZK / měsíc</div>
             <button
               disabled={loading === "monthly"}
+              onClick={e => { e.stopPropagation(); handleCheckout("monthly"); }}
               style={{
                 width: "100%", padding: "0.75rem",
                 background: loading === "monthly" ? "#2a2a2a" : "transparent",
                 border: "1px solid #2a2a2a", borderRadius: 10,
                 color: "#c0c0c0", fontWeight: 600, fontSize: 13,
                 cursor: loading === "monthly" ? "default" : "pointer",
-                marginTop: 8,
+                marginTop: "auto",
               }}
             >
-              {loading === "monthly" ? "Načítám..." : "Vybrat měsíční →"}
+              {loading === "monthly" ? "Načítám..." : "Vybrat →"}
             </button>
           </div>
 
-          {/* Yearly */}
+          {/* Yearly card */}
           <div style={{
             background: "linear-gradient(145deg, #0f0a1f, #0a0a1a)",
             border: "1px solid rgba(124,58,237,0.4)",
-            borderRadius: 16, padding: "1.25rem 1.5rem",
+            borderRadius: 16, padding: "1.5rem",
             position: "relative", overflow: "hidden",
             cursor: "pointer", transition: "border-color 0.2s",
+            display: "flex", flexDirection: "column" as const,
           }}
           onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.borderColor = "#7c3aed"}
           onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(124,58,237,0.4)"}
@@ -111,32 +101,29 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
 
             {/* Badge */}
             <div style={{
-              position: "absolute", top: 12, right: 12,
+              display: "inline-flex", alignItems: "center",
               padding: "3px 10px", background: "linear-gradient(135deg, #7c3aed, #5b21b6)",
               borderRadius: 100, fontSize: 10, fontWeight: 800, color: "#fff",
-              letterSpacing: "0.05em",
+              letterSpacing: "0.05em", marginBottom: "0.75rem", width: "fit-content",
             }}>
               3 MĚSÍCE ZDARMA
             </div>
 
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-              <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>PRO Roční</span>
-              <div style={{ textAlign: "right" as const }}>
-                <div style={{ fontSize: 20, fontWeight: 800, color: "#a78bfa" }}>€179.95</div>
-                <div style={{ fontSize: 10, color: "#525252" }}>≈ 4 498 CZK / rok</div>
-              </div>
-            </div>
-            <div style={{ fontSize: 11, color: "#a78bfa", marginBottom: 8 }}>
-              = €14.99/měsíc · Ušetříte €59.45
-            </div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: "#a78bfa", marginBottom: "0.75rem", letterSpacing: "0.08em" }}>ROČNÍ</div>
+            <div style={{ fontSize: 36, fontWeight: 900, color: "#a78bfa", letterSpacing: "-0.03em", marginBottom: 4 }}>€179.95</div>
+            <div style={{ fontSize: 12, color: "#525252", marginBottom: 4 }}>≈ 4 498 CZK / rok</div>
+            <div style={{ fontSize: 11, color: "#a78bfa", marginBottom: "1.5rem" }}>= €14.99/měsíc · Ušetříte €59.45</div>
+
             <button
               disabled={loading === "yearly"}
+              onClick={e => { e.stopPropagation(); handleCheckout("yearly"); }}
               style={{
                 width: "100%", padding: "0.75rem",
                 background: loading === "yearly" ? "#2a2a2a" : "linear-gradient(135deg, #7c3aed, #5b21b6)",
                 border: "none", borderRadius: 10,
                 color: "#fff", fontWeight: 700, fontSize: 13,
                 cursor: loading === "yearly" ? "default" : "pointer",
+                marginTop: "auto",
               }}
             >
               {loading === "yearly" ? "Načítám..." : "⭐ Vybrat roční →"}
