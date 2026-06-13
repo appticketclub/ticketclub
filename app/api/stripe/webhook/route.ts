@@ -43,7 +43,11 @@ export async function POST(request: NextRequest) {
         const subscriptionId = session.subscription as string;
         if (!userId) { console.log("No userId in metadata"); break; }
         const sub = (await stripe.subscriptions.retrieve(subscriptionId)) as any;
-        const periodEnd = new Date((sub.current_period_end as number) * 1000).toISOString();
+        console.log("sub.current_period_end:", sub.current_period_end, typeof sub.current_period_end);
+        const periodEndRaw = sub.current_period_end;
+        const periodEnd =  periodEndRaw 
+          ? new Date(typeof periodEndRaw === 'number' ? periodEndRaw * 1000 : periodEndRaw).toISOString() 
+          : null;
         await supabase.from("subscriptions").upsert({
           user_id: userId,
           plan: "pro",
@@ -119,7 +123,11 @@ export async function POST(request: NextRequest) {
         const sub = event.data.object as any;
         const userId = sub.metadata?.supabase_user_id;
         if (!userId) break;
-        const periodEnd = new Date(sub.current_period_end * 1000).toISOString();
+        console.log("sub.current_period_end:", sub.current_period_end, typeof sub.current_period_end);
+        const periodEndRaw = sub.current_period_end;
+        const periodEnd =  periodEndRaw 
+          ? new Date(typeof periodEndRaw === 'number' ? periodEndRaw * 1000 : periodEndRaw).toISOString() 
+          : null;
         await supabase.from("subscriptions").update({
           status: sub.status,
           current_period_end: periodEnd,
