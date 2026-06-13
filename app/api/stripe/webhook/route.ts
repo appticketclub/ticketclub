@@ -42,8 +42,8 @@ export async function POST(request: NextRequest) {
         const customerId = session.customer as string;
         const subscriptionId = session.subscription as string;
         if (!userId) { console.log("No userId in metadata"); break; }
-        const sub = await stripe.subscriptions.retrieve(subscriptionId);
-        const periodEnd = new Date(sub.current_period_end * 1000).toISOString();
+        const sub = (await stripe.subscriptions.retrieve(subscriptionId)) as Stripe.Subscription;
+        const periodEnd = new Date((sub.current_period_end as number) * 1000).toISOString();
         await supabase.from("subscriptions").upsert({
           user_id: userId,
           plan: "pro",
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
         const invoice = event.data.object as Stripe.Invoice;
         const subscriptionId = invoice.subscription as string;
         if (!subscriptionId) break;
-        const sub = await stripe.subscriptions.retrieve(subscriptionId);
+        const sub = (await stripe.subscriptions.retrieve(subscriptionId)) as Stripe.Subscription;
         const userId = sub.metadata?.supabase_user_id;
         if (!userId) break;
         const periodEnd = new Date(sub.current_period_end * 1000).toISOString();
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
         const invoice = event.data.object as Stripe.Invoice;
         const subscriptionId = invoice.subscription as string;
         if (!subscriptionId) break;
-        const sub = await stripe.subscriptions.retrieve(subscriptionId);
+        const sub = (await stripe.subscriptions.retrieve(subscriptionId)) as Stripe.Subscription;
         const userId = sub.metadata?.supabase_user_id;
         if (!userId) break;
         await supabase.from("subscriptions").update({
