@@ -144,30 +144,32 @@ export async function POST(request: NextRequest) {
           ? new Date(sub.current_period_end * 1000).toISOString()
           : null;
 
-        // Detect cancellation — canceled_at is set but status still active
-        const isCanceledAtPeriodEnd = sub.canceled_at !== null && sub.status === "active";
-        const isFullyCanceled = sub.status === "canceled";
+        // Deactivate immediately if canceled_at is set
+        const isCanceled = sub.canceled_at !== null && sub.canceled_at !== undefined;
 
-        await supabase.from("subscriptions").update({
-          status: isFullyCanceled ? "canceled" : isCanceledAtPeriodEnd ? "canceling" : sub.status,
-          current_period_end: periodEnd,
-          updated_at: new Date().toISOString(),
-        }).eq("user_id", userId);
+        if (isCanceled) {
+          console.log("❌ Cancellation detected, deactivating immediately:", userId);
 
-        // If fully canceled — deactivate everything immediately
-        if (isFullyCanceled) {
-          await supabase.from("extension_licenses").delete().eq("user_id", userId);
-          await supabase.from("launcher_tokens").update({ is_active: false }).eq("user_id", userId);
           await supabase.from("subscriptions").update({
             plan: "free",
+            status: "canceled",
             stripe_subscription_id: null,
+            current_period_end: null,
+            updated_at: new Date().toISOString(),
           }).eq("user_id", userId);
-          console.log("❌ Fully canceled:", userId);
-        }
 
-        // If canceling at period end — keep active until period ends
-        if (isCanceledAtPeriodEnd) {
-          console.log("⚠️ Canceling at period end:", userId, "until:", periodEnd);
+          await supabase.from("extension_licenses").delete().eq("user_id", userId);
+
+          await supabase.from("launcher_tokens").update({
+            is_active: false,
+          }).eq("user_id", userId);
+
+        } else {
+          await supabase.from("subscriptions").update({
+            status: sub.status,
+            current_period_end: periodEnd,
+            updated_at: new Date().toISOString(),
+          }).eq("user_id", userId);
         }
 
         break;
