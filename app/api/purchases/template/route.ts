@@ -11,9 +11,13 @@ export async function GET() {
     "Datum koncertu",
     "Počet lístků",
     "Nákupní cena celkem (EUR)",
+    "Prodejní cena celkem (EUR)",
     "Burza",
     "Účet",
     "Druh vstupenky",
+    "Datum prodeje",
+    "Vyplaceno (ANO/NIE)",
+    "Doručeno (ANO/NIE)",
     "Poznámky",
   ];
 
@@ -24,22 +28,26 @@ export async function GET() {
     "2026-09-15",
     "2",
     "300",
+    "500",
     "Viagogo",
     "ucet1@gmail.com",
     "Mobile Transfer",
+    "2026-07-01",
+    "ANO",
+    "ANO",
     "Poznámka",
   ];
 
   const ws = XLSX.utils.aoa_to_sheet([headers, example]);
 
-  // Column widths
   ws["!cols"] = [
-    { wch: 15 }, { wch: 25 }, { wch: 15 }, { wch: 15 },
-    { wch: 12 }, { wch: 22 }, { wch: 15 }, { wch: 22 },
-    { wch: 18 }, { wch: 20 },
+    { wch: 14 }, { wch: 25 }, { wch: 15 }, { wch: 14 },
+    { wch: 12 }, { wch: 22 }, { wch: 22 }, { wch: 15 },
+    { wch: 22 }, { wch: 18 }, { wch: 14 }, { wch: 18 },
+    { wch: 16 }, { wch: 20 },
   ];
 
-  XLSX.utils.book_append_sheet(wb, ws, "Nákupy");
+  XLSX.utils.book_append_sheet(wb, ws, "Evidence");
   const buf = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
 
   return new NextResponse(buf, {

@@ -17,9 +17,6 @@ export async function POST(request: NextRequest) {
     const ws = wb.Sheets[wb.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json(ws, { header: 1 }) as any[][];
 
-    // Skip header row
-    const dataRows = rows.slice(1).filter(row => row[1]);
-
     const parseDate = (val: any) => {
       if (!val) return null;
       const str = String(val).trim();
@@ -33,7 +30,14 @@ export async function POST(request: NextRequest) {
       return null;
     };
 
-    const purchases = dataRows.map(row => {
+    // Skip header row
+    const dataRows = rows.slice(1).filter(row => row[1]);
+    let imported = 0;
+    const errors: string[] = [];
+
+    for (let i = 0; i < dataRows.length; i++) {
+      const row = dataRows[i];
+      try {
         const eventDate = parseDate(row[0]);
         const eventName = String(row[1] || "").trim();
         const city = String(row[2] || "").trim() || null;
@@ -41,37 +45,75 @@ export async function POST(request: NextRequest) {
         const quantity = parseInt(row[4]) || 1;
         const buyPriceTotal = parseFloat(String(row[5]).replace(",", ".")) || 0;
         const buyPrice = quantity > 0 ? buyPriceTotal / quantity : buyPriceTotal;
-        const exchange = String(row[6] || "").trim() || null;
-        const accountRef = String(row[7] || "").trim() || null;
-        const ticketType = String(row[8] || "").trim() || null;
-        const notes = String(row[9] || "").trim() || null;
+        const sellPriceTotal = parseFloat(String(row[6]).replace(",", ".")) || 0;
+        const exchange = String(row[7] || "").trim() || null;
+        const accountRef = String(row[8] || "").trim() || null;
+        const ticketType = String(row[9] || "").trim() || null;
+        const soldAtRaw = parseDate(row[10]);
+        const soldAt = soldAtRaw ? new Date(soldAtRaw).toISOString() : null;
+        const paidOut = String(row[11] || "").trim().toUpperCase() === "ANO";
+        const delivered = String(row[12] || "").trim().toUpperCase() === "ANO";
+        const notes = String(row[13] || "").trim() || null;
 
-        return {
-          user_id: user.id,
-          event_name: eventName,
-          city,
-          event_date: eventDate,
-          event_actual_date: eventActualDate,
-          quantity,
-          quantity_remaining: quantity,
-          buy_price: buyPrice,
-          currency: "EUR",
-          exchange,
-          account_ref: accountRef,
-          ticket_type_custom: ticketType,
-          notes,
-          status: "active",
-        };
-      }).filter(p => p.event_name);
+        if (!eventName) continue;
 
-    if (purchases.length === 0) {
-      return NextResponse.json({ error: "Žádné platné záznamy nenalezeny" }, { status: 400 });
+        // Insert purchase
+        const { data: purchase, error: purchaseError } = await supabase
+          .from("purchases")
+          .insert({
+            user_id: user.id,
+            event_name: eventName,
+            city,
+            event_date: eventDate,
+            event_actual_date: eventActualDate,
+            quantity,
+            quantity_remaining: sellPriceTotal > 0 ? 0 : quantity,
+            buy_price: buyPrice,
+            currency: "EUR",
+            status: sellPriceTotal > 0 ? "sold" : "active",
+            exchange,
+            account_ref: accountRef,
+            ticket_type_custom: ticketType,
+            paid_out: paidOut,
+            delivered,
+            notes,
+          })
+          .select()
+          .single();
+
+        if (purchaseError) {
+          errors.push(`Řádek ${i + 2}: ${purchaseError.message}`);
+          continue;
+        }
+
+        // If sell price exists — insert sale
+        if (sellPriceTotal > 0 && purchase) {
+          const sellPricePerTicket = sellPriceTotal / quantity;
+          const { error: saleError } = await supabase.from("sales").insert({
+            user_id: user.id,
+            purchase_id: purchase.id,
+            quantity_sold: quantity,
+            sell_price: sellPricePerTicket,
+            currency: "EUR",
+            sold_at: soldAt ?? new Date().toISOString(),
+            platform: exchange,
+          });
+          if (saleError) {
+            errors.push(`Řádek ${i + 2}: ${saleError.message}`);
+          }
+        }
+
+        imported++;
+      } catch (err: any) {
+        errors.push(`Řádek ${i + 2}: ${err.message}`);
+      }
     }
 
-    const { error } = await supabase.from("purchases").insert(purchases);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (imported === 0 && errors.length > 0) {
+      return NextResponse.json({ error: errors.join("\n") }, { status: 400 });
+    }
 
-    return NextResponse.json({ success: true, imported: purchases.length });
+    return NextResponse.json({ success: true, imported, errors: errors.length > 0 ? errors : undefined });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

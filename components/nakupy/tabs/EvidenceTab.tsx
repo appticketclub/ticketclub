@@ -63,7 +63,7 @@ export default function EvidenceTab() {
   const [showModal, setShowModal] = useState(false);
   const [showImport, setShowImport] = useState(false);
   const [importing, setImporting] = useState(false);
-  const [importResult, setImportResult] = useState<{ success?: number; error?: string } | null>(null);
+  const [importResult, setImportResult] = useState<{ success?: number; error?: string; errors?: string[] } | null>(null);
 
   // Filter states
   const [search, setSearch] = useState("");
@@ -1048,7 +1048,13 @@ export default function EvidenceTab() {
                 {importResult?.success ? (
                   <div style={{ padding: "12px", background: "#0a2a1a", border: "1px solid rgba(52,211,153,0.3)", borderRadius: 10, textAlign: "center" }}>
                     <div style={{ fontSize: "1.5rem", marginBottom: 6 }}>✅</div>
-                    <p style={{ color: "#34d399", fontWeight: 600, fontSize: 14 }}>Importováno {importResult.success} nákupů!</p>
+                    <p style={{ color: "#34d399", fontWeight: 600, fontSize: 14 }}>Importováno {importResult.success} záznamů!</p>
+                    {importResult.errors && importResult.errors.length > 0 && (
+                      <div style={{ marginTop: "12px", padding: "10px", background: "#2a0a0a", border: "1px solid rgba(248,113,113,0.3)", borderRadius: 8 }}>
+                        <p style={{ color: "#f87171", fontWeight: 600, fontSize: 13, marginBottom: "8px" }}>Chyby:</p>
+                        <p style={{ color: "#fca5a5", fontSize: 12, whiteSpace: "pre-line" }}>{importResult.errors.join("\n")}</p>
+                      </div>
+                    )}
                   </div>
                 ) : importResult?.error ? (
                   <div style={{ padding: "12px", background: "#2a0a0a", border: "1px solid rgba(248,113,113,0.3)", borderRadius: 10, textAlign: "center" }}>
@@ -1080,7 +1086,7 @@ export default function EvidenceTab() {
                           const res = await fetch("/api/purchases/import", { method: "POST", body: formData });
                           const data = await res.json();
                           if (data.success) {
-                            setImportResult({ success: data.imported });
+                            setImportResult({ success: data.imported, errors: data.errors });
                             loadData();
                           } else {
                             setImportResult({ error: data.error });
