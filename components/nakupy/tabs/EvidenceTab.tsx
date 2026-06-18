@@ -957,7 +957,7 @@ export default function EvidenceTab() {
                     </td>
 
                     {/* Burza — DROPDOWN */}
-                    <DropdownCell rowId={row.id} field="exchange" value={row.exchange} width={120} options={[...EXCHANGES, "Jiné"]} />
+                    <DropdownCell rowId={row.id} field="exchange" value={row.exchange} width={120} options={EXCHANGES} />
 
                     {/* Účet — DROPDOWN from nákupní účty */}
                     <DropdownCell
