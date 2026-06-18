@@ -21,11 +21,16 @@ export function middleware(request: NextRequest) {
   }
 
   const isProtected = protectedRoutes.some(route => pathname.startsWith(route));
-
+ 
   if (isProtected) {
+    const allCookies = request.cookies.getAll();
+    console.log("Cookies:", allCookies.map(c => c.name));
+    // Supabase stores auth in these cookies
     const token =
-      request.cookies.get("sb-access-token") ||
-      request.cookies.get(`sb-eoeiuohwxulkgppjaogk-auth-token`);
+      request.cookies.get("sb-access-token")?.value ||
+      request.cookies.get(`sb-eoeiuohwxulkgppjaogk-auth-token`)?.value ||
+      request.cookies.get(`sb-eoeiuohwxulkgppjaogk-auth-token.0`)?.value ||
+      request.cookies.get(`sb-eoeiuohwxulkgppjaogk-auth-token.1`)?.value;
 
     if (!token) {
       const loginUrl = new URL("/prihlaseni", request.url);
