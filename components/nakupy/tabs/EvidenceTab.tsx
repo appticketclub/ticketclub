@@ -93,6 +93,10 @@ export default function EvidenceTab() {
       supabase.from("accounts").select("id, name").eq("type", "purchase").order("name"),
     ]);
 
+    console.log("purchases:", purchases?.length);
+    console.log("sales:", sales?.length);
+    console.log("first sale:", sales?.[0]);
+
     const evidenceRows: EvidenceRow[] = (purchases ?? []).map(p => {
       const relatedSales = (sales ?? []).filter(s => s.purchase_id === p.id);
       const sellTotal = relatedSales.reduce((sum, s) => sum + (s.sell_price * s.quantity_sold), 0);
