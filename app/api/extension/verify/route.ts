@@ -1,7 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Content-Type": "text/plain"
+};
+
 export const dynamic = "force-dynamic";
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 200, headers: corsHeaders });
+}
 
 export async function GET(request: NextRequest) {
   const supabase = createClient(
@@ -12,7 +23,7 @@ export async function GET(request: NextRequest) {
   const key = request.nextUrl.searchParams.get("key");
   const email = request.nextUrl.searchParams.get("email");
 
-  if (!key || !email) return new NextResponse("INVALID", { status: 200, headers: { "Content-Type": "text/plain" } });
+  if (!key || !email) return new NextResponse("INVALID", { status: 200, headers: corsHeaders });
 
   // Find license
   const { data: license } = await supabase
@@ -21,7 +32,7 @@ export async function GET(request: NextRequest) {
     .eq("license_key", key)
     .single();
 
-  if (!license || !license.is_active) return new NextResponse("INVALID", { status: 200, headers: { "Content-Type": "text/plain" } });
+  if (!license || !license.is_active) return new NextResponse("INVALID", { status: 200, headers: corsHeaders });
 
   // Verify email matches
   const { data: profile } = await supabase
@@ -31,7 +42,7 @@ export async function GET(request: NextRequest) {
     .single();
 
   if (!profile || profile.email.toLowerCase() !== email.toLowerCase()) {
-    return new NextResponse("EMAIL_MISMATCH", { status: 200, headers: { "Content-Type": "text/plain" } });
+    return new NextResponse("EMAIL_MISMATCH", { status: 200, headers: corsHeaders });
   }
 
   // Rate limiting
@@ -53,7 +64,7 @@ export async function GET(request: NextRequest) {
     }).eq("license_key", key);
   } else {
     if ((licenseData?.verify_count_hour ?? 0) >= 200) {
-      return new NextResponse("RATE_LIMIT", { status: 200, headers: { "Content-Type": "text/plain" } });
+      return new NextResponse("RATE_LIMIT", { status: 200, headers: corsHeaders });
     }
     await supabase.from("extension_licenses").update({
       verify_count_hour: (licenseData?.verify_count_hour ?? 0) + 1,
@@ -61,5 +72,5 @@ export async function GET(request: NextRequest) {
     }).eq("license_key", key);
   }
 
-  return new NextResponse("VALID", { status: 200, headers: { "Content-Type": "text/plain" } });
+  return new NextResponse("VALID", { status: 200, headers: corsHeaders });
 }
