@@ -141,31 +141,33 @@ export async function POST(request: NextRequest) {
         if (!userId) break;
 
         const periodEnd = sub.current_period_end
-          ? new Date(typeof sub.current_period_end === "number"
-            ? sub.current_period_end * 1000
-            : sub.current_period_end).toISOString()
+          ? new Date(sub.current_period_end * 1000).toISOString()
           : null;
 
+        // Detect cancellation — canceled_at is set but status still active
+        const isCanceledAtPeriodEnd = sub.canceled_at !== null && sub.status === "active";
+        const isFullyCanceled = sub.status === "canceled";
+
         await supabase.from("subscriptions").update({
-          status: sub.status,
+          status: isFullyCanceled ? "canceled" : isCanceledAtPeriodEnd ? "canceling" : sub.status,
           current_period_end: periodEnd,
           updated_at: new Date().toISOString(),
         }).eq("user_id", userId);
 
-        // If fully canceled — deactivate license
-        if (sub.status === "canceled") {
-          await supabase.from("extension_licenses").update({
-            is_active: false,
-          }).eq("user_id", userId);
+        // If fully canceled — deactivate everything immediately
+        if (isFullyCanceled) {
           await supabase.from("extension_licenses").delete().eq("user_id", userId);
-          await supabase.from("launcher_tokens").update({
-            is_active: false,
-          }).eq("user_id", userId);
+          await supabase.from("launcher_tokens").update({ is_active: false }).eq("user_id", userId);
           await supabase.from("subscriptions").update({
             plan: "free",
             stripe_subscription_id: null,
           }).eq("user_id", userId);
-          console.log("❌ Subscription canceled for user:", userId);
+          console.log("❌ Fully canceled:", userId);
+        }
+
+        // If canceling at period end — keep active until period ends
+        if (isCanceledAtPeriodEnd) {
+          console.log("⚠️ Canceling at period end:", userId, "until:", periodEnd);
         }
 
         break;
