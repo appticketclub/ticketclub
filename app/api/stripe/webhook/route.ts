@@ -139,19 +139,35 @@ export async function POST(request: NextRequest) {
         const sub = event.data.object as any;
         const userId = sub.metadata?.supabase_user_id;
         if (!userId) break;
-        console.log("sub.current_period_end:", sub.current_period_end, typeof sub.current_period_end);
-        const periodEndRaw = sub.current_period_end;
-        const periodEnd =  periodEndRaw 
-          ? new Date(typeof periodEndRaw === 'number' ? periodEndRaw * 1000 : periodEndRaw).toISOString() 
+
+        const periodEnd = sub.current_period_end
+          ? new Date(typeof sub.current_period_end === "number"
+            ? sub.current_period_end * 1000
+            : sub.current_period_end).toISOString()
           : null;
-        const interval = sub.items?.data?.[0]?.plan?.interval ?? "month";
-        const planInterval = interval === "year" ? "yearly" : "monthly";
+
         await supabase.from("subscriptions").update({
           status: sub.status,
-          plan_interval: planInterval,
           current_period_end: periodEnd,
           updated_at: new Date().toISOString(),
         }).eq("user_id", userId);
+
+        // If fully canceled — deactivate license
+        if (sub.status === "canceled") {
+          await supabase.from("extension_licenses").update({
+            is_active: false,
+          }).eq("user_id", userId);
+          await supabase.from("extension_licenses").delete().eq("user_id", userId);
+          await supabase.from("launcher_tokens").update({
+            is_active: false,
+          }).eq("user_id", userId);
+          await supabase.from("subscriptions").update({
+            plan: "free",
+            stripe_subscription_id: null,
+          }).eq("user_id", userId);
+          console.log("❌ Subscription canceled for user:", userId);
+        }
+
         break;
       }
     }
