@@ -17,33 +17,31 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
-    const supabase = createClient();
+    try {
+      const supabase = createClient();
+      const { error: err } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    // Set session persistence based on remember me
-    if (!rememberMe) {
-      // Session only — expires when browser closes
-      await supabase.auth.signOut();
+      if (err) {
+        setError(err.message);
+        setLoading(false);
+        return;
+      }
+
+      if (rememberMe) {
+        localStorage.setItem("rememberMe", "true");
+      } else {
+        localStorage.removeItem("rememberMe");
+        // Session will expire when browser closes naturally
+      }
+
+      window.location.href = "/dostupne-sluzby";
+    } catch (e: any) {
+      setError("Chyba přihlášení. Zkuste to znovu.");
     }
 
-    const { error: err } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (err) {
-      setError(err.message);
-      setLoading(false);
-      return;
-    }
-
-    if (rememberMe) {
-      // Store remember me preference
-      localStorage.setItem("rememberMe", "true");
-    } else {
-      localStorage.removeItem("rememberMe");
-    }
-
-    router.push("/dostupne-sluzby");
     setLoading(false);
   }
 
