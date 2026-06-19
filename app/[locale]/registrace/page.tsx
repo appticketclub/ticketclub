@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { signUpWithEmail, signInWithGoogle } from "@/lib/auth/actions";
 
@@ -12,6 +12,14 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`;
+    script.async = true;
+    document.head.appendChild(script);
+    return () => { document.head.removeChild(script); };
+  }, []);
+
   async function handleRegister() {
     if (!fullName || !email || !password || !confirmPassword) {
       return setError("Vyplňte všechna pole.");
@@ -22,12 +30,43 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
     setSuccess("");
-    const result = await signUpWithEmail(email, password, fullName);
-    if (result?.error) {
-      setError(result.error);
-    } else if (result?.success) {
-      setSuccess(result.success);
+
+    try {
+      // Execute reCAPTCHA
+      const token = await new Promise<string>((resolve, reject) => {
+        (window as any).grecaptcha.ready(() => {
+          (window as any).grecaptcha
+            .execute(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY, { action: "register" })
+            .then(resolve)
+            .catch(reject);
+        });
+      });
+
+      // Verify on server
+      const captchaRes = await fetch("/api/recaptcha/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
+      const captchaData = await captchaRes.json();
+
+      if (!captchaData.success) {
+        setError("Ověření reCAPTCHA selhalo. Zkuste to znovu.");
+        setLoading(false);
+        return;
+      }
+
+      // Continue with normal registration
+      const result = await signUpWithEmail(email, password, fullName);
+      if (result?.error) {
+        setError(result.error);
+      } else if (result?.success) {
+        setSuccess(result.success);
+      }
+    } catch (e) {
+      setError("Chyba reCAPTCHA. Zkuste to znovu.");
     }
+
     setLoading(false);
   }
 
