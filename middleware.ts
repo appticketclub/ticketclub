@@ -10,11 +10,9 @@ const protectedRoutes = ["/dashboard", "/nakupy", "/dostupne-sluzby", "/ucet", "
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Bypass everything for auth callback, forgot password, and reset password
+  // Bypass everything for auth callback
   if (pathname === "/auth/callback" || 
-      pathname.startsWith("/auth/callback") || 
-      pathname.includes("/zapomenute-heslo") || 
-      pathname.includes("/reset-hesla")) {
+      pathname.startsWith("/auth/callback")) {
     return NextResponse.next();
   }
 
