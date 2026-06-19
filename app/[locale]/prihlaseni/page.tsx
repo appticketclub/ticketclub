@@ -1,26 +1,50 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { signInWithEmail, signInWithGoogle } from "@/lib/auth/actions";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const router = useRouter();
 
   async function handleLogin() {
     if (!email || !password) return setError("Vyplňte všechna pole.");
     setLoading(true);
     setError("");
-    const result = await signInWithEmail(email, password);
-    if (result?.error) setError(result.error);
-    setLoading(false);
-  }
 
-  async function handleGoogle() {
-    setLoading(true);
-    await signInWithGoogle();
+    const supabase = createClient();
+
+    // Set session persistence based on remember me
+    if (!rememberMe) {
+      // Session only — expires when browser closes
+      await supabase.auth.signOut();
+    }
+
+    const { error: err } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (err) {
+      setError(err.message);
+      setLoading(false);
+      return;
+    }
+
+    if (rememberMe) {
+      // Store remember me preference
+      localStorage.setItem("rememberMe", "true");
+    } else {
+      localStorage.removeItem("rememberMe");
+    }
+
+    router.push("/dostupne-sluzby");
+    setLoading(false);
   }
 
   return (
@@ -68,7 +92,11 @@ export default function LoginPage() {
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.875rem", color: "#525252" }}>
             <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
-              <input type="checkbox" />
+              <input 
+                type="checkbox" 
+                checked={rememberMe} 
+                onChange={e => setRememberMe(e.target.checked)} 
+              />
               Zapamatovat si mě
             </label>
             <Link 
