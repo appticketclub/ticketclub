@@ -124,7 +124,7 @@ export default function KalendarTab() {
   const month = currentDate.getMonth();
 
   const unsoldDates = new Set(
-    (purchases ?? [])
+    (purchases as any[])
       .filter(p => p.status === "active" || p.status === "partial")
       .filter(p => p.event_actual_date)
       .map(p => p.event_actual_date.split("T")[0])
@@ -249,7 +249,7 @@ export default function KalendarTab() {
                         
                         if (!hasUnsold) return null;
 
-                        const dateEvents = (purchases ?? []) 
+                        const dateEvents = (purchases as any[]) 
                           .filter(p => p.status === "active" || p.status === "partial") 
                           .filter(p => p.event_actual_date.split("T")[0] === dateStr);
                         
