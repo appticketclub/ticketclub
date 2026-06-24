@@ -446,10 +446,8 @@ export default function EvidenceTab() {
     const [eventDate, setEventDate] = useState(today);
     const [eventActualDate, setEventActualDate] = useState("");
     const [accountRef, setAccountRef] = useState("");
-    const [buyPrice, setBuyPrice] = useState("");
     const [totalPrice, setTotalPrice] = useState("");
     const [quantity, setQuantity] = useState("1");
-    const [priceMode, setPriceMode] = useState<"per_ticket" | "total">("per_ticket");
     const [exchange, setExchange] = useState("");
     const [customExchange, setCustomExchange] = useState("");
     const [ticketType, setTicketType] = useState("");
@@ -484,7 +482,8 @@ export default function EvidenceTab() {
         const d = result.data;
         if (d.event_name) setEventName(d.event_name);
         if (d.city) setCity(d.city);
-        if (d.buy_price) setBuyPrice(String(d.buy_price));
+        if (d.buy_price) setTotalPrice(String(d.buy_price));
+        if (d.total_price) setTotalPrice(String(d.total_price));
         if (d.quantity) setQuantity(String(d.quantity));
         if (d.event_date) setEventDate(d.event_date);
         if (d.event_actual_date) setEventActualDate(d.event_actual_date);
@@ -497,11 +496,9 @@ export default function EvidenceTab() {
       e.target.value = "";
     }
 
-    const priceNum = priceMode === "per_ticket"
-      ? parseFloat(buyPrice.replace(",", ".")) || 0
-      : (parseFloat(totalPrice.replace(",", ".")) || 0) / (parseInt(quantity) || 1);
     const qtyNum = parseInt(quantity) || 1;
-    const totalCost = priceNum * qtyNum;
+    const totalCost = parseFloat(totalPrice.replace(",", ".")) || 0;
+    const priceNum = totalCost / qtyNum;
 
     async function handleSave() {
       if (!eventName.trim()) return setError("Název akce je povinný");
@@ -643,19 +640,10 @@ export default function EvidenceTab() {
                 </select>
               </div>
               <div>
-                <label style={labelStyle}>CENA</label>
-                <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.5rem" }}>
-                  <button onClick={() => setPriceMode("per_ticket")} style={{ flex: 1, padding: "8px 16px", fontSize: 12, fontWeight: 600, background: priceMode === "per_ticket" ? "#1a1a1a" : "transparent", border: "1px solid #2a2a2a", borderRadius: 8, color: priceMode === "per_ticket" ? "#fff" : "#525252", cursor: "pointer" }}>
-                    Na lístek
-                  </button>
-                  <button onClick={() => setPriceMode("total")} style={{ flex: 1, padding: "8px 16px", fontSize: 12, fontWeight: 600, background: priceMode === "total" ? "#1a1a1a" : "transparent", border: "1px solid #2a2a2a", borderRadius: 8, color: priceMode === "total" ? "#fff" : "#525252", cursor: "pointer" }}>
-                    Celkem
-                  </button>
-                </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
                   <div>
-                    <label style={labelStyle}>{priceMode === "per_ticket" ? "CENA NA LÍSTEK *" : "CENA CELKEM *"}</label>
-                    <input type="text" value={priceMode === "per_ticket" ? buyPrice : totalPrice} onChange={e => priceMode === "per_ticket" ? setBuyPrice(e.target.value) : setTotalPrice(e.target.value)} style={inputStyle} />
+                    <label style={labelStyle}>CELKOVÁ CENA *</label>
+                    <input type="text" value={totalPrice} onChange={e => setTotalPrice(e.target.value)} style={inputStyle} />
                   </div>
                   <div>
                     <label style={labelStyle}>POČET LÍSTKŮ *</label>
