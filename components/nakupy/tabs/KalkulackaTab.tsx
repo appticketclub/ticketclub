@@ -160,8 +160,8 @@ export default function KalkulackaTab() {
             {[
               { label: "Nákupní cena / ks", value: `${buyPrice.toLocaleString("cs-CZ")} ${currency}`, color: "#c0c0c0" },
               { label: "Prodejní cena / ks", value: `${sellPrice.toLocaleString("cs-CZ")} ${currency}`, color: "#c0c0c0" },
-              { label: "Celkové náklady", value: `-${totalCost.toLocaleString("cs-CZ")} ${currency}`, color: "#f87171" },
-              { label: "Celkový příjem", value: `+${totalRevenue.toLocaleString("cs-CZ")} ${currency}`, color: "#34d399" },
+              { label: "Náklady celkem", value: `-${totalCost.toLocaleString("cs-CZ")} ${currency}`, color: "#f87171" },
+              { label: "Příjem celkem", value: `+${totalRevenue.toLocaleString("cs-CZ")} ${currency}`, color: "#34d399" },
               { label: `Poplatky (${feePercent}%)`, value: `-${Math.round(fees).toLocaleString("cs-CZ")} ${currency}`, color: "#fbbf24" },
             ].map((row, i, arr) => (
               <div key={row.label} style={{
