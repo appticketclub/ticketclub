@@ -419,16 +419,21 @@ function EditSaleModal({ sale, onClose, onSave }: { sale: Sale; onClose: () => v
     const newSellPrice = parseFloat(sellPrice.replace(",", ".")) || 0;
     const newQty = parseInt(quantitySold) || 1;
     const newFees = parseFloat(fees.replace(",", ".")) || 0;
+    const newBuyPricePerTicket = parseFloat(buyPrice.replace(",", ".")) || 0;
 
-    // Calculate profit difference for capital update
+    // Calculate changes
     const oldRevenue = sale.sell_price * sale.quantity_sold;
     const oldCost = (purchase?.buy_price ?? 0) * sale.quantity_sold;
-    const oldProfit = oldRevenue - (sale.fees ?? 0) - oldCost;
-
+    
     const newRevenue = newSellPrice * newQty;
-    const newBuyCost = (parseFloat(buyPrice.replace(",", ".")) || 0) * newQty;
-    const newProfit = newRevenue - newFees - newBuyCost;
-    const profitDiff = newProfit - oldProfit;
+    const newCost = newBuyPricePerTicket * newQty;
+
+    // Total change in capital = (newRevenue - oldRevenue) - (newCost - oldCost)
+    // Because:
+    // - We originally subtracted oldCost when we made the purchase
+    // - We originally added oldRevenue when we made the sale
+    // - Now we want to adjust to subtract newCost and add newRevenue
+    const capitalChange = (newRevenue - oldRevenue) - (newCost - oldCost);
 
     // Update sale
     const { error: saleErr } = await supabase.from("sales").update({
@@ -454,7 +459,7 @@ function EditSaleModal({ sale, onClose, onSave }: { sale: Sale; onClose: () => v
         exchange: exchange === "Jiné" ? (customExchange || "Jiné") : (exchange || null),
         ticket_type_custom: ticketType || null,
         account_ref: accountRef || null,
-        buy_price: parseFloat(buyPrice.replace(",", ".")) || 0,
+        buy_price: newBuyPricePerTicket,
         notes: purchaseNotes.trim() || null,
         delivered,
         paid_out: paidOut,
@@ -463,14 +468,14 @@ function EditSaleModal({ sale, onClose, onSave }: { sale: Sale; onClose: () => v
     }
 
     // Update capital
-    if (profitDiff !== 0) {
+    if (capitalChange !== 0) {
       const { data: profile } = await supabase.from("profiles").select("capital").eq("id", user.id).single();
       if (profile) {
-        const newCapital = (profile.capital ?? 0) + profitDiff;
+        const newCapital = (profile.capital ?? 0) + capitalChange;
         await supabase.from("profiles").update({ capital: newCapital }).eq("id", user.id);
         await supabase.from("capital_history").insert({
           user_id: user.id,
-          amount: profitDiff,
+          amount: capitalChange,
           type: "sale_edit",
           description: `Úprava prodeje: ${eventName}`,
           balance_after: newCapital,
