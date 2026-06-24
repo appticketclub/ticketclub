@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
           continue;
         }
 
-        // If sell price exists — insert sale
+        // If sell price exists — insert sale and banner
         if (sellPriceTotal > 0 && purchase) {
           const sellPricePerTicket = sellPriceTotal / quantity;
           const { error: saleError } = await supabase.from("sales").insert({
@@ -101,6 +101,24 @@ export async function POST(request: NextRequest) {
           if (saleError) {
             errors.push(`Řádek ${i + 2}: ${saleError.message}`);
           }
+          
+          // Generate banner
+          const profit = sellPriceTotal - buyPriceTotal; 
+          const roi = buyPriceTotal > 0 ? (profit / buyPriceTotal) * 100 : 0; 
+ 
+          await supabase.from("banners").insert({ 
+            user_id: user.id, 
+            purchase_id: purchase.id, 
+            event_name: eventName, 
+            buy_price: buyPriceTotal, 
+            sell_price: sellPriceTotal, 
+            quantity: quantity, 
+            fees: 0, 
+            profit: profit, 
+            roi: roi, 
+            currency: "EUR", 
+            platform: exchange ?? null, 
+          }); 
         }
 
         imported++;
