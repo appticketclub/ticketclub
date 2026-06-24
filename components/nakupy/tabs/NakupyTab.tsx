@@ -47,7 +47,7 @@ const statusColors: Record<string, { bg: string; color: string; label: string }>
   cancelled:{ bg: "#2a0a0a", color: "#f87171", label: "Zrušeno" },
 };
 
-function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Account[]; onClose: () => void; onSave: () => void }) {
+export function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Account[]; onClose: () => void; onSave: () => void }) {
   const [eventName, setEventName] = useState("");
   const [city, setCity] = useState("");
   const [sector, setSector] = useState("");

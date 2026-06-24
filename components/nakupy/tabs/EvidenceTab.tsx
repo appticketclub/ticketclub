@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { EXCHANGES } from "@/lib/constants/exchanges";
 import { useCurrency } from "@/lib/context/CurrencyContext";
+import { AddPurchaseModal } from "./NakupyTab";
 
 function isThisMonth(dateStr: string | null): boolean {
   if (!dateStr) return false;
@@ -60,7 +61,7 @@ export default function EvidenceTab() {
   const [rows, setRows] = useState<EvidenceRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [accounts, setAccounts] = useState<any[]>([]);
-  const [showModal, setShowModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
   const [showImport, setShowImport] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<{ success?: number; error?: string; errors?: string[] } | null>(null);
@@ -438,279 +439,6 @@ export default function EvidenceTab() {
     );
   }
 
-  function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: any[]; onClose: () => void; onSave: () => void }) {
-    const [eventName, setEventName] = useState("");
-    const [city, setCity] = useState("");
-    const [sector, setSector] = useState("");
-    const today = new Date().toISOString().split("T")[0];
-    const [eventDate, setEventDate] = useState(today);
-    const [eventActualDate, setEventActualDate] = useState("");
-    const [accountRef, setAccountRef] = useState("");
-    const [totalPrice, setTotalPrice] = useState("");
-    const [quantity, setQuantity] = useState("1");
-    const [exchange, setExchange] = useState("");
-    const [customExchange, setCustomExchange] = useState("");
-    const [ticketType, setTicketType] = useState("");
-    const [customTicketType, setCustomTicketType] = useState("");
-    const [notes, setNotes] = useState("");
-    const [delivered, setDelivered] = useState(false);
-    const [paidOut, setPaidOut] = useState(false);
-    const [saving, setSaving] = useState(false);
-    const [error, setError] = useState("");
-    const [aiLoading, setAiLoading] = useState(false);
-    const [aiError, setAiError] = useState("");
-
-    async function handleAiImport(e: React.ChangeEvent<HTMLInputElement>) {
-      const file = e.target.files?.[0];
-      if (!file) return;
-      setAiLoading(true);
-      setAiError("");
-      try {
-        const base64 = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve((reader.result as string).split(",")[1]);
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        });
-        const res = await fetch("/api/ai/import-purchase", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ imageBase64: base64, mimeType: file.type }),
-        });
-        const result = await res.json();
-        if (!result.success) throw new Error(result.error);
-        const d = result.data;
-        if (d.event_name) setEventName(d.event_name);
-        if (d.city) setCity(d.city);
-        if (d.buy_price) setTotalPrice(String(d.buy_price));
-        if (d.total_price) setTotalPrice(String(d.total_price));
-        if (d.quantity) setQuantity(String(d.quantity));
-        if (d.event_date) setEventDate(d.event_date);
-        if (d.event_actual_date) setEventActualDate(d.event_actual_date);
-        if (d.ticket_type) setTicketType(d.ticket_type);
-        if (d.sector) setSector(d.sector);
-      } catch (err: any) {
-        setAiError(`AI chyba: ${err?.message ?? "Import selhal"}`);
-      }
-      setAiLoading(false);
-      e.target.value = "";
-    }
-
-    const qtyNum = parseInt(quantity) || 1;
-    const totalCost = parseFloat(totalPrice.replace(",", ".")) || 0;
-    const priceNum = totalCost / qtyNum;
-
-    async function handleSave() {
-      if (!eventName.trim()) return setError("Název akce je povinný");
-      if (priceNum <= 0) return setError("Zadejte platnou cenu");
-      setSaving(true);
-      setError("");
-      const resolvedExchange = exchange === "Jiné" ? (customExchange.trim() || "Jiné") : exchange;
-      const resolvedTicketType = ticketType === "Jiné" ? (customTicketType.trim() || "Jiné") : ticketType;
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      const { error: err } = await supabase.from("purchases").insert({
-        user_id: user.id,
-        event_name: eventName.trim(),
-        city: city.trim() || null,
-        event_date: eventDate || null,
-        event_actual_date: eventActualDate || null,
-        venue: sector.trim() || null,
-        exchange: resolvedExchange || null,
-        account_ref: accountRef || null,
-        buy_price: priceNum,
-        quantity: qtyNum,
-        ticket_type_custom: resolvedTicketType || null,
-        notes: notes.trim() || null,
-        delivered,
-        paid_out: paidOut,
-        status: "active",
-      });
-      if (err) {
-        setError(err.message);
-        setSaving(false);
-        return;
-      }
-      onSave();
-      setSaving(false);
-    }
-
-    const inputStyle: React.CSSProperties = {
-      width: "100%", padding: "0.75rem 1rem",
-      background: "#0a0a0a", border: "1px solid #2a2a2a",
-      borderRadius: 10, color: "#fff", fontSize: 14,
-      outline: "none", boxSizing: "border-box",
-    };
-    const labelStyle = {
-      fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252",
-      display: "block", marginBottom: "0.4rem",
-    };
-
-    return (
-      <>
-        <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 100, backdropFilter: "blur(4px)" }} />
-        <div style={{
-          position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
-          width: "100%", maxWidth: 520, maxHeight: "90vh",
-          background: "#111111", border: "1px solid #2a2a2a",
-          borderRadius: 20, zIndex: 101, overflow: "hidden", display: "flex", flexDirection: "column",
-        }}>
-          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)" }} />
-          <div style={{
-            padding: "1.5rem 2rem 1rem", borderBottom: "1px solid #1a1a1a", flexShrink: 0, background: "#111111",
-          }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Přidat nákup</h2>
-              <button onClick={onClose} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button>
-            </div>
-          </div>
-          <div style={{ overflowY: "auto", flex: 1, padding: "1.25rem 2rem" }}>
-            {error && <div style={{ marginBottom: "1rem", padding: "10px 14px", borderRadius: 8, background: "#2a0a0a", border: "1px solid #7f1d1d", color: "#fca5a5", fontSize: 13 }}>{error}</div>}
-            
-            {/* AI Import Banner */}
-            <div style={{
-              background: "linear-gradient(135deg, #0f0a1f, #0a1520)",
-              border: "1px solid rgba(139,92,246,0.3)",
-              borderRadius: 12, padding: "0.875rem 1rem",
-              marginBottom: "1.25rem",
-              position: "relative", overflow: "hidden",
-            }}>
-              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, rgba(139,92,246,0.6), transparent)" }} />
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: "#a78bfa", marginBottom: 2 }}>📸 AI import ze screenshotu</div>
-                  <div style={{ fontSize: 12, color: "#525252" }}>Nahrajte potvrzení z Viagogo, Ticketmaster...</div>
-                </div>
-                <label style={{
-                  padding: "7px 14px", fontSize: 12, fontWeight: 700,
-                  background: aiLoading ? "#2a2a2a" : "linear-gradient(135deg, #7c3aed, #5b21b6)",
-                  border: "none", borderRadius: 8, color: "#fff",
-                  cursor: aiLoading ? "default" : "pointer",
-                  whiteSpace: "nowrap" as const,
-                }}>
-                  {aiLoading ? "⏳ Analyzuji..." : "📤 Nahrát"}
-                  <input type="file" accept="image/*" onChange={handleAiImport} style={{ display: "none" }} disabled={aiLoading} />
-                </label>
-              </div>
-              {aiError && <div style={{ marginTop: 8, fontSize: 12, color: "#f87171" }}>{aiError}</div>}
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              <div>
-                <label style={labelStyle}>NÁZEV AKCE *</label>
-                <input type="text" value={eventName} onChange={e => setEventName(e.target.value)} style={inputStyle} />
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
-                <div>
-                  <label style={labelStyle}>MĚSTO</label>
-                  <input type="text" placeholder="Praha" value={city} onChange={e => setCity(e.target.value)} style={inputStyle} />
-                </div>
-                <div>
-                  <label style={labelStyle}>SEKTOR / SEDADLO</label>
-                  <input type="text" placeholder="Sektor A" value={sector} onChange={e => setSector(e.target.value)} style={inputStyle} />
-                </div>
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
-                <div>
-                  <label style={labelStyle}>DATUM NÁKUPU</label>
-                  <input type="date" value={eventDate} onChange={e => setEventDate(e.target.value)} style={{ ...inputStyle, colorScheme: "dark" }} />
-                </div>
-                <div>
-                  <label style={labelStyle}>DATUM AKCE</label>
-                  <input type="date" value={eventActualDate} onChange={e => setEventActualDate(e.target.value)} style={{ ...inputStyle, colorScheme: "dark" }} />
-                </div>
-              </div>
-              <div>
-                <label style={labelStyle}>BURZA</label>
-                <select value={exchange} onChange={e => { setExchange(e.target.value); setCustomExchange(""); }} style={{ ...inputStyle, cursor: "pointer" }}>
-                  <option value="">— Vyberte —</option>
-                  {EXCHANGES.map(e => <option key={e} value={e}>{e}</option>)}
-                  <option value="Jiné">Jiné</option>
-                </select>
-                {exchange === "Jiné" && (
-                  <input type="text" placeholder="Zadejte burzu" value={customExchange} onChange={e => setCustomExchange(e.target.value)} style={{ ...inputStyle, marginTop: "0.5rem" }} />
-                )}
-              </div>
-              <div>
-                <label style={labelStyle}>NÁKUPNÍ ÚČET</label>
-                <select value={accountRef} onChange={e => setAccountRef(e.target.value)} style={{ ...inputStyle, cursor: "pointer" }}>
-                  <option value="">— Vyberte účet —</option>
-                  {accounts.map(a => <option key={a.id} value={a.name}>{a.name}</option>)}
-                </select>
-              </div>
-              <div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
-                  <div>
-                    <label style={labelStyle}>CELKOVÁ CENA *</label>
-                    <input type="text" value={totalPrice} onChange={e => setTotalPrice(e.target.value)} style={inputStyle} />
-                  </div>
-                  <div>
-                    <label style={labelStyle}>POČET LÍSTKŮ *</label>
-                    <input type="number" min="1" value={quantity} onChange={e => setQuantity(e.target.value)} style={inputStyle} />
-                  </div>
-                </div>
-              </div>
-              <div>
-                <label style={labelStyle}>DRUH LÍSTKU</label>
-                <select value={ticketType} onChange={e => { setTicketType(e.target.value); setCustomTicketType(""); }} style={{ ...inputStyle, cursor: "pointer" }}>
-                  <option value="">— Vyberte —</option>
-                  <option value="Mobile Transfer">Mobile Transfer</option>
-                  <option value="E-Ticket">E-Ticket</option>
-                  <option value="Jiné">Jiné</option>
-                </select>
-                {ticketType === "Jiné" && (
-                  <input type="text" placeholder="Zadejte typ" value={customTicketType} onChange={e => setCustomTicketType(e.target.value)} style={{ ...inputStyle, marginTop: "0.5rem" }} />
-                )}
-              </div>
-              <div>
-                <label style={labelStyle}>POZNÁMKY</label>
-                <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2} style={{ ...inputStyle, resize: "vertical" }} />
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
-                <div style={{ background: "#0a0a0a", border: "1px solid #2a2a2a", borderRadius: 10, padding: "0.75rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer" }}
-                  onClick={() => setDelivered(!delivered)}
-                >
-                  <div>
-                    <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 2 }}>DORUČENO</div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: delivered ? "#34d399" : "#3a3a3a" }}>{delivered ? "ANO" : "NIE"}</div>
-                  </div>
-                  <div style={{ width: 36, height: 20, borderRadius: 10, background: delivered ? "#34d399" : "#2a2a2a", position: "relative", transition: "background 0.2s" }}>
-                    <div style={{ position: "absolute", top: 2, left: delivered ? 18 : 2, width: 16, height: 16, borderRadius: "50%", background: "#fff", transition: "left 0.2s" }} />
-                  </div>
-                </div>
-                <div style={{ background: "#0a0a0a", border: "1px solid #2a2a2a", borderRadius: 10, padding: "0.75rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer" }}
-                  onClick={() => setPaidOut(!paidOut)}
-                >
-                  <div>
-                    <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 2 }}>VYPLACENO</div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: paidOut ? "#34d399" : "#3a3a3a" }}>{paidOut ? "ANO" : "NIE"}</div>
-                  </div>
-                  <div style={{ width: 36, height: 20, borderRadius: 10, background: paidOut ? "#34d399" : "#2a2a2a", position: "relative", transition: "background 0.2s" }}>
-                    <div style={{ position: "absolute", top: 2, left: paidOut ? 18 : 2, width: 16, height: 16, borderRadius: "50%", background: "#fff", transition: "left 0.2s" }} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div style={{ padding: "1rem 2rem", borderTop: "1px solid #1a1a1a", flexShrink: 0, display: "flex", gap: "0.75rem" }}>
-            <button onClick={onClose} style={{ flex: 1, padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#525252", cursor: "pointer", fontSize: 14 }}>
-              Zrušit
-            </button>
-            <button onClick={handleSave} disabled={saving} style={{
-              flex: 2, padding: "0.8rem",
-              background: saving ? "#2a2a2a" : "linear-gradient(135deg, #ffffff, #c0c0c0)",
-              border: "none", borderRadius: 10, color: "#000", fontWeight: 700, fontSize: 14,
-              cursor: saving ? "default" : "pointer",
-            }}>
-              {saving ? "UKLÁDÁM..." : "ULOŽIT"}
-            </button>
-          </div>
-        </div>
-      </>
-    );
-  }
-
   if (loading) return <div style={{ color: "#525252", fontSize: 14 }}>Načítání...</div>;
 
   return (
@@ -770,7 +498,7 @@ export default function EvidenceTab() {
             ⬆ Import Excel
           </button>
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => setShowAddModal(true)}
             style={{
               padding: "0.65rem 1.25rem",
               background: "linear-gradient(135deg, #ffffff, #c0c0c0)",
@@ -1118,11 +846,11 @@ export default function EvidenceTab() {
       )}
 
       {/* Add Purchase Modal */}
-      {showModal && (
+      {showAddModal && (
         <AddPurchaseModal
           accounts={accounts}
-          onClose={() => setShowModal(false)}
-          onSave={() => { setShowModal(false); loadData(); }}
+          onClose={() => setShowAddModal(false)}
+          onSave={() => { setShowAddModal(false); loadData(); }}
         />
       )}
     </div>
