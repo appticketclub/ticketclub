@@ -15,17 +15,19 @@ const PLATFORMS = [
 
 export default function KalkulackaTab() {
   const { currency, format } = useCurrency();
-  const [buyPrice, setBuyPrice] = useState(100);
-  const [sellPrice, setSellPrice] = useState(200);
-  const [quantity, setQuantity] = useState(2);
+  const [buyPrice, setBuyPrice] = useState("");
+  const [sellPrice, setSellPrice] = useState("");
+  const [quantity, setQuantity] = useState(1);
   const [platformIdx, setPlatformIdx] = useState(0);
   const [customFee, setCustomFee] = useState(0);
 
   const platform = PLATFORMS[platformIdx];
   const feePercent = platform.name === "Vlastní" ? customFee : platform.fee;
 
-  const totalCost = buyPrice * quantity;
-  const totalRevenue = sellPrice * quantity;
+  const buyPriceNum = Number(buyPrice) || 0;
+  const sellPriceNum = Number(sellPrice) || 0;
+  const totalCost = buyPriceNum * quantity;
+  const totalRevenue = sellPriceNum * quantity;
   const fees = totalRevenue * (feePercent / 100);
   const netProfit = totalRevenue - fees - totalCost;
   const roi = totalCost > 0 ? (netProfit / totalCost) * 100 : 0;
@@ -62,11 +64,11 @@ export default function KalkulackaTab() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
               <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252" }}>NÁKUPNÍ CENA</span>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <input type="number" value={buyPrice} onChange={e => setBuyPrice(Number(e.target.value))} style={inputStyle} min={1} />
+                <input type="number" value={buyPrice} onChange={e => setBuyPrice(e.target.value)} style={inputStyle} min={1} />
                 <span style={{ fontSize: 13, color: "#c0c0c0", fontWeight: 600 }}>{currency}</span>
               </div>
             </div>
-            <input type="range" min={1} max={2000} step={1} value={buyPrice} onChange={e => setBuyPrice(Number(e.target.value))} style={sliderStyle} />
+            <input type="range" min={1} max={2000} step={1} value={buyPriceNum} onChange={e => setBuyPrice(String(e.target.value))} style={sliderStyle} />
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#3a3a3a", marginTop: 4 }}>
               <span>1</span><span>2 000 {currency}</span>
             </div>
@@ -77,11 +79,11 @@ export default function KalkulackaTab() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
               <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252" }}>PRODEJNÍ CENA</span>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <input type="number" value={sellPrice} onChange={e => setSellPrice(Number(e.target.value))} style={inputStyle} min={1} />
+                <input type="number" value={sellPrice} onChange={e => setSellPrice(e.target.value)} style={inputStyle} min={1} />
                 <span style={{ fontSize: 13, color: "#c0c0c0", fontWeight: 600 }}>{currency}</span>
               </div>
             </div>
-            <input type="range" min={1} max={5000} step={1} value={sellPrice} onChange={e => setSellPrice(Number(e.target.value))} style={sliderStyle} />
+            <input type="range" min={1} max={5000} step={1} value={sellPriceNum} onChange={e => setSellPrice(String(e.target.value))} style={sliderStyle} />
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#3a3a3a", marginTop: 4 }}>
               <span>1</span><span>5 000 {currency}</span>
             </div>
@@ -158,10 +160,10 @@ export default function KalkulackaTab() {
           {/* Detail breakdown */}
           <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.25rem 1.5rem" }}>
             {[
-              { label: "Nákupní cena / ks", value: `${buyPrice.toLocaleString("cs-CZ")} ${currency}`, color: "#c0c0c0" },
-              { label: "Prodejní cena / ks", value: `${sellPrice.toLocaleString("cs-CZ")} ${currency}`, color: "#c0c0c0" },
+              { label: "Nákupní cena / ks", value: `${buyPriceNum.toLocaleString("cs-CZ")} ${currency}`, color: "#c0c0c0" },
+              { label: "Prodejní cena / ks", value: `${sellPriceNum.toLocaleString("cs-CZ")} ${currency}`, color: "#c0c0c0" },
               { label: "Náklady celkem", value: `-${totalCost.toLocaleString("cs-CZ")} ${currency}`, color: "#f87171" },
-              { label: "Příjem celkem", value: `+${totalRevenue.toLocaleString("cs-CZ")} ${currency}`, color: "#34d399" },
+              { label: "Příjem celkem", value: `+${totalRevenue.toLocaleString("cs-CZ")} ${currency}`, color: "#2dd4bf" },
               { label: `Poplatky (${feePercent}%)`, value: `-${Math.round(fees).toLocaleString("cs-CZ")} ${currency}`, color: "#fbbf24" },
             ].map((row, i, arr) => (
               <div key={row.label} style={{
