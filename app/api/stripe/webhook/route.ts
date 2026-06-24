@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
           .from("launcher_tokens")
           .select("id, is_active")
           .eq("user_id", userId)
-          .single();
+          .maybeSingle();
 
         if (existingToken) {
           await supabase.from("launcher_tokens")
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
           .from("extension_licenses")
           .select("id")
           .eq("user_id", userId)
-          .single();
+          .maybeSingle();
 
         if (existingLicense) {
           await supabase.from("extension_licenses")
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
           .from("launcher_tokens")
           .select("id, is_active")
           .eq("user_id", userId)
-          .single();
+          .maybeSingle();
 
         if (existingToken) {
           await supabase.from("launcher_tokens")
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
           .from("extension_licenses")
           .select("id")
           .eq("user_id", userId)
-          .single();
+          .maybeSingle();
 
         if (existingLicense) {
           await supabase.from("extension_licenses")
