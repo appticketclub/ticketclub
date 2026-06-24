@@ -212,16 +212,51 @@ export default function EvidenceTab() {
       if (purchaseFields.includes(field)) {
         await supabase.from("purchases").update({ [field]: newValue || null, updated_at: new Date().toISOString() }).eq("id", rowId);
       } else if (saleFields.includes(field)) {
-        const row = rows.find(r => r.id === rowId);
-        if (row) {
-          const supabase2 = createClient();
-          const { data: sales } = await supabase2.from("sales").select("id").eq("purchase_id", rowId).limit(1);
-          if (sales?.[0]) {
-            const updateData: any = {};
-            if (field === "sell_price_total") updateData.sell_price = parseFloat(val.replace(",", ".")) || 0;
-            if (field === "sold_at") updateData.sold_at = val ? new Date(val).toISOString() : null;
-            if (field === "platform") updateData.platform = val || null;
-            await supabase2.from("sales").update(updateData).eq("id", sales[0].id);
+        if (field === "sell_price_total") {
+          const newSellTotal = parseFloat(val.replace(",", ".")) || 0;
+          const row = rows.find(r => r.id === rowId);
+          if (!row) {
+            setEditing(false);
+            return;
+          }
+
+          // Check if sale exists
+          const { data: existingSales } = await supabase
+            .from("sales")
+            .select("id, quantity_sold")
+            .eq("purchase_id", rowId);
+
+          if (existingSales && existingSales.length > 0) {
+            const sale = existingSales[0];
+            // Save sell_price as per ticket = total / quantity_sold
+            const newSellPerTicket = newSellTotal / (sale.quantity_sold || row.quantity);
+            await supabase.from("sales").update({
+              sell_price: newSellPerTicket,
+              updated_at: new Date().toISOString(),
+            }).eq("id", sale.id);
+          }
+
+          // Update row in state immediately
+          const buyTotal = row.buy_price * row.quantity;
+          const newProfit = newSellTotal - buyTotal;
+          const newRoi = buyTotal > 0 ? (newProfit / buyTotal) * 100 : 0;
+
+          setRows(prev => prev.map(r => r.id === rowId ? {
+            ...r,
+            sell_price_total: newSellTotal, // exact value user typed
+            profit: newProfit,
+            roi: newRoi,
+          } : r));
+        } else {
+          const row = rows.find(r => r.id === rowId);
+          if (row) {
+            const { data: sales } = await supabase.from("sales").select("id").eq("purchase_id", rowId).limit(1);
+            if (sales?.[0]) {
+              const updateData: any = {};
+              if (field === "sold_at") updateData.sold_at = val ? new Date(val).toISOString() : null;
+              if (field === "platform") updateData.platform = val || null;
+              await supabase.from("sales").update(updateData).eq("id", sales[0].id);
+            }
           }
         }
       }
