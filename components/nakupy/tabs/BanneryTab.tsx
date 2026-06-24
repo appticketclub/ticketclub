@@ -36,7 +36,7 @@ function generateTicketSVG(data: {
     </defs> 
     <path d="M20,0 L680,0 Q700,0 700,20 L700,200 Q700,220 680,220 L20,220 Q0,220 0,200 L0,20 Q0,0 20,0 Z" fill="#0d0d0d" stroke="#D4AF37" stroke-width="2"/> 
 
-    <text x="28" y="30" font-size="10" font-weight="700" fill="#D4AF37" letter-spacing="2" font-family="Montserrat, monospace">TICKETCLUB</text> 
+    <image href="/logo.png" x="28" y="12" width="120" height="28" preserveAspectRatio="xMinYMid meet"/> 
     <text x="28" y="52" font-size="18" font-weight="900" fill="#ffffff" font-family="Montserrat, monospace">${data.event_name.substring(0, 35)}</text> 
     <text x="28" y="68" font-size="10" fill="#525252" font-family="Montserrat, monospace">UZAVŘENÝ FLIP</text> 
 
@@ -63,7 +63,7 @@ function generateTicketSVG(data: {
     <text x="28" y="197" font-size="14" font-weight="700" fill="${color}" font-family="Montserrat, monospace">${isProfit ? "+" : ""}${data.roi.toFixed(1)}%</text> 
 
     <line x1="28" y1="205" x2="672" y2="205" stroke="#2a2a2a" stroke-width="0.5"/> 
-    <text x="28" y="216" font-size="9" fill="#3a3a3a" font-family="Montserrat, monospace">ticketclub.vip</text> 
+    <text x="28" y="216" font-size="10" font-weight="700" fill="#D4AF37" font-family="Montserrat, monospace" letter-spacing="1">ticketclub.vip</text> 
   </svg>`; 
 }
 
