@@ -205,8 +205,8 @@ export default function KalendarTab() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)" }}>
           {cells.map((day, i) => {
             const dayEvents = day ? getEventsForDay(day) : [];
-            const purchases = dayEvents.filter(e => e.type === "purchase");
-            const sales = dayEvents.filter(e => e.type === "sale");
+            const dayPurchases = dayEvents.filter(e => e.type === "purchase");
+            const daySales = dayEvents.filter(e => e.type === "sale");
             const isCurrentDay = day ? isToday(day) : false;
 
             return (
