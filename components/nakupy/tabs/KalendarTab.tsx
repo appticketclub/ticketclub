@@ -22,6 +22,7 @@ const MONTHS = ["Leden","Únor","Březen","Duben","Květen","Červen","Červenec
 export default function KalendarTab() {
   const { format } = useCurrency();
   const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [purchases, setPurchases] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [hoveredDay, setHoveredDay] = useState<number | null>(null);
@@ -72,14 +73,16 @@ export default function KalendarTab() {
       }
     }
 
-    const [{ data: purchases }, { data: sales }] = await Promise.all([
-      supabase.from("purchases").select("id, event_name, event_date, buy_price, quantity, currency").eq("user_id", user.id).limit(500),
+    const [{ data: purchasesData }, { data: sales }] = await Promise.all([
+      supabase.from("purchases").select("id, event_name, event_date, buy_price, quantity, currency, event_actual_date, status, quantity_remaining").eq("user_id", user.id).not("event_actual_date", "is", null).limit(500),
       supabase.from("sales").select("id, sell_price, quantity_sold, currency, platform, sold_at, fees, purchases(event_name, buy_price)").eq("user_id", user.id),
     ]);
 
+    setPurchases(purchasesData ?? []);
+
     const allEvents: CalendarEvent[] = [];
 
-    purchases?.forEach(p => {
+    purchasesData?.forEach(p => {
       if (p.event_date) allEvents.push({
         id: p.id,
         date: p.event_date,
@@ -119,6 +122,13 @@ export default function KalendarTab() {
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
+
+  const unsoldDates = new Set(
+    (purchases ?? [])
+      .filter(p => p.status === "active" || p.status === "partial")
+      .filter(p => p.event_actual_date)
+      .map(p => p.event_actual_date.split("T")[0])
+  );
 
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -221,16 +231,32 @@ export default function KalendarTab() {
               >
                 {day && (
                   <>
-                    <div style={{
-                      fontSize: 13, fontWeight: isCurrentDay ? 700 : 400,
-                      color: isCurrentDay ? "#fff" : day ? "#525252" : "#2a2a2a",
-                      width: 26, height: 26,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      borderRadius: "50%",
-                      background: isCurrentDay ? "linear-gradient(135deg, #ffffff, #a0a0a0)" : "transparent",
-                      marginBottom: 6,
-                    }}>
-                      {day}
+                    <div style={{ position: "relative", display: "inline-block" }}>
+                      <div style={{
+                        fontSize: 13, fontWeight: isCurrentDay ? 700 : 400,
+                        color: isCurrentDay ? "#fff" : day ? "#525252" : "#2a2a2a",
+                        width: 26, height: 26,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        borderRadius: "50%",
+                        background: isCurrentDay ? "linear-gradient(135deg, #ffffff, #a0a0a0)" : "transparent",
+                        marginBottom: 6,
+                      }}>
+                        {day}
+                      </div>
+                      {(() => {
+                        const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+                        const hasUnsold = unsoldDates.has(dateStr);
+                        return hasUnsold && (
+                          <span style={{
+                            position: "absolute",
+                            top: -4, right: -6,
+                            fontSize: 10,
+                            fontWeight: 900,
+                            color: "#f87171",
+                            lineHeight: 1,
+                          }}>!</span>
+                        );
+                      })()}
                     </div>
 
                     {/* Event dots */}
@@ -326,6 +352,11 @@ export default function KalendarTab() {
             </div>
           );
         })()}
+      </div>
+      
+      <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: "1rem", fontSize: 12, color: "#525252" }}> 
+        <span style={{ color: "#f87171", fontWeight: 900, fontSize: 14 }}>!</span> 
+        <span>Datum koncertu s neprodanými lístky</span> 
       </div>
     </div>
   );
