@@ -51,7 +51,7 @@ export default function KalendarTab() {
     if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
     hideTimeoutRef.current = setTimeout(() => {
       setHoveredDay(null);
-    }, 2000);
+    }, 5000);
   }
 
   function cancelHideTimer() {
@@ -119,6 +119,24 @@ export default function KalendarTab() {
   }
 
   useEffect(() => { loadEvents(); }, []);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      // Don't close if clicking on the popup or on a day cell
+      const isPopup = target.closest("#calendar-popup");
+      const isDayCell = target.closest("#calendar-grid") && !target.closest("#calendar-popup");
+      
+      if (!isPopup && !isDayCell) {
+        setHoveredDay(null);
+      } else if (isDayCell) {
+        // Do nothing, showPopup handles it
+      }
+    }
+
+    document.addEventListener("click", handleClick);
+    return () => document.removeEventListener("click", handleClick);
+  }, []);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
