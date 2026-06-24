@@ -55,10 +55,8 @@ function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Account[]; 
   const [eventDate, setEventDate] = useState(today);
   const [eventActualDate, setEventActualDate] = useState("");
   const [accountRef, setAccountRef] = useState("");
-  const [buyPrice, setBuyPrice] = useState("");
   const [totalPrice, setTotalPrice] = useState("");
   const [quantity, setQuantity] = useState("1");
-  const [priceMode, setPriceMode] = useState<"per_ticket" | "total">("per_ticket");
   const { currency, setCurrency } = useCurrency();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -72,11 +70,9 @@ function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Account[]; 
   const [delivered, setDelivered] = useState(false);
   const [paid, setPaid] = useState(false);
 
-  const priceNum = priceMode === "per_ticket"
-    ? parseFloat(buyPrice.replace(",", ".")) || 0
-    : (parseFloat(totalPrice.replace(",", ".")) || 0) / (parseInt(quantity) || 1);
   const qtyNum = parseInt(quantity) || 1;
-  const totalCost = priceNum * qtyNum;
+  const totalCost = parseFloat(totalPrice.replace(",", ".")) || 0;
+  const priceNum = totalCost / qtyNum;
 
   async function handleAiImport(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -109,7 +105,8 @@ function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Account[]; 
       const d = result.data;
       if (d.event_name) setEventName(d.event_name);
       if (d.city) setCity(d.city);
-      if (d.buy_price) setBuyPrice(String(d.buy_price));
+      if (d.buy_price) setTotalPrice(String(d.buy_price));
+      if (d.total_price) setTotalPrice(String(d.total_price));
       if (d.quantity) setQuantity(String(d.quantity));
       if (d.event_date) setEventDate(d.event_date);
       if (d.currency && ["EUR", "CZK"].includes(d.currency)) setCurrency(d.currency as "EUR" | "CZK");
@@ -381,64 +378,23 @@ function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Account[]; 
               )}
             </div>
 
-            {/* Price mode toggle */}
-            <div style={{ display: "flex", gap: "0.5rem", marginBottom: "-0.25rem" }}>
-              {[
-                { id: "per_ticket", label: "Cena za lístek" },
-                { id: "total", label: "Cena celkem" },
-              ].map(mode => (
-                <button
-                  key={mode.id}
-                  onClick={() => setPriceMode(mode.id as "per_ticket" | "total")}
-                  style={{
-                    padding: "5px 14px", fontSize: 12, fontWeight: 600,
-                    background: priceMode === mode.id ? "linear-gradient(135deg, #ffffff, #a0a0a0)" : "transparent",
-                    border: priceMode === mode.id ? "none" : "1px solid #2a2a2a",
-                    borderRadius: 8,
-                    color: priceMode === mode.id ? "#000" : "#525252",
-                    cursor: "pointer", transition: "all 0.15s",
-                  }}
-                >
-                  {mode.label}
-                </button>
-              ))}
-            </div>
-
             {/* Price inputs */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
-              {priceMode === "per_ticket" ? (
-                <div>
-                  <label style={labelStyle}>CENA ZA LÍSTEK *</label>
-                  <div style={{ position: "relative" }}>
-                    <input
-                      type="text"
-                      placeholder="0"
-                      value={buyPrice}
-                      onChange={e => setBuyPrice(e.target.value)}
-                      style={{ ...inputStyle, paddingRight: "3rem" }}
-                    />
-                    <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#525252", fontWeight: 600 }}>
-                      {currency}
-                    </span>
-                  </div>
+              <div>
+                <label style={labelStyle}>CELKOVÁ CENA *</label>
+                <div style={{ position: "relative" }}>
+                  <input
+                    type="text"
+                    placeholder="0"
+                    value={totalPrice}
+                    onChange={e => setTotalPrice(e.target.value)}
+                    style={{ ...inputStyle, paddingRight: "3rem" }}
+                  />
+                  <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#525252", fontWeight: 600 }}>
+                    {currency}
+                  </span>
                 </div>
-              ) : (
-                <div>
-                  <label style={labelStyle}>CENA CELKEM *</label>
-                  <div style={{ position: "relative" }}>
-                    <input
-                      type="text"
-                      placeholder="0"
-                      value={totalPrice}
-                      onChange={e => setTotalPrice(e.target.value)}
-                      style={{ ...inputStyle, paddingRight: "3rem" }}
-                    />
-                    <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#525252", fontWeight: 600 }}>
-                      {currency}
-                    </span>
-                  </div>
-                </div>
-              )}
+              </div>
               <div>
                 <label style={labelStyle}>POČET LÍSTKŮ *</label>
                 <input
@@ -550,7 +506,6 @@ function EditPurchaseModal({ purchase, accounts, onClose, onSave }: {
       : ""
   );
   const [accountRef, setAccountRef] = useState(purchase.account_ref ?? ""); 
-  const [buyPrice, setBuyPrice] = useState(String(purchase.buy_price)); 
   const [totalPrice, setTotalPrice] = useState(String(purchase.buy_price * purchase.quantity)); 
   const [quantity, setQuantity] = useState(String(purchase.quantity)); 
   const [ticketType, setTicketType] = useState(
@@ -565,7 +520,6 @@ function EditPurchaseModal({ purchase, accounts, onClose, onSave }: {
       ? purchase.ticket_type_custom
       : ""
   );
-  const [priceMode, setPriceMode] = useState<"per_ticket" | "total">("per_ticket"); 
   const { currency } = useCurrency(); 
   const [notes, setNotes] = useState(purchase.notes ?? ""); 
   const [delivered, setDelivered] = useState(purchase.delivered ?? false); 
@@ -573,11 +527,9 @@ function EditPurchaseModal({ purchase, accounts, onClose, onSave }: {
   const [saving, setSaving] = useState(false); 
   const [error, setError] = useState(""); 
 
-  const priceNum = priceMode === "per_ticket"
-    ? parseFloat(buyPrice.replace(",", ".")) || 0
-    : (parseFloat(totalPrice.replace(",", ".")) || 0) / (parseInt(quantity) || 1);
   const qtyNum = parseInt(quantity) || 1;
-  const totalCost = priceNum * qtyNum;
+  const totalCost = parseFloat(totalPrice.replace(",", ".")) || 0;
+  const priceNum = totalCost / qtyNum;
 
   async function handleSave() { 
     if (!eventName.trim()) return setError("Název akce je povinný."); 
@@ -737,64 +689,23 @@ function EditPurchaseModal({ purchase, accounts, onClose, onSave }: {
               )} 
             </div>
 
-            {/* Price mode toggle */}
-            <div style={{ display: "flex", gap: "0.5rem", marginBottom: "-0.25rem" }}>
-              {[
-                { id: "per_ticket", label: "Cena za lístek" },
-                { id: "total", label: "Cena celkem" },
-              ].map(mode => (
-                <button
-                  key={mode.id}
-                  onClick={() => setPriceMode(mode.id as "per_ticket" | "total")}
-                  style={{
-                    padding: "5px 14px", fontSize: 12, fontWeight: 600,
-                    background: priceMode === mode.id ? "linear-gradient(135deg, #ffffff, #a0a0a0)" : "transparent",
-                    border: priceMode === mode.id ? "none" : "1px solid #2a2a2a",
-                    borderRadius: 8,
-                    color: priceMode === mode.id ? "#000" : "#525252",
-                    cursor: "pointer", transition: "all 0.15s",
-                  }}
-                >
-                  {mode.label}
-                </button>
-              ))}
-            </div>
-
             {/* Price inputs */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
-              {priceMode === "per_ticket" ? (
-                <div>
-                  <label style={labelStyle}>CENA ZA LÍSTEK *</label>
-                  <div style={{ position: "relative" }}>
-                    <input
-                      type="text"
-                      placeholder="0"
-                      value={buyPrice}
-                      onChange={e => setBuyPrice(e.target.value)}
-                      style={{ ...inputStyle, paddingRight: "3rem" }}
-                    />
-                    <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#525252", fontWeight: 600 }}>
-                      {currency}
-                    </span>
-                  </div>
+              <div>
+                <label style={labelStyle}>CELKOVÁ CENA *</label>
+                <div style={{ position: "relative" }}>
+                  <input
+                    type="text"
+                    placeholder="0"
+                    value={totalPrice}
+                    onChange={e => setTotalPrice(e.target.value)}
+                    style={{ ...inputStyle, paddingRight: "3rem" }}
+                  />
+                  <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#525252", fontWeight: 600 }}>
+                    {currency}
+                  </span>
                 </div>
-              ) : (
-                <div>
-                  <label style={labelStyle}>CENA CELKEM *</label>
-                  <div style={{ position: "relative" }}>
-                    <input
-                      type="text"
-                      placeholder="0"
-                      value={totalPrice}
-                      onChange={e => setTotalPrice(e.target.value)}
-                      style={{ ...inputStyle, paddingRight: "3rem" }}
-                    />
-                    <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#525252", fontWeight: 600 }}>
-                      {currency}
-                    </span>
-                  </div>
-                </div>
-              )}
+              </div>
               <div>
                 <label style={labelStyle}>POČET LÍSTKŮ *</label>
                 <input

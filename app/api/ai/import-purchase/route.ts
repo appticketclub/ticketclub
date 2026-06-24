@@ -33,7 +33,7 @@ Extract the following information and return ONLY a valid JSON object with no ma
   "city": "city name", 
   "event_date": "YYYY-MM-DD format if found, otherwise null", 
   "quantity": total number of tickets as integer, 
-  "buy_price": price per single ticket as number without currency symbol, 
+  "buy_price": total price for all tickets (quantity × price per ticket) as number without currency symbol, 
   "total_price": total order amount as number without currency symbol, 
   "currency": "EUR or CZK or USD or GBP", 
   "platform": "Ticketmaster or Viagogo or StubHub etc", 
@@ -44,7 +44,7 @@ Extract the following information and return ONLY a valid JSON object with no ma
 
 IMPORTANT rules: 
 - For quantity: count total number of tickets (e.g. "6 x tickets" = 6) 
-- For buy_price: divide total by quantity to get per-ticket price (e.g. 457.80 / 6 = 76.30) 
+- For buy_price: always return TOTAL price for all tickets (quantity × price per ticket) - never return price per single ticket (e.g. 6 tickets × 76.30€ = 457.80€ total → return buy_price: 457.80)
 - For event_date: parse German dates too (e.g. "Donnerstag, 07. Mai 2026" = "2026-05-07") 
 - For sector: combine section and seat info (e.g. "Innenraum Stehplatz") 
 - If currency shows EUR/€ use "EUR" 
