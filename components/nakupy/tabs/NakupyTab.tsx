@@ -412,7 +412,7 @@ function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Account[]; 
             {totalCost > 0 ? (
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.875rem 1rem", borderRadius: 10, background: "#0a0a0a", border: "1px solid #2a2a2a" }}>
                 <span style={{ fontSize: 13, color: "#525252" }}>
-                  {priceMode === "per_ticket" ? `${priceNum.toLocaleString("cs-CZ")} ${currency} × ${qtyNum}` : `Cena za lístek: ${priceNum.toLocaleString("cs-CZ")} ${currency}`}
+                  Cena za lístek: {priceNum.toLocaleString("cs-CZ")} {currency}
                 </span>
                 <span style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff" }}>
                   {totalCost.toLocaleString("cs-CZ")} {currency}
@@ -723,7 +723,7 @@ function EditPurchaseModal({ purchase, accounts, onClose, onSave }: {
             {totalCost > 0 ? (
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.875rem 1rem", borderRadius: 10, background: "#0a0a0a", border: "1px solid #2a2a2a" }}>
                 <span style={{ fontSize: 13, color: "#525252" }}>
-                  {priceMode === "per_ticket" ? `${priceNum.toLocaleString("cs-CZ")} ${currency} × ${qtyNum}` : `Cena za lístek: ${priceNum.toLocaleString("cs-CZ")} ${currency}`}
+                  Cena za lístek: {priceNum.toLocaleString("cs-CZ")} {currency}
                 </span>
                 <span style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff" }}>
                   {totalCost.toLocaleString("cs-CZ")} {currency}
