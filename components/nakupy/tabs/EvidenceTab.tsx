@@ -212,100 +212,16 @@ export default function EvidenceTab() {
       if (purchaseFields.includes(field)) {
         await supabase.from("purchases").update({ [field]: newValue || null, updated_at: new Date().toISOString() }).eq("id", rowId);
       } else if (saleFields.includes(field)) {
-        if (field === "sell_price_total") {
-          const newSellTotal = parseFloat(val.replace(",", ".")) || 0;
-          const row = rows.find(r => r.id === rowId);
-          if (!row) {
-            setEditing(false);
-            return;
-          }
-
-          const { data: { user } } = await supabase.auth.getUser();
-          if (!user) {
-            setEditing(false);
-            return;
-          }
-
-          // Check if sale exists
-          const { data: existingSales } = await supabase
-            .from("sales")
-            .select("id, quantity_sold")
-            .eq("purchase_id", rowId);
-
-          if (existingSales && existingSales.length > 0) {
-            // Update existing sale
-            const sale = existingSales[0];
-            const newSellPerTicket = newSellTotal / (sale.quantity_sold || row.quantity);
-            await supabase.from("sales").update({
-              sell_price: newSellPerTicket,
-              updated_at: new Date().toISOString(),
-            }).eq("id", sale.id);
-          } else {
-            // Create new sale
-            const sellPricePerTicket = newSellTotal / row.quantity;
-            await supabase.from("sales").insert({
-              user_id: user.id,
-              purchase_id: rowId,
-              quantity_sold: row.quantity,
-              sell_price: sellPricePerTicket,
-              currency: row.currency,
-              sold_at: new Date().toISOString(),
-              fees: 0,
-            });
-
-            // Update purchase status to sold
-            await supabase.from("purchases").update({
-              status: "sold",
-              quantity_remaining: 0,
-              updated_at: new Date().toISOString(),
-            }).eq("id", rowId);
-
-            // Update capital
-            const { data: profile } = await supabase
-              .from("profiles")
-              .select("capital")
-              .eq("id", user.id)
-              .single();
-
-            if (profile) {
-              const newCapital = (profile.capital ?? 0) + newSellTotal;
-              await supabase.from("profiles").update({ capital: newCapital }).eq("id", user.id);
-              await supabase.from("capital_history").insert({
-                user_id: user.id,
-                amount: newSellTotal,
-                type: "sale",
-                description: `Prodej z evidence: ${row.event_name}`,
-                balance_after: newCapital,
-              });
-            }
-          }
-
-          // Update row in state immediately
-          const buyTotal = row.buy_price * row.quantity;
-          const newProfit = newSellTotal - buyTotal;
-          const newRoi = buyTotal > 0 ? (newProfit / buyTotal) * 100 : 0;
-
-          setRows(prev => prev.map(r => r.id === rowId ? {
-            ...r,
-            sell_price_total: newSellTotal,
-            profit: newProfit,
-            roi: newRoi,
-            status: "sold",
-          } : r));
-
-          setEditing(false);
-          loadData();
-          return;
-        } else {
-          const row = rows.find(r => r.id === rowId);
-          if (row) {
-            const { data: sales } = await supabase.from("sales").select("id").eq("purchase_id", rowId).limit(1);
-            if (sales?.[0]) {
-              const updateData: any = {};
-              if (field === "sold_at") updateData.sold_at = val ? new Date(val).toISOString() : null;
-              if (field === "platform") updateData.platform = val || null;
-              await supabase.from("sales").update(updateData).eq("id", sales[0].id);
-            }
+        const row = rows.find(r => r.id === rowId);
+        if (row) {
+          const supabase2 = createClient();
+          const { data: sales } = await supabase2.from("sales").select("id").eq("purchase_id", rowId).limit(1);
+          if (sales?.[0]) {
+            const updateData: any = {};
+            if (field === "sell_price_total") updateData.sell_price = parseFloat(val.replace(",", ".")) || 0;
+            if (field === "sold_at") updateData.sold_at = val ? new Date(val).toISOString() : null;
+            if (field === "platform") updateData.platform = val || null;
+            await supabase2.from("sales").update(updateData).eq("id", sales[0].id);
           }
         }
       }
