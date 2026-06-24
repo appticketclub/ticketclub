@@ -205,12 +205,15 @@ export async function POST(request: NextRequest) {
           ? new Date(sub.current_period_end * 1000).toISOString()
           : null;
 
-        // Deactivate immediately if canceled_at is set
         const isCanceled = sub.canceled_at !== null && sub.canceled_at !== undefined;
+        const isFullyCanceled = sub.status === "canceled";
 
-        if (isCanceled) {
-          console.log("❌ Cancellation detected, deactivating immediately:", userId);
+        // Check if this is a RENEWAL — previous had canceled_at but now it's null
+        const previousCanceledAt = (event.data as any).previous_attributes?.canceled_at;
+        const isRenewal = previousCanceledAt !== undefined && sub.canceled_at === null && sub.status === "active";
 
+        if (isFullyCanceled || isCanceled) {
+          // Deactivate
           await supabase.from("subscriptions").update({
             plan: "free",
             status: "canceled",
@@ -220,12 +223,57 @@ export async function POST(request: NextRequest) {
           }).eq("user_id", userId);
 
           await supabase.from("extension_licenses").delete().eq("user_id", userId);
+          await supabase.from("launcher_tokens").update({ is_active: false }).eq("user_id", userId);
+          console.log("❌ Canceled:", userId);
 
-          await supabase.from("launcher_tokens").update({
-            is_active: false,
+        } else if (isRenewal) {
+          // Reactivate
+          await supabase.from("subscriptions").update({
+            plan: "pro",
+            status: "active",
+            current_period_end: periodEnd,
+            updated_at: new Date().toISOString(),
           }).eq("user_id", userId);
 
+          // Reactivate launcher token if exists, otherwise skip
+          const { data: existingToken } = await supabase
+            .from("launcher_tokens")
+            .select("id, is_active")
+            .eq("user_id", userId)
+            .maybeSingle();
+
+          if (existingToken) {
+            await supabase.from("launcher_tokens")
+              .update({ is_active: true })
+              .eq("user_id", userId);
+            console.log("✅ Launcher token reactivated for:", userId);
+          }
+
+          // Reactivate or create extension license
+          const { data: existingLicense } = await supabase
+            .from("extension_licenses")
+            .select("id")
+            .eq("user_id", userId)
+            .maybeSingle();
+
+          if (existingLicense) {
+            await supabase.from("extension_licenses")
+              .update({ is_active: true })
+              .eq("user_id", userId);
+          } else {
+            const licenseKey = "TC-" + Array.from({length: 3}, () =>
+              Math.random().toString(36).toUpperCase().substring(2, 6)
+            ).join("-");
+            await supabase.from("extension_licenses").insert({
+              user_id: userId,
+              license_key: licenseKey,
+              is_active: true,
+            });
+          }
+          console.log("✅ Reactivated:", userId);
+
         } else {
+          // Normal update
           await supabase.from("subscriptions").update({
             status: sub.status,
             current_period_end: periodEnd,
