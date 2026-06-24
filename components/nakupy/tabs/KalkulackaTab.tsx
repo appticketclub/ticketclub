@@ -11,11 +11,7 @@ const PLATFORMS = [
   { name: "Vlastní", fee: 0 },
 ];
 
-const PRESETS = [
-  { label: "Pár lístků", qty: 2 },
-  { label: "Malá skupina", qty: 4 },
-  { label: "Velká skupina", qty: 8 },
-];
+
 
 export default function KalkulackaTab() {
   const { currency, format } = useCurrency();
@@ -64,7 +60,7 @@ export default function KalkulackaTab() {
           {/* Buy price */}
           <div style={{ marginBottom: "1.5rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-              <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252" }}>NÁKUPNÍ CENA · ZA LÍSTEK</span>
+              <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252" }}>NÁKUPNÍ CENA</span>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <input type="number" value={buyPrice} onChange={e => setBuyPrice(Number(e.target.value))} style={inputStyle} min={1} />
                 <span style={{ fontSize: 13, color: "#c0c0c0", fontWeight: 600 }}>{currency}</span>
@@ -79,7 +75,7 @@ export default function KalkulackaTab() {
           {/* Sell price */}
           <div style={{ marginBottom: "1.5rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-              <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252" }}>PRODEJNÍ CENA · ZA LÍSTEK</span>
+              <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252" }}>PRODEJNÍ CENA</span>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <input type="number" value={sellPrice} onChange={e => setSellPrice(Number(e.target.value))} style={inputStyle} min={1} />
                 <span style={{ fontSize: 13, color: "#c0c0c0", fontWeight: 600 }}>{currency}</span>
@@ -99,19 +95,7 @@ export default function KalkulackaTab() {
               <span style={{ fontSize: 24, fontWeight: 700, color: "#fff", minWidth: 40, textAlign: "center" as const }}>{quantity}</span>
               <button onClick={() => setQuantity(Math.min(50, quantity + 1))} style={{ width: 32, height: 32, borderRadius: 8, background: "#1a1a1a", border: "1px solid #2a2a2a", color: "#fff", cursor: "pointer", fontSize: 18 }}>+</button>
             </div>
-            {/* Presets */}
-            <div style={{ display: "flex", gap: 6, marginTop: "0.75rem" }}>
-              {PRESETS.map(p => (
-                <button key={p.label} onClick={() => setQuantity(p.qty)} style={{
-                  padding: "4px 10px", fontSize: 11, fontWeight: 500,
-                  background: quantity === p.qty ? "#2a2a2a" : "transparent",
-                  border: "1px solid #2a2a2a", borderRadius: 6,
-                  color: quantity === p.qty ? "#fff" : "#525252", cursor: "pointer",
-                }}>
-                  {p.label}
-                </button>
-              ))}
-            </div>
+
           </div>
 
           {/* Platform */}
