@@ -280,26 +280,8 @@ export default function EvidenceTab() {
             }
           }
 
-          // Generate banner 
-          const buyTotal = row.buy_price * row.quantity; 
-          const profit = newSellTotal - buyTotal; 
-          const roi = buyTotal > 0 ? (profit / buyTotal) * 100 : 0; 
- 
-          await supabase.from("banners").upsert({ 
-            user_id: user.id, 
-            purchase_id: rowId, 
-            event_name: row.event_name, 
-            buy_price: buyTotal, 
-            sell_price: newSellTotal, 
-            quantity: row.quantity, 
-            fees: 0, 
-            profit: profit, 
-            roi: roi, 
-            currency: row.currency, 
-            platform: row.exchange ?? null, 
-          }, { onConflict: "purchase_id" });
-
           // Update row in state immediately
+          const buyTotal = row.buy_price * row.quantity;
           const newProfit = newSellTotal - buyTotal;
           const newRoi = buyTotal > 0 ? (newProfit / buyTotal) * 100 : 0;
 
