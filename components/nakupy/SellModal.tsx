@@ -47,7 +47,11 @@ function generateTicketSVG(data: {
   const fmt = (n: number) => n.toLocaleString("cs-CZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); 
 
   return `<svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" width="700" height="220"> 
+    <defs> 
+      <style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');</style> 
+    </defs> 
     <path d="M20,0 L560,0 Q580,0 580,20 L580,85 Q565,85 565,100 Q565,115 580,115 L580,200 Q580,220 560,220 L20,220 Q0,220 0,200 L0,115 Q15,115 15,100 Q15,85 0,85 L0,20 Q0,0 20,0 Z" fill="#0d0d0d" stroke="#2a2a2a" stroke-width="1"/> 
+    <path d="M20,0 L560,0 Q580,0 580,20 L580,85 Q565,85 565,100 Q565,115 580,115 L580,200 Q580,220 560,220 L20,220 Q0,220 0,200 L0,115 Q15,115 15,100 Q15,85 0,85 L0,20 Q0,0 20,0 Z" fill="none" stroke="#D4AF37" stroke-width="2"/> 
     <path d="M20,0 L560,0" stroke="#D4AF37" stroke-width="2"/> 
     <line x1="580" y1="85" x2="700" y2="85" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="5,4"/> 
     <line x1="580" y1="115" x2="700" y2="115" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="5,4"/> 
@@ -56,48 +60,49 @@ function generateTicketSVG(data: {
     <rect x="580" y="0" width="120" height="220" fill="#0d0d0d"/> 
     <line x1="580" y1="0" x2="580" y2="84" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="5,4"/> 
     <line x1="580" y1="116" x2="580" y2="220" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="5,4"/> 
+    <rect x="582" y="2" width="116" height="216" rx="4" fill="none" stroke="#D4AF37" stroke-width="1.5"/> 
 
-    <text x="28" y="30" font-size="10" font-weight="700" fill="#D4AF37" letter-spacing="2" font-family="monospace">TICKETCLUB</text> 
-    <text x="28" y="52" font-size="18" font-weight="900" fill="#ffffff" font-family="monospace">${data.event_name.substring(0, 28)}</text> 
-    <text x="28" y="68" font-size="10" fill="#525252" font-family="monospace">UZAVŘENÝ FLIP</text> 
+    <text x="28" y="30" font-size="10" font-weight="700" fill="#D4AF37" letter-spacing="2" font-family="Montserrat, monospace">TICKETCLUB</text> 
+    <text x="28" y="52" font-size="18" font-weight="900" fill="#ffffff" font-family="Montserrat, monospace">${data.event_name.substring(0, 28)}</text> 
+    <text x="28" y="68" font-size="10" fill="#525252" font-family="Montserrat, monospace">UZAVŘENÝ FLIP</text> 
 
     <line x1="28" y1="78" x2="552" y2="78" stroke="#1a1a1a" stroke-width="0.5"/> 
 
-    <text x="28" y="95" font-size="9" fill="#525252" font-family="monospace" letter-spacing="1">POČET LÍSTKŮ</text> 
-    <text x="28" y="110" font-size="16" font-weight="700" fill="#ffffff" font-family="monospace">${data.quantity}×</text> 
+    <text x="28" y="95" font-size="9" fill="#525252" font-family="Montserrat, monospace" letter-spacing="1">POČET LÍSTKŮ</text> 
+    <text x="28" y="110" font-size="16" font-weight="700" fill="#ffffff" font-family="Montserrat, monospace">${data.quantity}×</text> 
 
-    <text x="140" y="95" font-size="9" fill="#525252" font-family="monospace" letter-spacing="1">KOUPENO</text> 
-    <text x="140" y="110" font-size="16" font-weight="700" fill="#c0c0c0" font-family="monospace">${fmt(data.buy_price * data.quantity)} ${data.currency}</text> 
+    <text x="140" y="95" font-size="9" fill="#525252" font-family="Montserrat, monospace" letter-spacing="1">KOUPENO</text> 
+    <text x="140" y="110" font-size="16" font-weight="700" fill="#c0c0c0" font-family="Montserrat, monospace">${fmt(data.buy_price * data.quantity)} ${data.currency}</text> 
 
-    <text x="320" y="95" font-size="9" fill="#525252" font-family="monospace" letter-spacing="1">NÁKUP / KS</text> 
-    <text x="320" y="110" font-size="16" font-weight="700" fill="#c0c0c0" font-family="monospace">${fmt(data.buy_price)} ${data.currency}</text> 
+    <text x="300" y="95" font-size="8" fill="#525252" font-family="Montserrat, monospace" letter-spacing="1">NÁKUP / KS</text> 
+    <text x="300" y="108" font-size="12" font-weight="700" fill="#c0c0c0" font-family="Montserrat, monospace">${fmt(data.buy_price)} ${data.currency}</text> 
 
-    <text x="320" y="130" font-size="9" fill="#525252" font-family="monospace" letter-spacing="1">PRODEJ / KS</text> 
-    <text x="320" y="145" font-size="16" font-weight="700" fill="#c0c0c0" font-family="monospace">${fmt(data.sell_price)} ${data.currency}</text> 
+    <text x="430" y="95" font-size="8" fill="#525252" font-family="Montserrat, monospace" letter-spacing="1">PRODEJ / KS</text> 
+    <text x="430" y="108" font-size="12" font-weight="700" fill="#c0c0c0" font-family="Montserrat, monospace">${fmt(data.sell_price)} ${data.currency}</text> 
 
     <line x1="28" y1="120" x2="552" y2="120" stroke="#1a1a1a" stroke-width="0.5"/> 
 
-    <text x="28" y="140" font-size="9" fill="#525252" font-family="monospace" letter-spacing="1">ZISK</text> 
-    <text x="28" y="162" font-size="32" font-weight="900" fill="${color}" font-family="monospace">${isProfit ? "+" : ""}${fmt(data.profit)} ${data.currency}</text> 
+    <text x="28" y="140" font-size="9" fill="#525252" font-family="Montserrat, monospace" letter-spacing="1">ZISK</text> 
+    <text x="28" y="162" font-size="32" font-weight="900" fill="${color}" font-family="Montserrat, monospace">${isProfit ? "+" : ""}${fmt(data.profit)} ${data.currency}</text> 
 
-    <text x="28" y="182" font-size="9" fill="#525252" font-family="monospace" letter-spacing="1">ROI</text> 
-    <text x="28" y="197" font-size="14" font-weight="700" fill="${color}" font-family="monospace">${isProfit ? "+" : ""}${data.roi.toFixed(1)}%</text> 
+    <text x="28" y="182" font-size="9" fill="#525252" font-family="Montserrat, monospace" letter-spacing="1">ROI</text> 
+    <text x="28" y="197" font-size="14" font-weight="700" fill="${color}" font-family="Montserrat, monospace">${isProfit ? "+" : ""}${data.roi.toFixed(1)}%</text> 
 
     <line x1="28" y1="205" x2="552" y2="205" stroke="#1a1a1a" stroke-width="0.5"/> 
-    <text x="28" y="216" font-size="9" fill="#3a3a3a" font-family="monospace">ticketclub.vip</text> 
+    <text x="28" y="216" font-size="9" fill="#3a3a3a" font-family="Montserrat, monospace">ticketclub.vip</text> 
 
-    <rect x="600" y="30" width="3" height="160" fill="#1a1a1a"/> 
-    <rect x="606" y="30" width="6" height="160" fill="#1a1a1a"/> 
-    <rect x="615" y="30" width="3" height="160" fill="#1a1a1a"/> 
-    <rect x="620" y="30" width="5" height="160" fill="#1a1a1a"/> 
-    <rect x="628" y="30" width="3" height="160" fill="#1a1a1a"/> 
-    <rect x="633" y="30" width="7" height="160" fill="#1a1a1a"/> 
-    <rect x="643" y="30" width="3" height="160" fill="#1a1a1a"/> 
-    <rect x="648" y="30" width="4" height="160" fill="#1a1a1a"/> 
-    <rect x="655" y="30" width="6" height="160" fill="#1a1a1a"/> 
-    <rect x="664" y="30" width="3" height="160" fill="#1a1a1a"/> 
-    <rect x="669" y="30" width="5" height="160" fill="#1a1a1a"/> 
-    <rect x="677" y="30" width="3" height="160" fill="#1a1a1a"/> 
+    <rect x="600" y="30" width="3" height="160" fill="#D4AF37" opacity="0.6"/> 
+    <rect x="606" y="30" width="6" height="160" fill="#D4AF37" opacity="0.8"/> 
+    <rect x="615" y="30" width="3" height="160" fill="#D4AF37" opacity="0.5"/> 
+    <rect x="620" y="30" width="5" height="160" fill="#D4AF37" opacity="0.7"/> 
+    <rect x="628" y="30" width="3" height="160" fill="#D4AF37" opacity="0.4"/> 
+    <rect x="633" y="30" width="7" height="160" fill="#D4AF37" opacity="0.9"/> 
+    <rect x="643" y="30" width="3" height="160" fill="#D4AF37" opacity="0.6"/> 
+    <rect x="648" y="30" width="4" height="160" fill="#D4AF37" opacity="0.75"/> 
+    <rect x="655" y="30" width="6" height="160" fill="#D4AF37" opacity="0.85"/> 
+    <rect x="664" y="30" width="3" height="160" fill="#D4AF37" opacity="0.5"/> 
+    <rect x="669" y="30" width="5" height="160" fill="#D4AF37" opacity="0.7"/> 
+    <rect x="677" y="30" width="3" height="160" fill="#D4AF37" opacity="0.65"/> 
   </svg>`; 
 }
 
