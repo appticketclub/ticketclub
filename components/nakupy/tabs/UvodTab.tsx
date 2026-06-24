@@ -88,12 +88,17 @@ export default function UvodTab() {
         const { from, to } = getDateRange();
 
         // Load capital history for chart
-        const { data: history } = await supabase 
+        let historyQuery = supabase 
           .from("capital_history") 
           .select("balance_after, created_at") 
           .eq("user_id", user.id)
           .order("created_at", { ascending: true }) 
           .limit(50);
+
+        if (from) historyQuery = historyQuery.gte("created_at", from);
+        if (to) historyQuery = historyQuery.lte("created_at", to);
+
+        const { data: history } = await historyQuery;
 
         // Load purchases and sales for stats (if tables exist)
         let invested = 0;
