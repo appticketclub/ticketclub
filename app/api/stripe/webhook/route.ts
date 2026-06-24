@@ -66,6 +66,20 @@ export async function POST(request: NextRequest) {
           current_period_end: periodEnd,
           updated_at: new Date().toISOString(),
         }, { onConflict: "user_id" });
+        // Reactivate launcher token if exists, otherwise skip
+        const { data: existingToken } = await supabase
+          .from("launcher_tokens")
+          .select("id, is_active")
+          .eq("user_id", userId)
+          .single();
+
+        if (existingToken) {
+          await supabase.from("launcher_tokens")
+            .update({ is_active: true })
+            .eq("user_id", userId);
+          console.log("✅ Launcher token reactivated for:", userId);
+        }
+
         // Reactivate or create extension license
         const { data: existingLicense } = await supabase
           .from("extension_licenses")
@@ -74,26 +88,19 @@ export async function POST(request: NextRequest) {
           .single();
 
         if (existingLicense) {
-          // Reactivate existing
           await supabase.from("extension_licenses")
             .update({ is_active: true })
             .eq("user_id", userId);
         } else {
-          // Create new license key
           const licenseKey = "TC-" + Array.from({length: 3}, () =>
             Math.random().toString(36).toUpperCase().substring(2, 6)
           ).join("-");
-
           await supabase.from("extension_licenses").insert({
             user_id: userId,
             license_key: licenseKey,
             is_active: true,
           });
         }
-        // Reactivate launcher token
-        await supabase.from("launcher_tokens")
-          .update({ is_active: true })
-          .eq("user_id", userId);
         console.log("✅ Pro activated:", userId);
         break;
       }
@@ -120,6 +127,20 @@ export async function POST(request: NextRequest) {
           current_period_end: periodEnd,
           updated_at: new Date().toISOString(),
         }, { onConflict: "user_id" });
+        // Reactivate launcher token if exists, otherwise skip
+        const { data: existingToken } = await supabase
+          .from("launcher_tokens")
+          .select("id, is_active")
+          .eq("user_id", userId)
+          .single();
+
+        if (existingToken) {
+          await supabase.from("launcher_tokens")
+            .update({ is_active: true })
+            .eq("user_id", userId);
+          console.log("✅ Launcher token reactivated for:", userId);
+        }
+
         // Reactivate or create extension license
         const { data: existingLicense } = await supabase
           .from("extension_licenses")
@@ -128,26 +149,19 @@ export async function POST(request: NextRequest) {
           .single();
 
         if (existingLicense) {
-          // Reactivate existing
           await supabase.from("extension_licenses")
             .update({ is_active: true })
             .eq("user_id", userId);
         } else {
-          // Create new license key
           const licenseKey = "TC-" + Array.from({length: 3}, () =>
             Math.random().toString(36).toUpperCase().substring(2, 6)
           ).join("-");
-
           await supabase.from("extension_licenses").insert({
             user_id: userId,
             license_key: licenseKey,
             is_active: true,
           });
         }
-        // Reactivate launcher token
-        await supabase.from("launcher_tokens")
-          .update({ is_active: true })
-          .eq("user_id", userId);
         console.log("✅ Renewed:", userId);
         break;
       }
