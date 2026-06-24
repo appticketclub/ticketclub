@@ -106,14 +106,23 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
       await Promise.all([
         supabase.from("purchases").delete().eq("user_id", user.id),
         supabase.from("sales").delete().eq("user_id", user.id),
+        supabase.from("accounts").delete().eq("user_id", user.id),
         supabase.from("banners").delete().eq("user_id", user.id),
         supabase.from("capital_history").delete().eq("user_id", user.id),
         supabase.from("expenses").delete().eq("user_id", user.id),
         supabase.from("ai_cache").delete().eq("user_id", user.id),
       ]);
-      await supabase.from("profiles").update({ capital: 0, capital_initial: 0 }).eq("id", user.id);
+
+      // Reset capital
+      await supabase.from("profiles").update({
+        capital: null,
+        capital_initial: null,
+        capital_currency: "EUR",
+      }).eq("id", user.id);
+
       setResetMsg("✓ Účet byl resetován");
       setResetConfirm("");
+      window.location.href = "/nakupy";
     } catch (e: any) {
       setResetMsg(`Chyba: ${e.message}`);
     }
@@ -123,8 +132,32 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
   async function deleteAccount() {
     if (deleteConfirm !== "smazat") return;
     setDeleting(true);
-    await supabase.auth.signOut();
-    router.push("/prihlaseni");
+    try {
+      // Delete all user data
+      await Promise.all([
+        supabase.from("purchases").delete().eq("user_id", user.id),
+        supabase.from("sales").delete().eq("user_id", user.id),
+        supabase.from("accounts").delete().eq("user_id", user.id),
+        supabase.from("banners").delete().eq("user_id", user.id),
+        supabase.from("capital_history").delete().eq("user_id", user.id),
+        supabase.from("expenses").delete().eq("user_id", user.id),
+        supabase.from("ai_cache").delete().eq("user_id", user.id),
+        supabase.from("extension_licenses").delete().eq("user_id", user.id),
+        supabase.from("launcher_tokens").delete().eq("user_id", user.id),
+        supabase.from("subscriptions").delete().eq("user_id", user.id),
+        supabase.from("profiles").delete().eq("id", user.id),
+      ]);
+
+      // Delete auth user via API route
+      await fetch("/api/user/delete", { method: "DELETE" });
+
+      await supabase.auth.signOut();
+      window.location.href = "/prihlaseni";
+    } catch (e: any) {
+      console.error(e);
+      alert(`Chyba při mazání účtu: ${e.message}`);
+    }
+    setDeleting(false);
   }
 
   async function getExtensionKey() {
