@@ -81,21 +81,27 @@ export default function ProdejeTab() {
   return (
     <div>
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.75rem" }}>
-        <div>
+      <div style={{ marginBottom: "1.75rem" }}>
+        <div style={{ marginBottom: "1rem" }}>
           <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.25rem" }}>Prodeje</h1>
           <p style={{ fontSize: 13, color: "#3a3a3a" }}>Historie všech uzavřených prodejů</p>
         </div>
-        {/* Summary */}
-        <div style={{ display: "flex", gap: "1rem" }}>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+          gap: "0.75rem",
+        }}>
           {[
-            { label: "Celkem prodejů", value: sales.length },
+            { label: "Celkem prodejů", value: sales.length, color: "#fff" },
             { label: "Celkový příjem", value: format(totalRevenue, currency), color: "#c0c0c0" },
             { label: "Celkový zisk", value: format(totalProfit, currency), color: totalProfit >= 0 ? "#34d399" : "#f87171" },
           ].map(s => (
-            <div key={s.label} style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 12, padding: "0.75rem 1.25rem", textAlign: "center" as const }}>
+            <div key={s.label} style={{
+              background: "#111111", border: "1px solid #1a1a1a",
+              borderRadius: 12, padding: "0.75rem 1rem",
+            }}>
               <div style={{ fontSize: 11, color: "#3a3a3a", marginBottom: 4 }}>{s.label}</div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: (s as any).color ?? "#fff" }}>{s.value}</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: s.color }}>{s.value}</div>
             </div>
           ))}
         </div>
@@ -123,116 +129,129 @@ export default function ProdejeTab() {
           <p style={{ color: "#525252", fontSize: 14 }}>Žádné prodeje zatím</p>
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-          {/* Header */}
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr 1fr 80px 1fr 80px",
-            padding: "0.5rem 1.5rem",
-            gap: "1rem",
-          }}>
-            {[ 
-              { label: "NÁZEV AKCE" }, 
-              { label: "MÍSTO AKCE" }, 
-              { label: "DATUM\nNÁKUPU" }, 
-              { label: "DATUM\nAKCE" }, 
-              { label: "DATUM\nPRODEJE" }, 
-              { label: "ÚČET" }, 
-              { label: "POČET" }, 
-              { label: "PRODEJNÍ CENA" }, 
-              { label: "" }, 
-            ].map(h => (
-              <div key={h.label} style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: "#707070", whiteSpace: "pre-line" as const, lineHeight: 1.3 }}>
-                {h.label}
-              </div>
-            ))}
+        <div style={{
+          overflowX: "auto",
+          borderRadius: 12,
+          border: "1px solid #1a1a1a",
+          WebkitOverflowScrolling: "touch",
+          scrollbarWidth: "thin" as const,
+          scrollbarColor: "#2a2a2a #0a0a0a",
+        }}>
+          <div style={{ minWidth: 900 }}>
+            {/* Header */}
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr 1fr 80px 1fr 80px",
+              padding: "0.5rem 1.5rem",
+              gap: "1rem",
+              background: "#0a0a0a",
+              borderBottom: "1px solid #1a1a1a",
+              position: "sticky" as const,
+              top: 0,
+              zIndex: 5,
+            }}>
+              {[ 
+                { label: "NÁZEV AKCE" }, 
+                { label: "MÍSTO AKCE" }, 
+                { label: "DATUM\nNÁKUPU" }, 
+                { label: "DATUM\nAKCE" }, 
+                { label: "DATUM\nPRODEJE" }, 
+                { label: "ÚČET" }, 
+                { label: "POČET" }, 
+                { label: "PRODEJNÍ CENA" }, 
+                { label: "" }, 
+              ].map(h => (
+                <div key={h.label} style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: "#707070", whiteSpace: "pre-line" as const, lineHeight: 1.3 }}>
+                  {h.label}
+                </div>
+              ))}
+            </div>
+
+            {/* Rows */}
+            {filtered.map(sale => {
+              const purchase = Array.isArray(sale.purchases) ? sale.purchases[0] : sale.purchases;
+              const revenue = sale.sell_price * sale.quantity_sold;
+              const cost = (purchase?.buy_price ?? 0) * sale.quantity_sold;
+              const profit = revenue - (sale.fees ?? 0) - cost;
+              const roi = cost > 0 ? (profit / cost) * 100 : 0;
+              const isProfit = profit >= 0;
+
+              return (
+                <div
+                  key={sale.id}
+                  onClick={() => setDetailSale(sale)}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr 1fr 80px 1fr 80px",
+                    padding: "0.875rem 1.5rem",
+                    background: "#111111",
+                    borderBottom: "1px solid #1a1a1a",
+                    alignItems: "center",
+                    gap: "1rem",
+                    transition: "background-color 0.15s",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.backgroundColor = "#0d0d0d"}
+                  onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.backgroundColor = "#111111"}
+                >
+                  {/* 1. Event name */}
+                  <div>
+                    <div style={{ fontWeight: 600, color: "#fff", fontSize: 14 }}>{purchase?.event_name ?? "—"}</div>
+                  </div>
+
+                  {/* 2. Místo akce */}
+                  <div style={{ fontSize: 13, color: "#525252" }}>{purchase?.city ?? "—"}</div>
+
+                  {/* 3. Datum nákupu */}
+                  <div style={{ fontSize: 12, color: "#525252" }}>
+                    {purchase?.created_at
+                      ? new Date(purchase.created_at).toLocaleDateString("cs-CZ")
+                      : "—"}
+                  </div>
+
+                  {/* 4. Datum akce */}
+                  <div style={{ fontSize: 12, color: "#525252" }}>
+                    {purchase?.event_actual_date
+                      ? new Date(purchase.event_actual_date).toLocaleDateString("cs-CZ")
+                      : "—"}
+                  </div>
+
+                  {/* 5. Datum prodeje */}
+                  <div style={{ fontSize: 12, color: "#525252" }}>
+                    {sale.sold_at ? new Date(sale.sold_at).toLocaleDateString("cs-CZ") : "—"}
+                  </div>
+
+                  {/* 6. Účet */}
+                  <div style={{ fontSize: 12, color: "#525252" }}>
+                    {purchase?.account_ref ?? "—"}
+                  </div>
+
+                  {/* 7. Počet */}
+                  <div style={{ fontSize: 13, color: "#c0c0c0" }}>{sale.quantity_sold}×</div>
+
+                  {/* 8. Prodejní cena + ROI */}
+                  <div>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: "#34d399" }}>
+                      {format(revenue, sale.currency as "EUR" | "CZK")}
+                    </div>
+                    <div style={{ fontSize: 11, color: isProfit ? "#34d399" : "#f87171", marginTop: 2, fontWeight: 600 }}>
+                      {isProfit ? "+" : ""}{roi.toFixed(1)}% ROI
+                    </div>
+                  </div>
+
+                  {/* 9. Actions */}
+                  <div style={{ display: "flex", justifyContent: "flex-end", gap: 4 }}>
+                    <button
+                      onClick={e => { e.stopPropagation(); setEditSale(sale); }}
+                      style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 14, padding: 4 }}
+                      onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#c0c0c0"}
+                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"}
+                    >✎</button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-
-          {/* Rows */}
-          {filtered.map(sale => {
-            const purchase = Array.isArray(sale.purchases) ? sale.purchases[0] : sale.purchases;
-            const revenue = sale.sell_price * sale.quantity_sold;
-            const cost = (purchase?.buy_price ?? 0) * sale.quantity_sold;
-            const profit = revenue - (sale.fees ?? 0) - cost;
-            const roi = cost > 0 ? (profit / cost) * 100 : 0;
-            const isProfit = profit >= 0;
-
-            return (
-              <div
-                key={sale.id}
-                onClick={() => setDetailSale(sale)}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr 1fr 80px 1fr 80px",
-                  padding: "0.875rem 1.5rem",
-                  background: "#111111",
-                  border: "1px solid #1a1a1a",
-                  borderRadius: 12,
-                  alignItems: "center",
-                  gap: "1rem",
-                  transition: "border-color 0.15s",
-                  cursor: "pointer",
-                }}
-                onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.borderColor = "#2a2a2a"}
-                onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.borderColor = "#1a1a1a"}
-              >
-                {/* 1. Event name */}
-                <div>
-                  <div style={{ fontWeight: 600, color: "#fff", fontSize: 14 }}>{purchase?.event_name ?? "—"}</div>
-                </div>
-
-                {/* 2. Místo akce */}
-                <div style={{ fontSize: 13, color: "#525252" }}>{purchase?.city ?? "—"}</div>
-
-                {/* 3. Datum nákupu */}
-                <div style={{ fontSize: 12, color: "#525252" }}>
-                  {purchase?.created_at
-                    ? new Date(purchase.created_at).toLocaleDateString("cs-CZ")
-                    : "—"}
-                </div>
-
-                {/* 4. Datum akce */}
-                <div style={{ fontSize: 12, color: "#525252" }}>
-                  {purchase?.event_actual_date
-                    ? new Date(purchase.event_actual_date).toLocaleDateString("cs-CZ")
-                    : "—"}
-                </div>
-
-                {/* 5. Datum prodeje */}
-                <div style={{ fontSize: 12, color: "#525252" }}>
-                  {sale.sold_at ? new Date(sale.sold_at).toLocaleDateString("cs-CZ") : "—"}
-                </div>
-
-                {/* 6. Účet */}
-                <div style={{ fontSize: 12, color: "#525252" }}>
-                  {purchase?.account_ref ?? "—"}
-                </div>
-
-                {/* 7. Počet */}
-                <div style={{ fontSize: 13, color: "#c0c0c0" }}>{sale.quantity_sold}×</div>
-
-                {/* 8. Prodejní cena + ROI */}
-                <div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: "#34d399" }}>
-                    {format(revenue, sale.currency as "EUR" | "CZK")}
-                  </div>
-                  <div style={{ fontSize: 11, color: isProfit ? "#34d399" : "#f87171", marginTop: 2, fontWeight: 600 }}>
-                    {isProfit ? "+" : ""}{roi.toFixed(1)}% ROI
-                  </div>
-                </div>
-
-                {/* 9. Actions */}
-                <div style={{ display: "flex", justifyContent: "flex-end", gap: 4 }}>
-                  <button
-                    onClick={e => { e.stopPropagation(); setEditSale(sale); }}
-                    style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 14, padding: 4 }}
-                    onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#c0c0c0"}
-                    onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"}
-                  >✎</button>
-                </div>
-              </div>
-            );
-          })}
         </div>
       )}
 

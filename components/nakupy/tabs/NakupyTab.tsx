@@ -1459,163 +1459,171 @@ export default function NakupyTab() {
 
       {/* Table */}
       {!loading && filtered.length > 0 && (
-        <div style={{ overflowX: "auto" as const }}>
-          <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, overflow: "hidden" }}>
-          {/* Table header */}
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "2fr 1fr 100px 100px 100px 1fr 1fr 1fr 100px",
-            padding: "0.875rem 1.5rem",
-            borderBottom: "1px solid #1a1a1a",
-            background: "#0d0d0d",
-          }}>
-            {[ 
-              { label: "NÁZEV AKCE" }, 
-              { label: "MÍSTO" }, 
-              { label: "DATUM\nNÁKUPU" }, 
-              { label: "DATUM\nAKCE" }, 
-              { label: "DATUM\nPRODEJE" }, 
-              { label: "ÚČET" }, 
-              { label: "POČET" }, 
-              { label: "CELKEM" }, 
-              { label: "" }, 
-            ].map(h => (
-              <div key={h.label} style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: "#707070", whiteSpace: "pre-line" as const, lineHeight: 1.3 }}>
-                {h.label}
-              </div>
-            ))}
-          </div>
+        <div style={{
+          overflowX: "auto",
+          borderRadius: 12,
+          WebkitOverflowScrolling: "touch",
+          scrollbarWidth: "thin" as const,
+          scrollbarColor: "#2a2a2a #0a0a0a",
+        }}>
+          <div style={{ minWidth: 900 }}>
+            <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, overflow: "hidden" }}>
+            {/* Table header */}
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "2fr 1fr 100px 100px 100px 1fr 1fr 1fr 100px",
+              padding: "0.875rem 1.5rem",
+              borderBottom: "1px solid #1a1a1a",
+              background: "#0d0d0d",
+            }}>
+              {[ 
+                { label: "NÁZEV AKCE" }, 
+                { label: "MÍSTO" }, 
+                { label: "DATUM\nNÁKUPU" }, 
+                { label: "DATUM\nAKCE" }, 
+                { label: "DATUM\nPRODEJE" }, 
+                { label: "ÚČET" }, 
+                { label: "POČET" }, 
+                { label: "CELKEM" }, 
+                { label: "" }, 
+              ].map(h => (
+                <div key={h.label} style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: "#707070", whiteSpace: "pre-line" as const, lineHeight: 1.3 }}>
+                  {h.label}
+                </div>
+              ))}
+            </div>
 
-          {/* Table rows */}
-          {filtered.map((purchase, i) => {
-            const status = statusColors[purchase.status] ?? statusColors.active;
-            return (
-              <div
-                key={purchase.id}
-                onClick={() => setDetailPurchase(purchase)}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "2fr 1fr 100px 100px 100px 1fr 1fr 1fr 100px",
-                  padding: "0.875rem 1.5rem",
-                  background: "#111111",
-                  border: "1px solid #1a1a1a",
-                  borderRadius: 12,
-                  alignItems: "center",
-                  transition: "border-color 0.15s, background 0.15s",
-                  cursor: "pointer",
-                  marginBottom: i < filtered.length - 1 ? "0.5rem" : 0,
-                }}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLDivElement).style.borderColor = "#2a2a2a";
-                  (e.currentTarget as HTMLDivElement).style.background = "#141414";
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLDivElement).style.borderColor = "#1a1a1a";
-                  (e.currentTarget as HTMLDivElement).style.background = "#111111";
-                }}
-              >
-                {/* Event name */}
-                <div>
-                  <div style={{ fontWeight: 600, color: "#fff", fontSize: 14, marginBottom: 4 }}>{purchase.event_name}</div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                    <span style={{
-                      fontSize: 11, fontWeight: 600,
-                      padding: "2px 8px", borderRadius: 5,
-                      background: status.bg, color: status.color,
-                    }}>
-                      {status.label}
-                    </span>
-                    {purchase.venue && <span style={{ fontSize: 11, color: "#3a3a3a" }}>{purchase.venue}</span>}
+            {/* Table rows */}
+            {filtered.map((purchase, i) => {
+              const status = statusColors[purchase.status] ?? statusColors.active;
+              return (
+                <div
+                  key={purchase.id}
+                  onClick={() => setDetailPurchase(purchase)}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "2fr 1fr 100px 100px 100px 1fr 1fr 1fr 100px",
+                    padding: "0.875rem 1.5rem",
+                    background: "#111111",
+                    border: "1px solid #1a1a1a",
+                    borderRadius: 12,
+                    alignItems: "center",
+                    transition: "border-color 0.15s, background 0.15s",
+                    cursor: "pointer",
+                    marginBottom: i < filtered.length - 1 ? "0.5rem" : 0,
+                  }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLDivElement).style.borderColor = "#2a2a2a";
+                    (e.currentTarget as HTMLDivElement).style.background = "#141414";
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLDivElement).style.borderColor = "#1a1a1a";
+                    (e.currentTarget as HTMLDivElement).style.background = "#111111";
+                  }}
+                >
+                  {/* Event name */}
+                  <div>
+                    <div style={{ fontWeight: 600, color: "#fff", fontSize: 14, marginBottom: 4 }}>{purchase.event_name}</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                      <span style={{
+                        fontSize: 11, fontWeight: 600,
+                        padding: "2px 8px", borderRadius: 5,
+                        background: status.bg, color: status.color,
+                      }}>
+                        {status.label}
+                      </span>
+                      {purchase.venue && <span style={{ fontSize: 11, color: "#3a3a3a" }}>{purchase.venue}</span>}
+                    </div>
+                    <div style={{ display: "flex", gap: 4 }}>
+                      <span style={{ fontSize: 10, padding: "1px 6px", borderRadius: 4, background: purchase.delivered ? "#0a2a1a" : "#1a1a1a", color: purchase.delivered ? "#34d399" : "#3a3a3a", border: `1px solid ${purchase.delivered ? "rgba(52,211,153,0.2)" : "#2a2a2a"}` }}>
+                        {purchase.delivered ? "✓ Doručeno" : "Nedoručeno"}
+                      </span>
+                      <span style={{ fontSize: 10, padding: "1px 6px", borderRadius: 4, background: purchase.paid_out ? "#0a2a1a" : "#1a1a1a", color: purchase.paid_out ? "#34d399" : "#3a3a3a", border: `1px solid ${purchase.paid_out ? "rgba(52,211,153,0.2)" : "#2a2a2a"}` }}>
+                        {purchase.paid_out ? "✓ Vyplaceno" : "Nevyplaceno"}
+                      </span>
+                    </div>
                   </div>
-                  <div style={{ display: "flex", gap: 4 }}>
-                    <span style={{ fontSize: 10, padding: "1px 6px", borderRadius: 4, background: purchase.delivered ? "#0a2a1a" : "#1a1a1a", color: purchase.delivered ? "#34d399" : "#3a3a3a", border: `1px solid ${purchase.delivered ? "rgba(52,211,153,0.2)" : "#2a2a2a"}` }}>
-                      {purchase.delivered ? "✓ Doručeno" : "Nedoručeno"}
-                    </span>
-                    <span style={{ fontSize: 10, padding: "1px 6px", borderRadius: 4, background: purchase.paid_out ? "#0a2a1a" : "#1a1a1a", color: purchase.paid_out ? "#34d399" : "#3a3a3a", border: `1px solid ${purchase.paid_out ? "rgba(52,211,153,0.2)" : "#2a2a2a"}` }}>
-                      {purchase.paid_out ? "✓ Vyplaceno" : "Nevyplaceno"}
-                    </span>
+
+                  {/* Místo akce */}
+                  <div style={{ fontSize: 13, color: "#525252" }}>
+                    {purchase.city ?? "—"}
+                  </div>
+
+                  {/* Purchase date */}
+                  <div style={{ fontSize: 13, color: "#525252" }}>
+                    {purchase.event_date
+                      ? new Date(purchase.event_date).toLocaleDateString("cs-CZ")
+                      : "—"}
+                  </div>
+
+                  {/* Event actual date */}
+                  <div style={{ fontSize: 13, color: isThisMonth(purchase.event_actual_date) ? "#f87171" : "#525252" }}>
+                    {purchase.event_actual_date
+                      ? new Date(purchase.event_actual_date).toLocaleDateString("cs-CZ")
+                      : "—"}
+                  </div>
+
+                  {/* Sale date */}
+                  <div style={{ fontSize: 13, color: purchase.status === "sold" || purchase.status === "partial" ? "#34d399" : "#3a3a3a" }}>
+                    {getSaleDate(purchase.id)
+                      ? new Date(getSaleDate(purchase.id)!).toLocaleDateString("cs-CZ")
+                      : "—"}
+                  </div>
+
+                  {/* Account */}
+                  <div style={{ fontSize: 13, color: "#525252" }}>{purchase.account_ref ?? "—"}</div>
+
+                  {/* Quantity */}
+                  <div style={{ fontSize: 14, color: "#c0c0c0" }}>{purchase.quantity}×</div>
+
+                  {/* Total */}
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>
+                    {format(purchase.buy_price * purchase.quantity, purchase.currency as "EUR" | "CZK")}
+                  </div>
+
+                  {/* Actions */}
+                  <div style={{ display: "flex", justifyContent: "flex-end", gap: 4 }} onClick={e => e.stopPropagation()}>
+                    <button 
+                      onClick={() => setDetailPurchase(purchase)} 
+                      title="Detail" 
+                      style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 14, padding: 4 }} 
+                      onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#a78bfa"} 
+                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"} 
+                    > 
+                      ℹ 
+                    </button> 
+                    <button
+                      onClick={() => setSellPurchase(purchase)}
+                      title="Zaznamenat prodej"
+                      style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 16, padding: 4 }}
+                      onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#34d399"}
+                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"}
+                    >
+                      💰
+                    </button>
+                    <button 
+                      onClick={() => setEditPurchase(purchase)} 
+                      title="Upravit" 
+                      style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 14, padding: 4 }} 
+                      onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#c0c0c0"} 
+                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"} 
+                    > 
+                      ✎ 
+                    </button> 
+                    <button 
+                      onClick={() => setDeleteConfirm(purchase)} 
+                      title="Smazat" 
+                      style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 16, padding: 4 }} 
+                      onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#f87171"} 
+                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"} 
+                    > 
+                      × 
+                    </button> 
                   </div>
                 </div>
-
-                {/* Místo akce */}
-                <div style={{ fontSize: 13, color: "#525252" }}>
-                  {purchase.city ?? "—"}
-                </div>
-
-                {/* Purchase date */}
-                <div style={{ fontSize: 13, color: "#525252" }}>
-                  {purchase.event_date
-                    ? new Date(purchase.event_date).toLocaleDateString("cs-CZ")
-                    : "—"}
-                </div>
-
-                {/* Event actual date */}
-                <div style={{ fontSize: 13, color: isThisMonth(purchase.event_actual_date) ? "#f87171" : "#525252" }}>
-                  {purchase.event_actual_date
-                    ? new Date(purchase.event_actual_date).toLocaleDateString("cs-CZ")
-                    : "—"}
-                </div>
-
-                {/* Sale date */}
-                <div style={{ fontSize: 13, color: purchase.status === "sold" || purchase.status === "partial" ? "#34d399" : "#3a3a3a" }}>
-                  {getSaleDate(purchase.id)
-                    ? new Date(getSaleDate(purchase.id)!).toLocaleDateString("cs-CZ")
-                    : "—"}
-                </div>
-
-                {/* Account */}
-                <div style={{ fontSize: 13, color: "#525252" }}>{purchase.account_ref ?? "—"}</div>
-
-                {/* Quantity */}
-                <div style={{ fontSize: 14, color: "#c0c0c0" }}>{purchase.quantity}×</div>
-
-                {/* Total */}
-                <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>
-                  {format(purchase.buy_price * purchase.quantity, purchase.currency as "EUR" | "CZK")}
-                </div>
-
-                {/* Actions */}
-                <div style={{ display: "flex", justifyContent: "flex-end", gap: 4 }} onClick={e => e.stopPropagation()}>
-                  <button 
-                    onClick={() => setDetailPurchase(purchase)} 
-                    title="Detail" 
-                    style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 14, padding: 4 }} 
-                    onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#a78bfa"} 
-                    onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"} 
-                  > 
-                    ℹ 
-                  </button> 
-                  <button
-                    onClick={() => setSellPurchase(purchase)}
-                    title="Zaznamenat prodej"
-                    style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 16, padding: 4 }}
-                    onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#34d399"}
-                    onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"}
-                  >
-                    💰
-                  </button>
-                  <button 
-                    onClick={() => setEditPurchase(purchase)} 
-                    title="Upravit" 
-                    style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 14, padding: 4 }} 
-                    onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#c0c0c0"} 
-                    onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"} 
-                  > 
-                    ✎ 
-                  </button> 
-                  <button 
-                    onClick={() => setDeleteConfirm(purchase)} 
-                    title="Smazat" 
-                    style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 16, padding: 4 }} 
-                    onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#f87171"} 
-                    onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"} 
-                  > 
-                    × 
-                  </button> 
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+            </div>
           </div>
         </div>
       )}
