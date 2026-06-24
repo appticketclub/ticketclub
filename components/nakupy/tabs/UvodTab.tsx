@@ -114,11 +114,11 @@ export default function UvodTab() {
 
           let salesQuery = supabase
             .from("sales")
-            .select("sell_price, quantity_sold, fees, purchases(buy_price)")
+            .select("sell_price, quantity_sold, fees, purchases(buy_price), sold_at")
             .eq("user_id", user.id);
 
-          if (from) salesQuery = salesQuery.gte("created_at", from);
-          if (to) salesQuery = salesQuery.lte("created_at", to);
+          if (from) salesQuery = salesQuery.gte("sold_at", from);
+          if (to) salesQuery = salesQuery.lte("sold_at", to);
 
           const [{ data: p }, { data: s }] = await Promise.all([
             purchasesQuery,
@@ -127,6 +127,8 @@ export default function UvodTab() {
 
           purchases = p ?? [];
           sales = s ?? [];
+
+          console.log("Sales loaded:", sales?.length, sales);
 
           // Calculate total invested
           const totalInvested = purchases 
@@ -143,6 +145,8 @@ export default function UvodTab() {
             const fees = sale.fees ?? 0;
             return sum + (revenue - buyCost - fees);
           }, 0) ?? 0;
+          
+          console.log("Profit calculated:", profit);
         } catch {
           // Tables might not exist yet
         }
