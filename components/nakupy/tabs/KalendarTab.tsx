@@ -246,25 +246,71 @@ export default function KalendarTab() {
                       {(() => {
                         const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
                         const hasUnsold = unsoldDates.has(dateStr);
-                        return hasUnsold && (
-                          <span style={{
-                            position: "absolute",
-                            top: -4, right: -6,
-                            fontSize: 10,
-                            fontWeight: 900,
-                            color: "#f87171",
-                            lineHeight: 1,
-                          }}>!</span>
-                        );
+                        
+                        if (!hasUnsold) return null;
+
+                        const dateEvents = (purchases ?? []) 
+                          .filter(p => p.status === "active" || p.status === "partial") 
+                          .filter(p => p.event_actual_date.split("T")[0] === dateStr);
+                        
+                        return (
+                          <div style={{ position: "relative", display: "inline-block" }} 
+                            onMouseEnter={e => { 
+                              const tooltip = (e.currentTarget as HTMLDivElement).querySelector(".tooltip") as HTMLElement; 
+                              if (tooltip) tooltip.style.display = "block"; 
+                            }} 
+                            onMouseLeave={e => { 
+                              const tooltip = (e.currentTarget as HTMLDivElement).querySelector(".tooltip") as HTMLElement; 
+                              if (tooltip) tooltip.style.display = "none"; 
+                            }} 
+                          > 
+                            <span style={{ 
+                              position: "absolute", 
+                              top: -8, right: -8, 
+                              fontSize: 14, 
+                              fontWeight: 900, 
+                              color: "#f87171", 
+                              lineHeight: 1, 
+                              cursor: "pointer", 
+                              zIndex: 2, 
+                            }}>!</span> 
+                        
+                            {/* Tooltip */} 
+                            <div className="tooltip" style={{ 
+                              display: "none", 
+                              position: "absolute", 
+                              top: -8, left: "100%", 
+                              marginLeft: 8, 
+                              background: "#111111", 
+                              border: "1px solid #2a2a2a", 
+                              borderRadius: 10, 
+                              padding: "0.5rem 0.75rem", 
+                              zIndex: 50, 
+                              minWidth: 180, 
+                              whiteSpace: "nowrap" as const, 
+                              boxShadow: "0 4px 20px rgba(0,0,0,0.5)", 
+                            }}> 
+                              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #f87171, transparent)", borderRadius: "10px 10px 0 0" }} /> 
+                              {dateEvents.map(p => ( 
+                                <div key={p.id} style={{ fontSize: 12, color: "#c0c0c0", padding: "2px 0" }}> 
+                                  🎟️ {p.event_name} 
+                                  <span style={{ fontSize: 10, color: "#f87171", marginLeft: 6 }}> 
+                                    {p.quantity_remaining ?? p.quantity}× neprodáno 
+                                  </span> 
+                                </div> 
+                              ))} 
+                            </div> 
+                          </div> 
+                        ); 
                       })()}
                     </div>
 
                     {/* Event dots */}
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
-                      {purchases.slice(0, 3).map((_, idx) => (
+                      {dayEvents.filter(e => e.type === "purchase").slice(0, 3).map((_, idx) => (
                         <div key={"p" + idx} style={{ width: 6, height: 6, borderRadius: "50%", background: "#f87171" }} />
                       ))}
-                      {sales.slice(0, 3).map((_, idx) => (
+                      {dayEvents.filter(e => e.type === "sale").slice(0, 3).map((_, idx) => (
                         <div key={"s" + idx} style={{ width: 6, height: 6, borderRadius: "50%", background: "#34d399" }} />
                       ))}
                     </div>
