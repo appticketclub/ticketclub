@@ -188,8 +188,8 @@ export default function KalkulackaTab() {
               </div>
               <div>
                 <div style={{ fontSize: 11, color: "#525252", marginBottom: 4 }}>Marže nad break-even</div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: sellPrice > breakEven ? "#34d399" : "#f87171" }}>
-                  {sellPrice > breakEven ? "+" : ""}{Math.round(((sellPrice - breakEven) / breakEven) * 100)}%
+                <div style={{ fontSize: 18, fontWeight: 700, color: sellPriceNum > breakEven ? "#34d399" : "#f87171" }}>
+                  {sellPriceNum > breakEven ? "+" : ""}{Math.round(((sellPriceNum - breakEven) / breakEven) * 100)}%
                 </div>
                 <div style={{ fontSize: 11, color: "#3a3a3a", marginTop: 2 }}>nad minimem</div>
               </div>
