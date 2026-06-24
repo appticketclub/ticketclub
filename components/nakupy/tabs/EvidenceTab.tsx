@@ -490,66 +490,71 @@ export default function EvidenceTab() {
       </div>
 
       {/* Search + actions bar */}
-      <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1rem", alignItems: "center", flexWrap: "wrap" }}>
+      <div style={{
+        display: "flex",
+        gap: "0.5rem",
+        marginBottom: "1rem",
+        alignItems: "center",
+        flexWrap: "wrap" as const,
+      }}>
         <input
           type="text"
           placeholder="Hledat..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          style={{ padding: "0.6rem 1rem", width: 220, background: "#111111", border: "1px solid #1f1f1f", borderRadius: 10, color: "#fff", fontSize: 13, outline: "none" }}
+          style={{
+            padding: "0.6rem 1rem",
+            width: 180,
+            minWidth: 120,
+            background: "#111111", border: "1px solid #1f1f1f",
+            borderRadius: 10, color: "#fff", fontSize: 13,
+            outline: "none",
+          }}
         />
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ padding: "0.6rem 0.75rem", background: "#111111", border: "1px solid #1f1f1f", borderRadius: 10, color: "#fff", fontSize: 13, outline: "none", cursor: "pointer" }}>
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
+          style={{ padding: "0.6rem 0.75rem", background: "#111111", border: "1px solid #1f1f1f", borderRadius: 10, color: "#fff", fontSize: 13, outline: "none", cursor: "pointer" }}>
           <option value="all">Všechny statusy</option>
           <option value="active">Aktivní</option>
           <option value="partial">Částečně prodáno</option>
           <option value="sold">Prodáno</option>
           <option value="cancelled">Zrušeno</option>
         </select>
-        <select value={sortBy} onChange={e => setSortBy(e.target.value as any)} style={{ padding: "0.6rem 0.75rem", background: "#111111", border: "1px solid #1f1f1f", borderRadius: 10, color: "#fff", fontSize: 13, outline: "none", cursor: "pointer" }}>
-          <option value="event_date">Datum nákupu</option>
+        <select value={sortBy} onChange={e => setSortBy(e.target.value as any)}
+          style={{ padding: "0.6rem 0.75rem", background: "#111111", border: "1px solid #1f1f1f", borderRadius: 10, color: "#fff", fontSize: 13, outline: "none", cursor: "pointer" }}>
+          <option value="created_at">Datum nákupu</option>
+          <option value="event_date">Datum akce</option>
           <option value="sold_at">Datum prodeje</option>
         </select>
-        <button onClick={() => setSortDir(d => d === "asc" ? "desc" : "asc")} style={{ padding: "0.6rem 0.875rem", fontSize: 13, background: "#111111", border: "1px solid #1f1f1f", borderRadius: 10, color: "#c0c0c0", cursor: "pointer" }}>
-          {sortDir === "asc" ? "↑ Vzestupně" : "↓ Sestupně"}
+        <button onClick={() => setSortDir(d => d === "asc" ? "desc" : "asc")}
+          style={{ padding: "0.6rem 0.875rem", fontSize: 13, background: "#111111", border: "1px solid #1f1f1f", borderRadius: 10, color: "#c0c0c0", cursor: "pointer", whiteSpace: "nowrap" as const }}>
+          {sortDir === "asc" ? "↑" : "↓"}
         </button>
-        <button onClick={() => setShowFilters(!showFilters)} style={{ padding: "0.6rem 1rem", fontSize: 13, background: showFilters ? "#1f1f1f" : "transparent", border: "1px solid #1f1f1f", borderRadius: 10, color: showFilters ? "#fff" : "#525252", cursor: "pointer", whiteSpace: "nowrap" }}>
-          🔍 Filtry
+        <button onClick={() => setShowFilters(!showFilters)}
+          style={{ padding: "0.6rem 0.875rem", fontSize: 13, background: showFilters ? "#2a2a2a" : "#111111", border: "1px solid #1f1f1f", borderRadius: 10, color: "#c0c0c0", cursor: "pointer" }}>
+          Filtry
         </button>
-        {(search || statusFilter !== "all" || deliveredFilter !== "all" || exchangeFilter || cityFilter || dateFrom || dateTo) && (
-          <button onClick={resetFilters} style={{ padding: "0.6rem 1rem", fontSize: 13, background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#f87171", cursor: "pointer" }}>
-            × Resetovat
+        <div style={{ marginLeft: "auto", display: "flex", gap: "0.5rem", flexWrap: "wrap" as const }}>
+          <button onClick={() => setShowImport(true)}
+            style={{ padding: "0.6rem 1rem", fontSize: 13, fontWeight: 600, background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#c0c0c0", cursor: "pointer", whiteSpace: "nowrap" as const }}>
+            Import
           </button>
-        )}
-        <div style={{ marginLeft: "auto", display: "flex", gap: "0.75rem" }}>
-          <button
-            onClick={() => setShowImport(true)}
-            style={{
-              padding: "0.65rem 1.25rem", fontSize: 13, fontWeight: 600,
-              background: "transparent", border: "1px solid #2a2a2a",
-              borderRadius: 10, color: "#c0c0c0", cursor: "pointer",
-              display: "flex", alignItems: "center", gap: 6,
-            }}
-          >
-            ⬆ Import Excel
-          </button>
-          <button
-            onClick={() => setShowAddModal(true)}
-            style={{
-              padding: "0.65rem 1.25rem",
-              background: "linear-gradient(135deg, #ffffff, #c0c0c0)",
-              border: "none", borderRadius: 10, color: "#000", fontWeight: 700, fontSize: 13,
-              letterSpacing: "0.05em", cursor: "pointer",
-              display: "flex", alignItems: "center", gap: 6,
-            }}
-          >
-            + Přidat nákup
+          <button onClick={() => setShowAddModal(true)}
+            style={{ padding: "0.6rem 1rem", fontSize: 13, fontWeight: 700, background: "linear-gradient(135deg, #ffffff, #a0a0a0)", border: "none", borderRadius: 10, color: "#000", cursor: "pointer", whiteSpace: "nowrap" as const }}>
+            + Přidat
           </button>
         </div>
       </div>
 
       {/* Advanced filters */}
       {showFilters && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "0.75rem", marginBottom: "1rem", padding: "1rem", background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: 12 }}>
+        <div style={{
+          background: "#111111", border: "1px solid #1a1a1a",
+          borderRadius: 12, padding: "1rem 1.25rem",
+          marginBottom: "1rem",
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+          gap: "0.75rem",
+        }}>
           <div>
             <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 6 }}>DORUČENO</div>
             <select value={deliveredFilter} onChange={e => setDeliveredFilter(e.target.value)} style={{ width: "100%", padding: "0.6rem 0.75rem", background: "#111111", border: "1px solid #1f1f1f", borderRadius: 8, color: "#fff", fontSize: 13, outline: "none", cursor: "pointer", boxSizing: "border-box" }}>
@@ -580,31 +585,30 @@ export default function EvidenceTab() {
         </div>
       )}
 
-      {/* Sticky summary bar — always visible above table */}
+      {/* Summary bar */}
       <div style={{
         background: "#0a0a0a",
         border: "1px solid #1a1a1a",
         borderRadius: 12,
         padding: "0.75rem 1.25rem",
         marginBottom: "0.75rem",
-        display: "flex",
-        gap: "2rem",
-        alignItems: "center",
-        flexWrap: "wrap" as const,
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+        gap: "0.75rem",
       }}>
         {[
-          { label: "Nákupů", value: `${filtered.length}` },
-          { label: "Lístků celkem", value: `${filtered.reduce((s, r) => s + r.quantity, 0)}×` },
-          { label: "Nákup celkem", value: format(totalBuy, currency), color: "#c0c0c0" },
-          { label: "Prodej celkem", value: format(totalSell, currency), color: "#34d399" },
-          { label: "Zisk celkem", value: `${totalProfit >= 0 ? "+" : ""}${format(totalProfit, currency)}`, color: totalProfit >= 0 ? "#34d399" : "#f87171" },
-          { label: "Průměrná ziskovost", value: `${avgRoi >= 0 ? "+" : ""}${avgRoi.toFixed(1)}%`, color: avgRoi >= 0 ? "#34d399" : "#f87171" },
-          { label: "Lístky v prodeji", value: `${ticketsActive}×`, color: "#fbbf24" },
-          { label: "Peníze na cestě", value: format(moneyOnWay, currency), color: "#a78bfa" },
+          { label: "NÁKUPŮ", value: `${filtered.length}`, color: "#fff" },
+          { label: "LÍSTKŮ CELKEM", value: `${filtered.reduce((s, r) => s + r.quantity, 0)}×`, color: "#fff" },
+          { label: "NÁKUP CELKEM", value: format(totalBuy, currency), color: "#c0c0c0" },
+          { label: "PRODEJ CELKEM", value: format(totalSell, currency), color: "#34d399" },
+          { label: "ZISK CELKEM", value: `${totalProfit >= 0 ? "+" : ""}${format(totalProfit, currency)}`, color: totalProfit >= 0 ? "#34d399" : "#f87171" },
+          { label: "PRŮMĚRNÁ ZISKOVOST", value: `${avgRoi >= 0 ? "+" : ""}${avgRoi.toFixed(1)}%`, color: avgRoi >= 0 ? "#34d399" : "#f87171" },
+          { label: "LÍSTKY V PRODEJI", value: `${ticketsActive}×`, color: "#fbbf24" },
+          { label: "PENÍZE NA CESTĚ", value: format(moneyOnWay, currency), color: "#a78bfa" },
         ].map(s => (
           <div key={s.label} style={{ textAlign: "center" as const }}>
-            <div style={{ fontSize: 11, color: "#525252", letterSpacing: "0.08em", marginBottom: 3 }}>{s.label.toUpperCase()}</div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: (s as any).color ?? "#fff" }}>{s.value}</div>
+            <div style={{ fontSize: 9, color: "#3a3a3a", letterSpacing: "0.08em", marginBottom: 3 }}>{s.label}</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: s.color }}>{s.value}</div>
           </div>
         ))}
       </div>
@@ -613,15 +617,21 @@ export default function EvidenceTab() {
       <div style={{
         overflowX: "auto",
         overflowY: "auto",
-        maxHeight: "calc(100vh - 320px)",
+        maxHeight: "calc(100vh - 340px)",
         borderRadius: 16,
         border: "1px solid #1a1a1a",
         scrollbarWidth: "thin" as const,
         scrollbarColor: "#2a2a2a #0a0a0a",
+        WebkitOverflowScrolling: "touch",
       }}>
-        <table style={{ borderCollapse: "collapse", width: "max-content", minWidth: "100%" }}>
+        <table style={{
+          borderCollapse: "collapse",
+          width: "max-content",
+          minWidth: "100%",
+          tableLayout: "auto",
+        }}>
           {/* Header */}
-          <thead style={{ position: "sticky", top: 0, zIndex: 10 }}>
+          <thead style={{ position: "sticky", top: 0, zIndex: 10, background: "#0a0a0a" }}>
             <tr style={{ background: "#0a0a0a", borderBottom: "1px solid #1f1f1f" }}>
               {COLS.map(col => (
                 <th key={col.key} style={{
