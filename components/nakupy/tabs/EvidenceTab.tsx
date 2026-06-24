@@ -213,7 +213,7 @@ export default function EvidenceTab() {
         await supabase.from("purchases").update({ [field]: newValue || null, updated_at: new Date().toISOString() }).eq("id", rowId);
       } else if (saleFields.includes(field)) {
         if (field === "sell_price_total") {
-          const newSellTotal = parseFloat(val.replace(",", ".")) || 0;
+          const newSellTotal = Math.round(parseFloat(val.replace(",", ".")) * 100) / 100 || 0;
           const row = rows.find(r => r.id === rowId);
           if (!row) {
             setEditing(false);
@@ -228,8 +228,8 @@ export default function EvidenceTab() {
 
           if (existingSales && existingSales.length > 0) {
             const sale = existingSales[0];
-            // Save sell_price as per ticket = total / quantity_sold
-            const newSellPerTicket = newSellTotal / (sale.quantity_sold || row.quantity);
+            // Save sell_price as per ticket = total / quantity_sold, rounded
+            const newSellPerTicket = Math.round((newSellTotal / (sale.quantity_sold || row.quantity)) * 100) / 100;
             await supabase.from("sales").update({
               sell_price: newSellPerTicket,
               updated_at: new Date().toISOString(),
