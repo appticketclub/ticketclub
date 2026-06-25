@@ -50,6 +50,7 @@ export async function POST(request: NextRequest) {
         },
       ],
       mode: "subscription",
+      allow_promotion_codes: true,
       success_url: `https://app.ticketclub.vip/dostupne-sluzby?upgraded=true`,
       cancel_url: `https://app.ticketclub.vip/dostupne-sluzby?cancelled=true`,
       metadata: {
@@ -60,7 +61,6 @@ export async function POST(request: NextRequest) {
           supabase_user_id: user.id,
         },
       },
-      allow_promotion_codes: true,
       billing_address_collection: "auto",
     });
 
