@@ -22,17 +22,17 @@ export async function GET() {
   ];
 
   const example = [
-    "2026-06-01",
+    "19.10.2026",
     "Coldplay",
     "Praha",
-    "2026-09-15",
+    "15.08.2026",
     "2",
     "300",
     "500",
     "Viagogo",
     "ucet1@gmail.com",
     "Mobile Transfer",
-    "2026-07-01",
+    "01.07.2026",
     "ANO",
     "ANO",
     "Poznámka",

@@ -17,18 +17,40 @@ export async function POST(request: NextRequest) {
     const ws = wb.Sheets[wb.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json(ws, { header: 1 }) as any[][];
 
-    const parseDate = (val: any) => {
+    function parseDate(val: any): string | null {
       if (!val) return null;
       const str = String(val).trim();
-      // Try DD.MM.YYYY
-      const parts = str.split(".");
-      if (parts.length === 3) {
-        return `${parts[2]}-${parts[1].padStart(2, "0")}-${parts[0].padStart(2, "0")}`;
+
+      // DD.MM.YYYY format
+      const dotMatch = str.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+      if (dotMatch) {
+        const [, d, m, y] = dotMatch;
+        return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
       }
-      // Try YYYY-MM-DD
-      if (str.match(/^\d{4}-\d{2}-\d{2}$/)) return str;
+
+      // DD-MM-YYYY format
+      const dashMatch = str.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+      if (dashMatch) {
+        const [, d, m, y] = dashMatch;
+        return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
+      }
+
+      // YYYY-MM-DD format (already correct)
+      const isoMatch = str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (isoMatch) return str;
+
+      // Excel serial date number
+      if (!isNaN(Number(val))) {
+        const date = new Date((Number(val) - 25569) * 86400 * 1000);
+        return date.toISOString().split("T")[0];
+      }
+
+      // Try native Date parse as fallback
+      const d = new Date(val);
+      if (!isNaN(d.getTime())) return d.toISOString().split("T")[0];
+
       return null;
-    };
+    }
 
     // Skip header row
     const dataRows = rows.slice(1).filter(row => row[1]);
