@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     const ws = wb.Sheets[wb.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json(ws, { header: 1 }) as any[][];
 
-    function parseDate(val: any): string | null {
+    const parseDate = (val: any): string | null => {
       if (!val) return null;
       const str = String(val).trim();
 
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       if (!isNaN(d.getTime())) return d.toISOString().split("T")[0];
 
       return null;
-    }
+    };
 
     // Skip header row
     const dataRows = rows.slice(1).filter(row => row[1]);
