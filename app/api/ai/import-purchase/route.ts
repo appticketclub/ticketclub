@@ -23,31 +23,32 @@ export async function POST(request: NextRequest) {
               },
               {
                 type: "text",
-                text: `You are a ticket purchase data extractor. Analyze this image which may be a screenshot of a ticket confirmation email or webpage from Ticketmaster, Viagogo, StubHub or similar platforms. 
+                text: `You are a ticket purchase data extractor. Analyze this image which may be a screenshot of a ticket confirmation email or webpage from Ticketmaster, Viagogo, or similar platforms.
 
-Extract the following information and return ONLY a valid JSON object with no markdown, no explanation, no thinking tags: 
-{ 
-  "event_name": "full event name including tour name if present", 
-  "artist": "artist or band name only", 
-  "venue": "venue name", 
-  "city": "city name", 
-  "event_date": "YYYY-MM-DD format if found, otherwise null", 
-  "quantity": total number of tickets as integer, 
-  "buy_price": total price for all tickets (quantity × price per ticket) as number without currency symbol, 
-  "total_price": total order amount as number without currency symbol, 
-  "currency": "EUR or CZK or USD or GBP", 
-  "platform": "Ticketmaster or Viagogo or StubHub etc", 
-  "ticket_type": "Mobile Transfer or E-Ticket or Paper or null", 
-  "sector": "section/sector/seat info if available or null", 
-  "exchange": "platform where purchased or null" 
-} 
+Extract the following information and return ONLY a valid JSON object with no markdown, no explanation:
+{
+  "event_name": "artist/band name and tour if present",
+  "venue": "venue name",
+  "city": "city name only",
+  "event_date": "YYYY-MM-DD format — this is the CONCERT DATE (e.g. Fri 08 May 2026 = 2026-05-08)",
+  "purchase_date": null,
+  "quantity": total number of tickets as integer,
+  "buy_price": total order amount as number (convert to EUR if needed),
+  "original_price": original price before conversion,
+  "original_currency": "GBP or USD or CZK or EUR",
+  "currency": "EUR",
+  "ticket_type": "Mobile Transfer or E-Ticket or Paper or null",
+  "sector": "section/standing/seat info if available",
+  "exchange": "Ticketmaster or Viagogo etc"
+}
 
-IMPORTANT rules: 
-- For quantity: count total number of tickets (e.g. "6 x tickets" = 6) 
-- For buy_price: always return TOTAL price for all tickets (quantity × price per ticket) - never return price per single ticket (e.g. 6 tickets × 76.30€ = 457.80€ total → return buy_price: 457.80)
-- For event_date: parse German dates too (e.g. "Donnerstag, 07. Mai 2026" = "2026-05-07") 
-- For sector: combine section and seat info (e.g. "Innenraum Stehplatz") 
-- If currency shows EUR/€ use "EUR" 
+CRITICAL RULES:
+- event_date = the date of the CONCERT/EVENT (e.g. "Fri 08 May 2026" = "2026-05-08"). NOT today's date.
+- purchase_date = always return null (app will use today's date)
+- For currency conversion: if price is in GBP multiply by 1.18 to get EUR. If USD multiply by 0.92. If CZK divide by 25. Always return final EUR amount in buy_price.
+- original_price = the original amount before conversion
+- original_currency = the original currency symbol found (GBP, USD, CZK, EUR)
+- quantity: count total tickets
 - Return ONLY the JSON, nothing else`,
               },
             ],

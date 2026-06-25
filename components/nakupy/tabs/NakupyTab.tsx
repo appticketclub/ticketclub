@@ -106,14 +106,12 @@ export function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Acco
       if (d.event_name) setEventName(d.event_name);
       if (d.city) setCity(d.city);
       if (d.buy_price) setTotalPrice(String(d.buy_price));
-      if (d.total_price) setTotalPrice(String(d.total_price));
       if (d.quantity) setQuantity(String(d.quantity));
-      if (d.event_date) setEventDate(d.event_date);
-      if (d.currency && ["EUR", "CZK"].includes(d.currency)) setCurrency(d.currency as "EUR" | "CZK");
+      if (d.event_date) setEventActualDate(d.event_date);
       if (d.ticket_type) setTicketType(d.ticket_type);
       if (d.sector) setSector(d.sector);
       if (d.exchange) setExchange(d.exchange);
-      if (d.venue) setSector(prev => prev || d.venue);
+      setCurrency("EUR");
 
     } catch (err: any) {
       console.error("Frontend AI error:", err);
