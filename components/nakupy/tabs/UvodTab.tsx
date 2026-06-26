@@ -9,12 +9,11 @@ import {
 import { useCurrency } from "@/lib/context/CurrencyContext";
 import { getCached, setCached } from "@/lib/hooks/useDataCache";
 
-const currencies = ["EUR", "CZK"];
 const timeRangeOptions = [
-  { id: "week", label: "Týden" },
-  { id: "month", label: "Měsíc" },
-  { id: "half_year", label: "Půl roku" },
   { id: "year", label: "Rok" },
+  { id: "half_year", label: "Půl roku" },
+  { id: "month", label: "Měsíc" },
+  { id: "week", label: "Týden" },
   { id: "custom", label: "Vlastní" },
 ] as const;
 
@@ -22,17 +21,16 @@ type TimeRange = (typeof timeRangeOptions)[number]["id"];
 
 export default function UvodTab() {
   const [capital, setCapitalState] = useState<number | null>(null);
-  const { format, setCurrency } = useCurrency();
+  const { format } = useCurrency();
   const [loading, setLoading] = useState(true);
   const [input, setInput] = useState("");
-  const [selectedCurrency, setSelectedCurrency] = useState<"EUR" | "CZK">("EUR");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [chartData, setChartData] = useState<any[]>([]);
   const [stats, setStats] = useState({ invested: 0, profit: 0, balance: 0 });
   const [initialCapital, setInitialCapital] = useState(0);
   const [currentBalance, setCurrentBalance] = useState(0);
-  const [timeRange, setTimeRange] = useState<TimeRange>("month");
+  const [timeRange, setTimeRange] = useState<TimeRange>("year");
   const [customFrom, setCustomFrom] = useState("");
   const [customTo, setCustomTo] = useState("");
 
@@ -200,11 +198,10 @@ export default function UvodTab() {
     if (isNaN(amount) || amount <= 0) return setError("Zadejte platnou částku.");
     setSaving(true);
     setError("");
-    const result = await setCapital(amount, selectedCurrency);
+    const result = await setCapital(amount, "EUR");
     if (result?.error) setError(result.error);
     else {
       setCapitalState(amount);
-      setCurrency(selectedCurrency);
       setInitialCapital(amount);
       setCurrentBalance(amount);
       setStats({ invested: 0, profit: 0, balance: amount });
@@ -251,33 +248,21 @@ export default function UvodTab() {
             POČÁTEČNÍ KAPITÁL
           </label>
 
-          <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1.5rem" }}>
-            <input
-              type="text"
-              placeholder="50 000"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSave()}
-              style={{
-                flex: 1, padding: "0.875rem 1.125rem",
-                background: "#0a0a0a", border: "1px solid #2a2a2a",
-                borderRadius: 12, color: "#fff", fontSize: 18,
-                fontWeight: 600, outline: "none", letterSpacing: "0.02em",
-              }}
-            />
-            <select
-              value={selectedCurrency}
-              onChange={(e) => setSelectedCurrency(e.target.value as "EUR" | "CZK")}
-              style={{
-                padding: "0.875rem 1rem",
-                background: "#0a0a0a", border: "1px solid #2a2a2a",
-                borderRadius: 12, color: "#c0c0c0", fontSize: 14,
-                fontWeight: 600, outline: "none", cursor: "pointer",
-              }}
-            >
-              {currencies.map((c) => <option key={c} value={c}>{c}</option>)}
-            </select>
-          </div>
+          <div style={{ marginBottom: "1.5rem" }}>
+              <input
+                type="text"
+                placeholder="50 000"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSave()}
+                style={{
+                  width: "100%", padding: "0.875rem 1.125rem",
+                  background: "#0a0a0a", border: "1px solid #2a2a2a",
+                  borderRadius: 12, color: "#fff", fontSize: 18,
+                  fontWeight: 600, outline: "none", letterSpacing: "0.02em",
+                }}
+              />
+            </div>
 
           <button
             onClick={handleSave}

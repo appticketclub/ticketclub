@@ -46,7 +46,7 @@ const COLS = [
   { key: "event_actual_date", label: "Datum\nkoncertu", width: 100 },
   { key: "quantity", label: "Počet\nlístků", width: 80 },
   { key: "buy_total", label: "Nákupní cena\ncelkem", width: 130 },
-  { key: "quantity_sold", label: "Prod.", width: 80 },
+  { key: "quantity_sold", label: "Prod.\nlístků", width: 80 },
   { key: "sell_total", label: "Prodejní cena\ncelkem", width: 130 },
   { key: "profit", label: "Celkový\nzisk", width: 120 },
   { key: "roi", label: "Ziskovost", width: 90 },
