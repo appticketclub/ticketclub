@@ -176,10 +176,16 @@ function BannerCard({ banner }: { banner: Banner }) {
     <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, overflow: "hidden" }}>
       {/* Full banner preview with ref! */}
       <div ref={cardRef} style={{
-        padding: "1rem",
-        display: "flex",
-        justifyContent: "center",
-      }} dangerouslySetInnerHTML={{ __html: svg }} />
+        width: "100%",
+        borderRadius: 12,
+        overflow: "hidden",
+        border: "1px solid #1a1a1a",
+      }}>
+        <div
+          style={{ width: "100%", lineHeight: 0 }}
+          dangerouslySetInnerHTML={{ __html: svg }}
+        />
+      </div>
 
       {/* Footer */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.75rem 1.25rem", gap: "0.5rem" }}>
