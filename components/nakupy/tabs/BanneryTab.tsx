@@ -17,7 +17,7 @@ type Banner = {
   created_at: string;
 };
 
-function generateTicketSVG(data: { 
+export function generateTicketSVG(data: { 
   eventName: string; 
   quantity: number; 
   buyPrice: number; 

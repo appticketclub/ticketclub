@@ -1,9 +1,10 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { EXCHANGES } from "@/lib/constants/exchanges";
 import { useCurrency } from "@/lib/context/CurrencyContext";
 import { AddPurchaseModal } from "./NakupyTab";
+import { generateTicketSVG } from "./BanneryTab";
 
 function isThisMonth(dateStr: string | null): boolean {
   if (!dateStr) return false;
@@ -56,6 +57,7 @@ const COLS = [
   { key: "paid_out", label: "Vyplaceno", width: 90 },
   { key: "delivered", label: "Doručeno", width: 90 },
   { key: "notes", label: "Poznámky", width: 160 },
+  { key: "banner", label: "", width: 50 },
 ];
 
 export default function EvidenceTab() {
@@ -69,6 +71,9 @@ export default function EvidenceTab() {
   const [importResult, setImportResult] = useState<{ success?: number; error?: string; errors?: string[] } | null>(null);
   const [editingCell, setEditingCell] = useState<{ rowId: string; field: string } | null>(null);
   const [editValue, setEditValue] = useState("");
+  const [bannerRow, setBannerRow] = useState<EvidenceRow | null>(null);
+  const [downloadingBanner, setDownloadingBanner] = useState(false);
+  const bannerRef = useRef<HTMLDivElement>(null);
 
   // Filter states
   const [search, setSearch] = useState("");
@@ -854,6 +859,18 @@ export default function EvidenceTab() {
 
                     {/* Poznámky */}
                     <EditableCell rowId={row.id} field="notes" value={row.notes} width={160} color="#525252" />
+
+                    {/* Banner button */}
+                    <td style={{ ...cellStyle(50), textAlign: "center" }}>
+                      <button
+                        onClick={() => setBannerRow(row)}
+                        title="Vygenerovat banner"
+                        style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, color: row.sell_price_total > 0 ? "#D4AF37" : "#3a3a3a", padding: 4 }}
+                        disabled={row.sell_price_total <= 0}
+                      >
+                        🎟
+                      </button>
+                    </td>
                   </tr>
                 );
               })
@@ -988,6 +1005,97 @@ export default function EvidenceTab() {
           onClose={() => setShowAddModal(false)}
           onSave={() => { setShowAddModal(false); loadData(); }}
         />
+      )}
+
+      {/* Banner Modal */}
+      {bannerRow && (
+        <>
+          <div onClick={() => setBannerRow(null)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", zIndex: 100, backdropFilter: "blur(8px)" }} />
+          <div style={{
+            position: "fixed", top: "50%", left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "100%", maxWidth: 600,
+            background: "#111111", border: "1px solid #2a2a2a",
+            borderRadius: 20, zIndex: 101,
+            overflow: "hidden",
+          }}>
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #D4AF37, transparent)" }} />
+
+            {/* Header */}
+            <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #1a1a1a", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>P&L Banner</h2>
+                <p style={{ fontSize: 13, color: "#525252", marginTop: 2 }}>{bannerRow.event_name}</p>
+              </div>
+              <button onClick={() => setBannerRow(null)} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button>
+            </div>
+
+            {/* Banner preview */}
+            <div ref={bannerRef} style={{ padding: "1rem", lineHeight: 0 }}>
+              <div dangerouslySetInnerHTML={{ __html: generateTicketSVG({
+                eventName: bannerRow.event_name,
+                quantity: bannerRow.quantity,
+                buyPrice: bannerRow.buy_price * bannerRow.quantity,
+                sellPrice: bannerRow.sell_price_total,
+                profit: bannerRow.profit,
+                roi: bannerRow.roi,
+                currency: bannerRow.currency,
+              }) }} style={{ width: "100%", borderRadius: 8, overflow: "hidden" }} />
+            </div>
+
+            {/* Actions */}
+            <div style={{ padding: "1rem 1.5rem", borderTop: "1px solid #1a1a1a", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+              <button
+                onClick={async () => {
+                  setDownloadingBanner(true);
+                  try {
+                    const html2canvas = (await import("html2canvas")).default;
+                    const el = bannerRef.current?.querySelector("div") as HTMLElement;
+                    if (!el) return;
+                    const canvas = await html2canvas(el, { backgroundColor: "#0c0c0c", scale: 2, useCORS: true });
+                    canvas.toBlob(blob => {
+                      if (!blob) return;
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      a.download = `${bannerRow.event_name}-banner.png`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    });
+                  } catch (e) { console.error(e); }
+                  setDownloadingBanner(false);
+                }}
+                disabled={downloadingBanner}
+                style={{ padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#c0c0c0", cursor: "pointer", fontSize: 13, fontWeight: 600 }}
+              >
+                {downloadingBanner ? "⏳ Sťahujem..." : "⬇ Stáhnout"}
+              </button>
+              <button
+                onClick={async () => {
+                  try {
+                    const html2canvas = (await import("html2canvas")).default;
+                    const el = bannerRef.current?.querySelector("div") as HTMLElement;
+                    if (!el) return;
+                    const canvas = await html2canvas(el, { backgroundColor: "#0c0c0c", scale: 2, useCORS: true });
+                    canvas.toBlob(async blob => {
+                      if (!blob) return;
+                      const file = new File([blob], `${bannerRow.event_name}-banner.png`, { type: "image/png" });
+                      if (navigator.share && navigator.canShare({ files: [file] })) {
+                        await navigator.share({ files: [file], title: bannerRow.event_name });
+                      } else {
+                        const url = URL.createObjectURL(blob);
+                        window.open(url, "_blank");
+                      }
+                    });
+                  } catch (e) { console.error(e); }
+                }}
+                style={{ padding: "0.8rem", background: "linear-gradient(135deg, #D4AF37, #b8960f)", border: "none", borderRadius: 10, color: "#000", cursor: "pointer", fontSize: 13, fontWeight: 700 }}
+              >
+                ↗ Zdieľať
+              </button>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
