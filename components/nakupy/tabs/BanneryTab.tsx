@@ -125,7 +125,7 @@ export function generateTicketSVG(data: {
   <text x="90" y="556" font-family="Arial, sans-serif" font-size="20" fill="#666666" letter-spacing="2">ROI</text> 
   <text x="90" y="600" font-family="'Arial Black', Arial, sans-serif" font-size="30" font-weight="900" fill="${profitColor}">${isProfit ? "+" : ""}${data.roi.toFixed(1)}%</text> 
  
-  <text x="1080" y="668" font-family="'Arial Black', Arial, sans-serif" font-size="90" font-weight="900" fill="url(#tcGrad)" opacity="0.90">TC</text> 
+  <image href="/logo.png" x="1050" y="590" width="180" height="80" preserveAspectRatio="xMidYMid meet" opacity="0.9"/> 
  </svg>`; 
 }
 
