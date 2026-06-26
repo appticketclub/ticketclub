@@ -45,8 +45,8 @@ const COLS = [
   { key: "event_actual_date", label: "Datum\nkoncertu", width: 100 },
   { key: "quantity", label: "Počet\nlístků", width: 80 },
   { key: "buy_total", label: "Nákupní cena\ncelkem", width: 130 },
-  { key: "sell_total", label: "Prodejní cena\ncelkem", width: 130 },
   { key: "quantity_sold", label: "Prod.", width: 80 },
+  { key: "sell_total", label: "Prodejní cena\ncelkem", width: 130 },
   { key: "profit", label: "Celkový\nzisk", width: 120 },
   { key: "roi", label: "Ziskovost", width: 90 },
   { key: "exchange", label: "Burza", width: 120 },
@@ -729,9 +729,6 @@ export default function EvidenceTab() {
                       }}
                     />
 
-                    {/* Prodejní cena celkem — EDITABLE */}
-                    <EditableCell rowId={row.id} field="sell_price_total" value={row.sell_price_total > 0 ? row.sell_price_total.toFixed(2) : null} width={130} align="right" color={row.sell_price_total > 0 ? "#34d399" : "#3a3a3a"} />
-
                     {/* Prod. — EDITABLE with dropdown */}
                     {editingCell?.rowId === row.id && editingCell?.field === "quantity_sold" ? (
                       <td style={{ ...cellStyle(80), padding: 0, background: "#1a1a2e" }}>
@@ -801,6 +798,9 @@ export default function EvidenceTab() {
                         </span>
                       </td>
                     )}
+
+                    {/* Prodejní cena celkem — EDITABLE */}
+                    <EditableCell rowId={row.id} field="sell_price_total" value={row.sell_price_total > 0 ? row.sell_price_total.toFixed(2) : null} width={130} align="right" color={row.sell_price_total > 0 ? "#34d399" : "#3a3a3a"} />
 
                     {/* Celkový zisk — READ ONLY */}
                     <td style={{ ...cellStyle(120), textAlign: "right", color: row.profit >= 0 ? "#34d399" : "#f87171", fontWeight: 700, cursor: "default" }} title="Pouze pro čtení">
