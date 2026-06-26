@@ -44,9 +44,9 @@ const COLS = [
   { key: "city", label: "Místo akce", width: 140 },
   { key: "event_actual_date", label: "Datum\nkoncertu", width: 100 },
   { key: "quantity", label: "Počet\nlístků", width: 80 },
-  { key: "quantity_sold", label: "Prod.", width: 80 },
   { key: "buy_total", label: "Nákupní cena\ncelkem", width: 130 },
   { key: "sell_total", label: "Prodejní cena\ncelkem", width: 130 },
+  { key: "quantity_sold", label: "Prod.", width: 80 },
   { key: "profit", label: "Celkový\nzisk", width: 120 },
   { key: "roi", label: "Ziskovost", width: 90 },
   { key: "exchange", label: "Burza", width: 120 },
@@ -710,75 +710,6 @@ export default function EvidenceTab() {
                       }}
                     />
 
-                    {/* Prod. — EDITABLE */}
-                    <td
-                      onClick={() => {
-                        setEditingCell({ rowId: row.id, field: "quantity_sold" });
-                        setEditValue(String(row.quantity_sold));
-                      }}
-                      style={{ ...cellStyle(80), textAlign: "center", cursor: "text" }}
-                      title="Klikněte pro úpravu počtu prodaných"
-                    >
-                      {editingCell?.rowId === row.id && editingCell?.field === "quantity_sold" ? (
-                        <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
-                          <input
-                            autoFocus
-                            type="number"
-                            min="0"
-                            max={row.quantity}
-                            value={editValue}
-                            onChange={e => setEditValue(e.target.value)}
-                            onBlur={async () => {
-                              const newQty = Math.min(parseInt(editValue) || 0, row.quantity);
-                              const supabase = createClient();
-                              const { data: existingSales } = await supabase
-                                .from("sales")
-                                .select("id, sell_price")
-                                .eq("purchase_id", row.id)
-                                .limit(1);
-
-                              if (existingSales?.[0]) {
-                                await supabase.from("sales").update({
-                                  quantity_sold: newQty,
-                                  updated_at: new Date().toISOString(),
-                                }).eq("id", existingSales[0].id);
-                              } else if (newQty > 0) {
-                                const { data: { user } } = await supabase.auth.getUser();
-                                await supabase.from("sales").insert({
-                                  user_id: user!.id,
-                                  purchase_id: row.id,
-                                  quantity_sold: newQty,
-                                  sell_price: 0,
-                                  currency: row.currency,
-                                  sold_at: new Date().toISOString(),
-                                  fees: 0,
-                                });
-                              }
-
-                              // Update purchase status
-                              const newStatus = newQty >= row.quantity ? "sold" : newQty > 0 ? "partial" : "active";
-                              const newRemaining = Math.max(0, row.quantity - newQty);
-                              await supabase.from("purchases").update({
-                                status: newStatus,
-                                quantity_remaining: newRemaining,
-                                updated_at: new Date().toISOString(),
-                              }).eq("id", row.id);
-
-                              setEditingCell(null);
-                              loadData();
-                            }}
-                            onKeyDown={e => { if (e.key === "Enter") (e.target as HTMLInputElement).blur(); if (e.key === "Escape") setEditingCell(null); }}
-                            style={{ width: 30, padding: "2px 4px", background: "#0d0d2a", border: "2px solid #7c3aed", borderRadius: 4, color: "#fff", fontSize: 12, outline: "none", textAlign: "center" }}
-                          />
-                          <span style={{ fontSize: 11, color: "#525252" }}>/{row.quantity}</span>
-                        </div>
-                      ) : (
-                        <span style={{ fontSize: 12, color: row.quantity_sold > 0 ? "#34d399" : "#525252" }}>
-                          {row.quantity_sold}/{row.quantity}
-                        </span>
-                      )}
-                    </td>
-
                     {/* Nákupní cena celkem — EDITABLE */}
                     <NumberCell
                       rowId={row.id}
@@ -800,6 +731,76 @@ export default function EvidenceTab() {
 
                     {/* Prodejní cena celkem — EDITABLE */}
                     <EditableCell rowId={row.id} field="sell_price_total" value={row.sell_price_total > 0 ? row.sell_price_total.toFixed(2) : null} width={130} align="right" color={row.sell_price_total > 0 ? "#34d399" : "#3a3a3a"} />
+
+                    {/* Prod. — EDITABLE with dropdown */}
+                    {editingCell?.rowId === row.id && editingCell?.field === "quantity_sold" ? (
+                      <td style={{ ...cellStyle(80), padding: 0, background: "#1a1a2e" }}>
+                        <select
+                          autoFocus
+                          value={editValue}
+                          onChange={async e => {
+                            const newQty = parseInt(e.target.value);
+                            setEditValue(String(newQty));
+                            const supabase = createClient();
+                            const { data: { user } } = await supabase.auth.getUser();
+                            if (!user) return;
+
+                            const { data: existingSales } = await supabase
+                              .from("sales")
+                              .select("id")
+                              .eq("purchase_id", row.id)
+                              .limit(1);
+
+                            if (existingSales?.[0]) {
+                              await supabase.from("sales").update({
+                                quantity_sold: newQty,
+                                updated_at: new Date().toISOString(),
+                              }).eq("id", existingSales[0].id);
+                            } else if (newQty > 0) {
+                              await supabase.from("sales").insert({
+                                user_id: user.id,
+                                purchase_id: row.id,
+                                quantity_sold: newQty,
+                                sell_price: 0,
+                                currency: row.currency,
+                                sold_at: new Date().toISOString(),
+                                fees: 0,
+                              });
+                            }
+
+                            const newStatus = newQty >= row.quantity ? "sold" : newQty > 0 ? "partial" : "active";
+                            const newRemaining = Math.max(0, row.quantity - newQty);
+                            await supabase.from("purchases").update({
+                              status: newStatus,
+                              quantity_remaining: newRemaining,
+                              updated_at: new Date().toISOString(),
+                            }).eq("id", row.id);
+
+                            setEditingCell(null);
+                            loadData();
+                          }}
+                          onBlur={() => setEditingCell(null)}
+                          style={{ width: "100%", padding: "0.5rem", background: "#0d0d2a", border: "2px solid #7c3aed", color: "#fff", fontSize: 12, outline: "none" }}
+                        >
+                          {Array.from({ length: row.quantity + 1 }, (_, i) => (
+                            <option key={i} value={i}>{i}/{row.quantity}</option>
+                          ))}
+                        </select>
+                      </td>
+                    ) : (
+                      <td
+                        onClick={() => {
+                          setEditingCell({ rowId: row.id, field: "quantity_sold" });
+                          setEditValue(String(row.quantity_sold));
+                        }}
+                        style={{ ...cellStyle(80), textAlign: "center", cursor: "pointer" }}
+                        title="Klikněte pro úpravu"
+                      >
+                        <span style={{ fontSize: 12, color: row.quantity_sold > 0 ? "#34d399" : "#525252" }}>
+                          {row.quantity_sold}/{row.quantity}
+                        </span>
+                      </td>
+                    )}
 
                     {/* Celkový zisk — READ ONLY */}
                     <td style={{ ...cellStyle(120), textAlign: "right", color: row.profit >= 0 ? "#34d399" : "#f87171", fontWeight: 700, cursor: "default" }} title="Pouze pro čtení">
