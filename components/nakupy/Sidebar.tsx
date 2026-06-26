@@ -12,17 +12,18 @@ export default function Sidebar({
   isAdmin?: boolean;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const isProduction = process.env.NEXT_PUBLIC_SITE_URL === "https://app.ticketclub.vip";
 
   const navItems = [
     { id: "uvod", label: "Úvod", icon: null },
     { id: "ucty", label: "Účty hesla", icon: null },
     { id: "evidence", label: "Evidence", icon: null },
-    { id: "detaily", label: "Detaily N&P", icon: null },
+    ...(!isProduction ? [{ id: "detaily", label: "Detaily N&P", icon: null }] : []),
     { id: "kalendar", label: "Kalendář", icon: null },
     { id: "ai-statistiky", label: "AI statistiky", icon: null },
     { id: "doporucene-akce", label: "Nadcházející akce", icon: null },
     { id: "kalkulacka", label: "Kalkulačka", icon: null },
-    { id: "bannery", label: "P&L bannery", icon: null },
+    ...(!isProduction ? [{ id: "bannery", label: "P&L bannery", icon: null }] : []),
     ...(isAdmin ? [{ id: "tym-statistiky", label: "Štatistiky týmu", icon: null }] : []),
   ];
 
