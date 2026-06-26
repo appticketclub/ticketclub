@@ -30,7 +30,7 @@ export function generateTicketSVG(data: {
   const profitColor = isProfit ? "#4ade80" : "#f87171"; 
   const fmt = (n: number) => n.toLocaleString("cs-CZ", { minimumFractionDigits: 0, maximumFractionDigits: 0 }); 
  
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720"> 
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"> 
   <defs> 
     <filter id="borderGlow" x="-5%" y="-5%" width="110%" height="110%"> 
       <feGaussianBlur stdDeviation="5" result="blur"/> 
@@ -181,10 +181,12 @@ function BannerCard({ banner }: { banner: Banner }) {
         overflow: "hidden",
         border: "1px solid #1a1a1a",
       }}>
-        <div
-          style={{ width: "100%", lineHeight: 0 }}
-          dangerouslySetInnerHTML={{ __html: svg }}
-        />
+        <div style={{ width: "100%", aspectRatio: "16/9", overflow: "hidden" }}>
+          <div
+            style={{ width: "100%", height: "100%", lineHeight: 0 }}
+            dangerouslySetInnerHTML={{ __html: svg }}
+          />
+        </div>
       </div>
 
       {/* Footer */}

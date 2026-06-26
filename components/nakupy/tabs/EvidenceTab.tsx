@@ -1014,7 +1014,7 @@ export default function EvidenceTab() {
           <div style={{
             position: "fixed", top: "50%", left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "100%", maxWidth: 600,
+            width: "100%", maxWidth: 720,
             background: "#111111", border: "1px solid #2a2a2a",
             borderRadius: 20, zIndex: 101,
             overflow: "hidden",
@@ -1031,16 +1031,18 @@ export default function EvidenceTab() {
             </div>
 
             {/* Banner preview */}
-            <div ref={bannerRef} style={{ padding: "1rem", lineHeight: 0 }}>
-              <div dangerouslySetInnerHTML={{ __html: generateTicketSVG({
-                eventName: bannerRow.event_name,
-                quantity: bannerRow.quantity,
-                buyPrice: bannerRow.buy_price * bannerRow.quantity,
-                sellPrice: bannerRow.sell_price_total,
-                profit: bannerRow.profit,
-                roi: bannerRow.roi,
-                currency: bannerRow.currency,
-              }) }} style={{ width: "100%", borderRadius: 8, overflow: "hidden" }} />
+            <div ref={bannerRef} style={{ padding: "1rem" }}>
+              <div style={{ width: "100%", aspectRatio: "16/9", overflow: "hidden", borderRadius: 8 }}>
+                <div dangerouslySetInnerHTML={{ __html: generateTicketSVG({
+                  eventName: bannerRow.event_name,
+                  quantity: bannerRow.quantity,
+                  buyPrice: bannerRow.buy_price * bannerRow.quantity,
+                  sellPrice: bannerRow.sell_price_total,
+                  profit: bannerRow.profit,
+                  roi: bannerRow.roi,
+                  currency: bannerRow.currency,
+                }) }} style={{ width: "100%", height: "100%", lineHeight: 0 }} />
+              </div>
             </div>
 
             {/* Actions */}
