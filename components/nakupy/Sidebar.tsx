@@ -12,7 +12,9 @@ export default function Sidebar({
   isAdmin?: boolean;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const isProduction = process.env.NEXT_PUBLIC_SITE_URL === "https://app.ticketclub.vip";
+  const isProduction = typeof window !== "undefined"
+    ? window.location.hostname === "app.ticketclub.vip"
+    : process.env.NEXT_PUBLIC_SITE_URL === "https://app.ticketclub.vip";
 
   const navItems = [
     { id: "uvod", label: "Úvod", icon: null },
