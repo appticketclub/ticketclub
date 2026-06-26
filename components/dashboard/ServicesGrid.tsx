@@ -73,7 +73,7 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
       description: "Automatická registrace na pre-sale akce.",
       icon: "⚡",
       href: "/presale-bot",
-      free: false,
+      free: true,
     },
   ];
 
