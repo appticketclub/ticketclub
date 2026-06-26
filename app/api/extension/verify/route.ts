@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
   // Find license
   const { data: license } = await supabase
     .from("extension_licenses")
-    .select("user_id, is_active")
+    .select("user_id, is_active, plan")
     .eq("license_key", key)
     .single();
 
@@ -72,5 +72,6 @@ export async function GET(request: NextRequest) {
     }).eq("license_key", key);
   }
 
-  return new NextResponse("VALID", { status: 200, headers: corsHeaders });
+  const plan = license.plan ?? "single";
+  return new NextResponse(`VALID:${plan}`, { status: 200, headers: corsHeaders });
 }

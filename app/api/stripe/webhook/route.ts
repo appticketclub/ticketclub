@@ -56,9 +56,15 @@ export async function POST(request: NextRequest) {
           : null;
         const interval = sub.items?.data?.[0]?.plan?.interval ?? "month";
         const planInterval = interval === "year" ? "yearly" : "monthly";
+        
+        const priceId = sub.items?.data?.[0]?.price?.id;
+        const isProMax = priceId === process.env.STRIPE_PRO_MAX_PRICE_ID || 
+                          priceId === process.env.STRIPE_PRO_MAX_YEARLY_PRICE_ID;
+        const extensionPlan = isProMax ? "unlimited" : "single";
+        
         await supabase.from("subscriptions").upsert({
           user_id: userId,
-          plan: "pro",
+          plan: isProMax ? "pro_max" : "pro",
           plan_interval: planInterval,
           status: "active",
           stripe_customer_id: customerId,
@@ -89,7 +95,7 @@ export async function POST(request: NextRequest) {
 
         if (existingLicense) {
           await supabase.from("extension_licenses")
-            .update({ is_active: true })
+            .update({ is_active: true, plan: extensionPlan })
             .eq("user_id", userId);
         } else {
           const licenseKey = "TC-" + Array.from({length: 3}, () =>
@@ -99,6 +105,7 @@ export async function POST(request: NextRequest) {
             user_id: userId,
             license_key: licenseKey,
             is_active: true,
+            plan: extensionPlan,
           });
         }
         console.log("✅ Pro activated:", userId);
@@ -117,9 +124,15 @@ export async function POST(request: NextRequest) {
           : null;
         const interval = sub.items?.data?.[0]?.plan?.interval ?? "month";
         const planInterval = interval === "year" ? "yearly" : "monthly";
+        
+        const priceId = sub.items?.data?.[0]?.price?.id;
+        const isProMax = priceId === process.env.STRIPE_PRO_MAX_PRICE_ID || 
+                          priceId === process.env.STRIPE_PRO_MAX_YEARLY_PRICE_ID;
+        const extensionPlan = isProMax ? "unlimited" : "single";
+        
         await supabase.from("subscriptions").upsert({
           user_id: userId,
-          plan: "pro",
+          plan: isProMax ? "pro_max" : "pro",
           plan_interval: planInterval,
           status: "active",
           stripe_customer_id: invoice.customer as string,
@@ -150,7 +163,7 @@ export async function POST(request: NextRequest) {
 
         if (existingLicense) {
           await supabase.from("extension_licenses")
-            .update({ is_active: true })
+            .update({ is_active: true, plan: extensionPlan })
             .eq("user_id", userId);
         } else {
           const licenseKey = "TC-" + Array.from({length: 3}, () =>
@@ -160,6 +173,7 @@ export async function POST(request: NextRequest) {
             user_id: userId,
             license_key: licenseKey,
             is_active: true,
+            plan: extensionPlan,
           });
         }
         console.log("✅ Renewed:", userId);

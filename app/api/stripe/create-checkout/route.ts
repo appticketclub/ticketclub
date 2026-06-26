@@ -35,9 +35,11 @@ export async function POST(request: NextRequest) {
 
     const { plan } = await request.json().catch(() => ({ plan: "monthly" }));
 
-    const priceId = plan === "yearly"
-      ? process.env.STRIPE_PRO_YEARLY_PRICE_ID!
-      : process.env.STRIPE_PRO_PRICE_ID!;
+    const priceId = 
+      plan === "yearly" ? process.env.STRIPE_PRO_YEARLY_PRICE_ID! :
+      plan === "pro_max_monthly" ? process.env.STRIPE_PRO_MAX_PRICE_ID! :
+      plan === "pro_max_yearly" ? process.env.STRIPE_PRO_MAX_YEARLY_PRICE_ID! :
+      process.env.STRIPE_PRO_PRICE_ID!;
 
     // Create checkout session
     const session = await stripe.checkout.sessions.create({

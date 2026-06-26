@@ -2,9 +2,9 @@
 import { useState } from "react";
 
 export default function UpgradeModal({ onClose }: { onClose: () => void }) {
-  const [loading, setLoading] = useState<"monthly" | "yearly" | null>(null);
+  const [loading, setLoading] = useState<"monthly" | "yearly" | "pro_max_monthly" | "pro_max_yearly" | null>(null);
 
-  async function handleCheckout(plan: "monthly" | "yearly") {
+  async function handleCheckout(plan: "monthly" | "yearly" | "pro_max_monthly" | "pro_max_yearly") {
     setLoading(plan);
     try {
       const res = await fetch("/api/stripe/create-checkout", {
@@ -137,6 +137,38 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
                 }}
               >
                 {loading === "yearly" ? "Načítám..." : "⭐ Vybrat roční →"}
+              </button>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div style={{ borderTop: "1px solid #2a2a2a", margin: "1rem 0" }} />
+
+          <div style={{ fontSize: 11, color: "#D4AF37", fontWeight: 700, letterSpacing: "0.1em", marginBottom: "0.75rem" }}>PRO MAX — NEOMEZENÉ PROFILY</div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+            {/* Pro Max Monthly */}
+            <div style={{ background: "linear-gradient(145deg, #0f0a00, #1a1200)", border: "1px solid rgba(212,175,55,0.4)", borderRadius: 16, padding: "1rem 1.25rem", cursor: "pointer", display: "flex", flexDirection: "column" as const }}
+            onClick={() => handleCheckout("pro_max_monthly")}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#D4AF37", marginBottom: "0.75rem", letterSpacing: "0.08em" }}>MĚSÍČNÍ</div>
+              <div style={{ fontSize: 28, fontWeight: 900, color: "#D4AF37", letterSpacing: "-0.03em", marginBottom: 4 }}>€39.95</div>
+              <div style={{ fontSize: 12, color: "#525252", marginBottom: "1.5rem" }}>/ měsíc</div>
+              <button disabled={loading === "pro_max_monthly"} onClick={e => { e.stopPropagation(); handleCheckout("pro_max_monthly"); }} style={{ width: "100%", padding: "0.65rem", background: loading === "pro_max_monthly" ? "#2a2a2a" : "linear-gradient(135deg, #D4AF37, #b8960f)", border: "none", borderRadius: 10, color: "#000", fontWeight: 700, fontSize: 13, cursor: loading === "pro_max_monthly" ? "default" : "pointer", marginTop: "auto" }}>
+                {loading === "pro_max_monthly" ? "Načítám..." : "Vybrat →"}
+              </button>
+            </div>
+
+            {/* Pro Max Yearly */}
+            <div style={{ background: "linear-gradient(145deg, #0f0a00, #1a1200)", border: "1px solid rgba(212,175,55,0.6)", borderRadius: 16, padding: "1rem 1.25rem", cursor: "pointer", position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" as const }}
+            onClick={() => handleCheckout("pro_max_yearly")}>
+              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #D4AF37, transparent)" }} />
+              <div style={{ display: "inline-flex", alignItems: "center", padding: "3px 10px", background: "#D4AF37", borderRadius: 100, fontSize: 10, fontWeight: 800, color: "#000", marginBottom: "0.75rem", width: "fit-content", letterSpacing: "0.05em" }}>3 MĚSÍCE ZDARMA</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#D4AF37", marginBottom: "0.75rem", letterSpacing: "0.08em" }}>ROČNÍ</div>
+              <div style={{ fontSize: 28, fontWeight: 900, color: "#D4AF37", letterSpacing: "-0.03em", marginBottom: 4 }}>€359.95</div>
+              <div style={{ fontSize: 12, color: "#525252", marginBottom: 4 }}>/ rok · €29.99/měsíc</div>
+              <div style={{ fontSize: 11, color: "#D4AF37", marginBottom: "1.5rem" }}></div>
+              <button disabled={loading === "pro_max_yearly"} onClick={e => { e.stopPropagation(); handleCheckout("pro_max_yearly"); }} style={{ width: "100%", padding: "0.65rem", background: loading === "pro_max_yearly" ? "#2a2a2a" : "linear-gradient(135deg, #D4AF37, #b8960f)", border: "none", borderRadius: 10, color: "#000", fontWeight: 700, fontSize: 13, cursor: loading === "pro_max_yearly" ? "default" : "pointer", marginTop: "auto" }}>
+                {loading === "pro_max_yearly" ? "Načítám..." : "⭐ Vybrat →"}
               </button>
             </div>
           </div>
