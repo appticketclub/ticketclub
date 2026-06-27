@@ -23,29 +23,32 @@ export async function GET(request: NextRequest) {
   const key = request.nextUrl.searchParams.get("key");
   const email = request.nextUrl.searchParams.get("email");
 
+  console.log("[verify] key:", key, "email:", email);
+
   if (!key || !email) return new NextResponse("INVALID", { status: 200, headers: corsHeaders });
 
-  // Find license
-  const { data: license } = await supabase
+  const { data: license, error: licenseError } = await supabase
     .from("extension_licenses")
     .select("user_id, is_active, plan")
     .eq("license_key", key)
     .single();
 
+  console.log("[verify] license:", license, "error:", licenseError);
+
   if (!license || !license.is_active) return new NextResponse("INVALID", { status: 200, headers: corsHeaders });
 
-  // Verify email matches
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("email")
     .eq("id", license.user_id)
     .single();
 
+  console.log("[verify] profile:", profile, "error:", profileError);
+
   if (!profile || profile.email.toLowerCase() !== email.toLowerCase()) {
     return new NextResponse("EMAIL_MISMATCH", { status: 200, headers: corsHeaders });
   }
 
-  // Rate limiting
   const { data: licenseData } = await supabase
     .from("extension_licenses")
     .select("verify_count_hour, verify_hour_start")
@@ -73,5 +76,6 @@ export async function GET(request: NextRequest) {
   }
 
   const plan = license.plan ?? "single";
+  console.log("[verify] returning VALID:", plan);
   return new NextResponse(`VALID:${plan}`, { status: 200, headers: corsHeaders });
 }
