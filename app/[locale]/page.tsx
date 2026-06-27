@@ -43,7 +43,6 @@ export default async function HomePage() {
         <div className="nav-links">
           <a href="#features">Funkce</a>
           <a href="#how-it-works">Jak to funguje</a>
-          <a href="#pricing">Ceník</a>
         </div>
         <div className="nav-cta">
           {isLoggedIn ? (
@@ -92,7 +91,7 @@ export default async function HomePage() {
         .step-number { font-size: 4rem; font-weight: 800; color: #a0a0a0; line-height: 1; margin-bottom: 1rem; }
         .step-title { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
         .step-desc { font-size: 13px; color: #6b6b6b; line-height: 1.6; }
-        div#features, div#how-it-works, div#pricing { display: none; }
+        div#features, div#how-it-works { display: none; }
       `}</style>
 
       <section id="features" className="features">
@@ -141,20 +140,6 @@ export default async function HomePage() {
       </section>
 
       <style>{`
-        .pricing { flex-direction: column; }
-        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; max-width: 700px; width: 100%; margin-top: 4rem; }
-        .pricing-card { background: #111111; border: 1px solid #1a1a1a; border-radius: 20px; padding: 2.5rem; position: relative; overflow: hidden; }
-        .pricing-card.pro { border-color: rgba(192,192,192,0.2); background: linear-gradient(145deg, #141414, #111111); }
-        .pricing-card.pro::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, #c0c0c0, transparent); }
-        .pricing-badge { display: inline-block; padding: 3px 10px; background: linear-gradient(135deg, #fff, #a0a0a0); border-radius: 100px; font-size: 10px; font-weight: 800; color: #000; letter-spacing: 0.1em; margin-bottom: 1.5rem; }
-        .pricing-name { font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
-        .pricing-price { font-size: 3rem; font-weight: 800; color: #fff; letter-spacing: -0.03em; margin-bottom: 0.25rem; }
-        .pricing-period { font-size: 13px; color: #3a3a3a; margin-bottom: 2rem; }
-        .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem; }
-        .pricing-features li { font-size: 13px; color: #c0c0c0; display: flex; align-items: center; gap: 8px; }
-        .pricing-features li::before { content: "✓"; color: #34d399; font-weight: 700; }
-        .pricing-features li.off { color: #3a3a3a; }
-        .pricing-features li.off::before { content: "×"; color: #2a2a2a; }
         .cta-section { flex-direction: column; text-align: center; }
         .cta-section h2 { font-size: clamp(2rem, 5vw, 4rem); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 1rem; }
         .cta-section p { font-size: 1.1rem; color: #525252; margin-bottom: 3rem; }
@@ -167,63 +152,6 @@ export default async function HomePage() {
           footer { padding: 2rem 1.5rem; flex-direction: column; text-align: center; }
         }
       `}</style>
-
-      <section id="pricing" className="pricing">
-        <div className="section-label">Ceník</div>
-        <div className="section-title">Jednoduché ceny</div>
-        <div className="section-sub">Začněte zdarma. Upgradujte když budete připraveni.</div>
-        <div className="pricing-grid">
-          <div className="pricing-card">
-            <div className="pricing-name">Free</div>
-            <div className="pricing-price">€0</div>
-            <div className="pricing-period">navždy zdarma</div>
-            <ul className="pricing-features">
-              <li>P&L Tracker</li>
-              <li>Až 20 nákupů</li>
-              <li>Kalendář</li>
-              <li>Kalkulačka profitů</li>
-              <li className="off">AI Statistiky</li>
-              <li className="off">Chrome Launcher</li>
-              <li className="off">Extension</li>
-              <li className="off">Doporučené akce</li>
-            </ul>
-            {isLoggedIn ? (
-              <Link href="/dostupne-sluzby" className="btn-ghost" style={{ display: "block", textAlign: "center", padding: "0.875rem" }}>
-                Přejít do dashboardu
-              </Link>
-            ) : (
-              <Link href="/registrace" className="btn-ghost" style={{ display: "block", textAlign: "center", padding: "0.875rem" }}>
-                Začít zdarma
-              </Link>
-            )}
-          </div>
-          <div className="pricing-card pro">
-            <div className="pricing-badge">PRO</div>
-            <div className="pricing-name">Pro</div>
-            <div className="pricing-price">€9.99</div>
-            <div className="pricing-period">za měsíc</div>
-            <ul className="pricing-features">
-              <li>Vše v Free</li>
-              <li>Neomezené nákupy</li>
-              <li>AI Statistiky</li>
-              <li>Doporučené akce</li>
-              <li>Chrome Launcher</li>
-              <li>Extension licence</li>
-              <li>P&L Bannery ∞</li>
-              <li>Prioritní podpora</li>
-            </ul>
-            {isLoggedIn ? (
-              <Link href="/dostupne-sluzby" className="btn-primary" style={{ display: "block", textAlign: "center", padding: "0.875rem" }}>
-                Přejít do dashboardu
-              </Link>
-            ) : (
-              <Link href="/registrace" className="btn-primary" style={{ display: "block", textAlign: "center", padding: "0.875rem" }}>
-                Začít s Pro →
-              </Link>
-            )}
-          </div>
-        </div>
-      </section>
 
       <section className="cta-section">
         <div className="hero-glow" />
@@ -246,7 +174,6 @@ export default async function HomePage() {
         <p>© 2026 TicketClub. Všechna práva vyhrazena.</p>
         <nav>
           <a href="#features">Funkce</a>
-          <a href="#pricing">Ceník</a>
           {isLoggedIn ? (
             <Link href="/dostupne-sluzby">Dashboard</Link>
           ) : (
