@@ -60,6 +60,35 @@ export async function GET(request: NextRequest) {
         return new NextResponse("PROFILE_LIMIT", { status: 200, headers: corsHeaders });
       }
 
+      if (forceActivate) {
+        // Check activation count
+        const { data: actData } = await supabase
+          .from("extension_licenses")
+          .select("activation_count, activation_count_reset")
+          .eq("license_key", key)
+          .single();
+
+        const now = new Date();
+        const resetTime = actData?.activation_count_reset ? new Date(actData.activation_count_reset) : null;
+        const isNewDay = !resetTime || (now.getTime() - resetTime.getTime()) > 86400000;
+
+        if (isNewDay) {
+          // Reset counter
+          await supabase
+            .from("extension_licenses")
+            .update({ activation_count: 1, activation_count_reset: now.toISOString() })
+            .eq("license_key", key);
+        } else {
+          if ((actData?.activation_count ?? 0) >= 3) {
+            return new NextResponse("ACTIVATION_LIMIT", { status: 200, headers: corsHeaders });
+          }
+          await supabase
+            .from("extension_licenses")
+            .update({ activation_count: (actData?.activation_count ?? 0) + 1 })
+            .eq("license_key", key);
+        }
+      }
+
       await supabase
         .from("extension_licenses")
         .update({ active_profile_id: profileId, last_verified_at: new Date().toISOString() })
