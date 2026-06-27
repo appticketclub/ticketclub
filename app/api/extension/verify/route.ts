@@ -81,6 +81,9 @@ export async function GET(request: NextRequest) {
   const hourStart = licenseData?.verify_hour_start ? new Date(licenseData.verify_hour_start) : null;
   const isNewHour = !hourStart || (now.getTime() - hourStart.getTime()) > 3600000;
 
+  // Different limits per plan
+  const hourlyLimit = plan === "single" ? 20 : 200;
+
   if (isNewHour) {
     await supabase.from("extension_licenses").update({
       verify_count_hour: 1,
@@ -88,7 +91,8 @@ export async function GET(request: NextRequest) {
       last_verified_at: now.toISOString(),
     }).eq("license_key", key);
   } else {
-    if ((licenseData?.verify_count_hour ?? 0) >= 200) {
+    if ((licenseData?.verify_count_hour ?? 0) >= hourlyLimit) {
+      console.log("[verify] RATE_LIMIT", { current: licenseData?.verify_count_hour, limit: hourlyLimit, plan });
       return new NextResponse("RATE_LIMIT", { status: 200, headers: corsHeaders });
     }
     await supabase.from("extension_licenses").update({
