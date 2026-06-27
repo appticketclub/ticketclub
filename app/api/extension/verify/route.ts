@@ -61,7 +61,8 @@ export async function GET(request: NextRequest) {
 
   if (plan === "single") {
     const profileId = request.nextUrl.searchParams.get("profileId");
-    console.log("[verify] checking profile limit, profileId:", profileId);
+    const forceActivate = request.nextUrl.searchParams.get("forceActivate") === "true";
+    console.log("[verify] checking profile limit, profileId:", profileId, "forceActivate:", forceActivate);
 
     if (profileId) {
       const { data: licenseData2 } = await supabase
@@ -72,11 +73,12 @@ export async function GET(request: NextRequest) {
 
       console.log("[verify] licenseData2.active_profile_id:", licenseData2?.active_profile_id);
 
-      if (licenseData2?.active_profile_id && licenseData2.active_profile_id !== profileId) {
+      if (!forceActivate && licenseData2?.active_profile_id && licenseData2.active_profile_id !== profileId) {
         console.log("[verify] PROFILE_LIMIT: different profile", { active: licenseData2.active_profile_id, requested: profileId });
         return new NextResponse("PROFILE_LIMIT", { status: 200, headers: corsHeaders });
       }
 
+      // Always update profile on forceActivate, or if no profile saved yet
       console.log("[verify] setting active_profile_id to:", profileId);
       await supabase
         .from("extension_licenses")
