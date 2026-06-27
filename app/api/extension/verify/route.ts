@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
 
   const { data: license, error: licenseError } = await supabase
     .from("extension_licenses")
-    .select("user_id, is_active, plan")
+    .select("user_id, is_active, plan, active_profile_id")
     .eq("license_key", key)
     .single();
 
@@ -47,6 +47,28 @@ export async function GET(request: NextRequest) {
 
   if (!profile || profile.email.toLowerCase() !== email.toLowerCase()) {
     return new NextResponse("EMAIL_MISMATCH", { status: 200, headers: corsHeaders });
+  }
+
+  // After confirming license is valid and email matches, check plan limits:
+  const plan = license.plan ?? "single";
+
+  if (plan === "single") {
+    // Get the stored chrome profile fingerprint from request
+    const profileId = request.nextUrl.searchParams.get("profileId");
+
+    if (profileId) {
+      if (license.active_profile_id && license.active_profile_id !== profileId) {
+        // Different profile is trying to use this license
+        console.log("[verify] PROFILE_LIMIT: different profile", { active: license.active_profile_id, requested: profileId });
+        return new NextResponse("PROFILE_LIMIT", { status: 200, headers: corsHeaders });
+      }
+
+      // Save this profile as the active one
+      await supabase
+        .from("extension_licenses")
+        .update({ active_profile_id: profileId })
+        .eq("license_key", key);
+    }
   }
 
   const { data: licenseData } = await supabase
@@ -75,7 +97,6 @@ export async function GET(request: NextRequest) {
     }).eq("license_key", key);
   }
 
-  const plan = license.plan ?? "single";
   console.log("[verify] returning VALID:", plan);
   return new NextResponse(`VALID:${plan}`, { status: 200, headers: corsHeaders });
 }
