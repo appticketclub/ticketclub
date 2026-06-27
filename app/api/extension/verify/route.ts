@@ -59,6 +59,32 @@ export async function GET(request: NextRequest) {
   // After confirming license is valid and email matches, check plan limits:
   const plan = license.plan ?? "single";
 
+  if (plan === "single") {
+    const profileId = request.nextUrl.searchParams.get("profileId");
+    console.log("[verify] checking profile limit, profileId:", profileId);
+
+    if (profileId) {
+      const { data: licenseData2 } = await supabase
+        .from("extension_licenses")
+        .select("active_profile_id")
+        .eq("license_key", key)
+        .single();
+
+      console.log("[verify] licenseData2.active_profile_id:", licenseData2?.active_profile_id);
+
+      if (licenseData2?.active_profile_id && licenseData2.active_profile_id !== profileId) {
+        console.log("[verify] PROFILE_LIMIT: different profile", { active: licenseData2.active_profile_id, requested: profileId });
+        return new NextResponse("PROFILE_LIMIT", { status: 200, headers: corsHeaders });
+      }
+
+      console.log("[verify] setting active_profile_id to:", profileId);
+      await supabase
+        .from("extension_licenses")
+        .update({ active_profile_id: profileId })
+        .eq("license_key", key);
+    }
+  }
+
   console.log("[verify] email OK, checking rate limit...");
 
   const { data: licenseData } = await supabase
