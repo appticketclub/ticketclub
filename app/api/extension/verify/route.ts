@@ -23,105 +23,49 @@ export async function GET(request: NextRequest) {
   const key = request.nextUrl.searchParams.get("key");
   const email = request.nextUrl.searchParams.get("email");
 
-  console.log("[verify] START key:", key, "email:", email);
+  if (!key || !email) return new NextResponse("INVALID", { status: 200, headers: corsHeaders });
 
-  if (!key || !email) {
-    console.log("[verify] INVALID - missing key or email");
-    return new NextResponse("INVALID", { status: 200, headers: corsHeaders });
-  }
-
-  const { data: license, error: licenseError } = await supabase
+  const { data: license } = await supabase
     .from("extension_licenses")
     .select("user_id, is_active, plan")
     .eq("license_key", key)
     .single();
 
-  console.log("[verify] license:", JSON.stringify(license), "error:", JSON.stringify(licenseError));
+  if (!license || !license.is_active) return new NextResponse("INVALID", { status: 200, headers: corsHeaders });
 
-  if (!license || !license.is_active) {
-    console.log("[verify] INVALID - no license or not active");
-    return new NextResponse("INVALID", { status: 200, headers: corsHeaders });
-  }
-
-  const { data: profile, error: profileError } = await supabase
+  const { data: profile } = await supabase
     .from("profiles")
     .select("email")
     .eq("id", license.user_id)
     .single();
 
-  console.log("[verify] profile:", JSON.stringify(profile), "error:", JSON.stringify(profileError));
-
   if (!profile || profile.email.toLowerCase() !== email.toLowerCase()) {
-    console.log("[verify] INVALID - email mismatch, db:", profile?.email, "input:", email);
     return new NextResponse("EMAIL_MISMATCH", { status: 200, headers: corsHeaders });
   }
 
-  // After confirming license is valid and email matches, check plan limits:
   const plan = license.plan ?? "single";
 
   if (plan === "single") {
     const profileId = request.nextUrl.searchParams.get("profileId");
     const forceActivate = request.nextUrl.searchParams.get("forceActivate") === "true";
-    console.log("[verify] checking profile limit, profileId:", profileId, "forceActivate:", forceActivate);
 
     if (profileId) {
-      const { data: licenseData2 } = await supabase
+      const { data: licenseData } = await supabase
         .from("extension_licenses")
         .select("active_profile_id")
         .eq("license_key", key)
         .single();
 
-      console.log("[verify] licenseData2.active_profile_id:", licenseData2?.active_profile_id);
-
-      if (!forceActivate && licenseData2?.active_profile_id && licenseData2.active_profile_id !== profileId) {
-        console.log("[verify] PROFILE_LIMIT: different profile", { active: licenseData2.active_profile_id, requested: profileId });
+      if (!forceActivate && licenseData?.active_profile_id && licenseData.active_profile_id !== profileId) {
         return new NextResponse("PROFILE_LIMIT", { status: 200, headers: corsHeaders });
       }
 
-      // Always update profile on forceActivate, or if no profile saved yet
-      console.log("[verify] setting active_profile_id to:", profileId);
       await supabase
         .from("extension_licenses")
-        .update({ active_profile_id: profileId })
+        .update({ active_profile_id: profileId, last_verified_at: new Date().toISOString() })
         .eq("license_key", key);
     }
   }
 
-  console.log("[verify] email OK, checking rate limit...");
-
-  const { data: licenseData } = await supabase
-    .from("extension_licenses")
-    .select("verify_count_hour, verify_hour_start")
-    .eq("license_key", key)
-    .single();
-
-  console.log("[verify] licenseData:", JSON.stringify(licenseData));
-
-  const hourlyLimit = plan === "single" ? 20 : 200;
-  const now = new Date();
-  const hourStart = licenseData?.verify_hour_start ? new Date(licenseData.verify_hour_start) : null;
-  const isNewHour = !hourStart || (now.getTime() - hourStart.getTime()) > 3600000;
-
-  if (!isNewHour && (licenseData?.verify_count_hour ?? 0) >= hourlyLimit) {
-    console.log("[verify] RATE_LIMIT", { current: licenseData?.verify_count_hour, limit: hourlyLimit, plan });
-    return new NextResponse("RATE_LIMIT", { status: 200, headers: corsHeaders });
-  }
-
-  if (isNewHour) {
-    console.log("[verify] new hour, resetting count to 1");
-    await supabase.from("extension_licenses").update({
-      verify_count_hour: 1,
-      verify_hour_start: now.toISOString(),
-      last_verified_at: now.toISOString(),
-    }).eq("license_key", key);
-  } else {
-    console.log("[verify] incrementing count to", (licenseData?.verify_count_hour ?? 0) + 1);
-    await supabase.from("extension_licenses").update({
-      verify_count_hour: (licenseData?.verify_count_hour ?? 0) + 1,
-      last_verified_at: now.toISOString(),
-    }).eq("license_key", key);
-  }
-
-  console.log("[verify] returning VALID:", plan);
   return new NextResponse(`VALID:${plan}`, { status: 200, headers: corsHeaders });
 }
