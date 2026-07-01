@@ -252,7 +252,7 @@ export default function KalendarTab() {
                     <div style={{ position: "relative", display: "inline-block" }}>
                       <div style={{
                         fontSize: 13, fontWeight: isCurrentDay ? 700 : 400,
-                        color: isCurrentDay ? "#fff" : day ? "#525252" : "#2a2a2a",
+                        color: isCurrentDay ? "#fff" : day ? "#ffffff" : "#2a2a2a",
                         width: 26, height: 26,
                         display: "flex", alignItems: "center", justifyContent: "center",
                         borderRadius: "50%",
