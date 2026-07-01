@@ -68,7 +68,7 @@ function AddVaultModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
         background: "#111111", border: "1px solid #2a2a2a", 
         borderRadius: 20, padding: "2rem", zIndex: 101, overflow: "hidden", 
       }}> 
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)" }} /> 
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)" }} /> 
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.75rem" }}> 
           <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Přidat záznam</h2> 
@@ -182,7 +182,7 @@ function EditVaultModal({ account, onClose, onSave }: { account: VaultAccount; o
     <>
       <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 100, backdropFilter: "blur(4px)" }} />
       <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "100%", maxWidth: 500, background: "#111111", border: "1px solid #2a2a2a", borderRadius: 20, padding: "2rem", zIndex: 101, overflow: "hidden" }}>
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)" }} />
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)" }} />
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.75rem" }}>
           <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Upravit záznam</h2>
@@ -337,7 +337,7 @@ export default function UctyHeslaTab() {
         <div style={{ background: "#111111", border: "1px dashed #2a2a2a", borderRadius: 16, padding: "3rem", textAlign: "center" }}> 
           <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>🔑</div> 
           <p style={{ color: "#525252", fontSize: 14, marginBottom: "1.5rem" }}>Zatím žádné záznamy. Uložte si přihlašovací údaje bezpečně na jednom místě.</p> 
-          <button onClick={() => setShowModal(true)} style={{ padding: "0.65rem 1.5rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#c0c0c0", cursor: "pointer", fontSize: 14 }}> 
+          <button onClick={() => setShowModal(true)} style={{ padding: "0.65rem 1.5rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ffffff", cursor: "pointer", fontSize: 14 }}> 
             + Přidat záznam 
           </button> 
         </div> 
@@ -353,7 +353,7 @@ export default function UctyHeslaTab() {
             background: "#111111", border: "1px solid #2a2a2a", 
             borderRadius: 20, padding: "1.75rem", zIndex: 101, overflow: "hidden", 
           }}>
-            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)" }} />
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)" }} />
 
             {/* Header */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
@@ -379,7 +379,7 @@ export default function UctyHeslaTab() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.75rem 0", borderBottom: "1px solid #141414" }}>
                   <span style={{ fontSize: 12, color: "#525252" }}>E-mail</span>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ fontSize: 13, color: "#c0c0c0" }}>{detailAccount.email}</span>
+                    <span style={{ fontSize: 13, color: "#ffffff" }}>{detailAccount.email}</span>
                     <button
                       onClick={e => { e.stopPropagation(); navigator.clipboard.writeText(detailAccount.email!); }}
                       style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 11 }}
@@ -393,13 +393,13 @@ export default function UctyHeslaTab() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.75rem 0", borderBottom: "1px solid #141414" }}>
                   <span style={{ fontSize: 12, color: "#525252" }}>Heslo</span>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ fontSize: 13, color: "#c0c0c0", letterSpacing: revealedPasswords.has(detailAccount.id) ? "normal" : "0.1em" }}>
+                    <span style={{ fontSize: 13, color: "#ffffff", letterSpacing: revealedPasswords.has(detailAccount.id) ? "normal" : "0.1em" }}>
                       {revealedPasswords.has(detailAccount.id) ? detailAccount.password_encrypted : "••••••••"}
                     </span>
                     <button
                       onClick={e => { e.stopPropagation(); togglePassword(detailAccount.id); }}
                       style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 11 }}
-                      onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#c0c0c0"}
+                      onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#ffffff"}
                       onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"}
                     >{revealedPasswords.has(detailAccount.id) ? "skrýt" : "zobrazit"}</button>
                     <button
@@ -414,7 +414,7 @@ export default function UctyHeslaTab() {
               {detailAccount.notes && (
                 <div style={{ padding: "0.75rem 0" }}>
                   <span style={{ fontSize: 12, color: "#525252", display: "block", marginBottom: 4 }}>Poznámka</span>
-                  <p style={{ fontSize: 13, color: "#c0c0c0", margin: 0, lineHeight: 1.5 }}>{detailAccount.notes}</p>
+                  <p style={{ fontSize: 13, color: "#ffffff", margin: 0, lineHeight: 1.5 }}>{detailAccount.notes}</p>
                 </div>
               )}
             </div>
@@ -423,7 +423,7 @@ export default function UctyHeslaTab() {
             <div style={{ display: "flex", gap: "0.75rem", marginTop: "1.5rem" }}>
               <button
                 onClick={e => { e.stopPropagation(); setEditAccount(detailAccount); setDetailAccount(null); }}
-                style={{ flex: 1, padding: "0.75rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#c0c0c0", cursor: "pointer", fontSize: 13, fontWeight: 600 }}
+                style={{ flex: 1, padding: "0.75rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ffffff", cursor: "pointer", fontSize: 13, fontWeight: 600 }}
               >✎ Upravit</button>
               <button
                 onClick={e => { e.stopPropagation(); setDetailAccount(null); }}
@@ -469,7 +469,7 @@ export default function UctyHeslaTab() {
                   <button
                     onClick={() => setEditAccount(account)}
                     style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 14, padding: 4 }}
-                    onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#c0c0c0"}
+                    onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#ffffff"}
                     onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"}
                   >✎</button>
                   <button

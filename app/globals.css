@@ -66,7 +66,7 @@ body {
 
 /* Chrome/metallic text gradient */
 .text-chrome {
-  background: linear-gradient(135deg, #ffffff 0%, #c0c0c0 40%, #808080 70%, #c0c0c0 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 40%, #808080 70%, #ffffff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -99,7 +99,7 @@ body {
 .border-chrome {
   border: 1px solid transparent;
   background: linear-gradient(#111111, #111111) padding-box,
-              linear-gradient(135deg, #c0c0c0, #404040, #c0c0c0) border-box;
+              linear-gradient(135deg, #ffffff, #404040, #ffffff) border-box;
 }
 
 /* Mobile responsive */

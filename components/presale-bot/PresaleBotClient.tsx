@@ -22,7 +22,7 @@ export default function PresaleBotClient() {
       <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 20, padding: "1.75rem", marginBottom: "1.5rem", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #a78bfa, transparent)" }} />
         <div style={{ fontSize: 48, marginBottom: "1rem" }}>⚡</div>
-        <p style={{ fontSize: 14, color: "#c0c0c0", lineHeight: 1.8, marginBottom: "1.5rem" }}>
+        <p style={{ fontSize: 14, color: "#ffffff", lineHeight: 1.8, marginBottom: "1.5rem" }}>
           Pre-sale Bot bude dostupný při další pre-sale akci. O dostupnosti vás budeme informovat v Discordu TicketClub. Pokud máte informace o akci s velkým potenciálem, napište Jirkovi nebo do Discordu TicketClub — a pokud akce stojí za to, bota připravíme.
         </p>
         <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" as const }}>
@@ -35,7 +35,7 @@ export default function PresaleBotClient() {
           </a>
           <a
             href="mailto:pato.strnadel@gmail.com"
-            style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "0.75rem 1.5rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 12, color: "#c0c0c0", fontWeight: 600, fontSize: 13, textDecoration: "none" }}
+            style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "0.75rem 1.5rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 12, color: "#ffffff", fontWeight: 600, fontSize: 13, textDecoration: "none" }}
           >
             ✉ Napsat Jirkovi
           </a>
@@ -50,7 +50,7 @@ export default function PresaleBotClient() {
         </div>
         <a
           href="mailto:pato.strnadel@gmail.com"
-          style={{ padding: "0.6rem 1.25rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#c0c0c0", fontSize: 13, fontWeight: 600, textDecoration: "none" }}
+          style={{ padding: "0.6rem 1.25rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ffffff", fontSize: 13, fontWeight: 600, textDecoration: "none" }}
         >
           ✉ pato.strnadel@gmail.com
         </a>

@@ -75,7 +75,7 @@ function AddAccountModal({ onClose, onSave }: { onClose: () => void; onSave: () 
         borderRadius: 20, padding: "2rem", zIndex: 101,
         overflow: "hidden",
       }}>
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)" }} />
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)" }} />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.75rem" }}>
           <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Přidat účet</h2>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 20, lineHeight: 1 }}>×</button>
@@ -182,7 +182,7 @@ function EditAccountModal({ account, onClose, onSave }: { account: Account; onCl
     <>
       <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 100, backdropFilter: "blur(4px)" }} />
       <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "100%", maxWidth: 500, background: "#111111", border: "1px solid #2a2a2a", borderRadius: 20, padding: "2rem", zIndex: 101, overflow: "hidden" }}>
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)" }} />
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)" }} />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.75rem" }}>
           <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Upravit účet</h2>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 20, lineHeight: 1 }}>×</button>
@@ -265,7 +265,7 @@ function DetailAccountModal({
         borderRadius: 20, padding: "1.75rem", zIndex: 101,
         overflow: "hidden",
       }}>
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)" }} />
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)" }} />
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
           <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>{account.name}</h2>
@@ -287,7 +287,7 @@ function DetailAccountModal({
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.6rem 0", borderBottom: "1px solid #141414" }}>
               <span style={{ fontSize: 12, color: "#525252" }}>E-mail</span>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontSize: 13, color: "#c0c0c0" }}>{account.email}</span>
+                <span style={{ fontSize: 13, color: "#ffffff" }}>{account.email}</span>
                 <button
                   onClick={() => copyToClipboard(account.email!)}
                   style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 11 }}
@@ -303,13 +303,13 @@ function DetailAccountModal({
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.6rem 0", borderBottom: "1px solid #141414" }}>
               <span style={{ fontSize: 12, color: "#525252" }}>Heslo</span>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontSize: 13, color: "#c0c0c0" }}>
+                <span style={{ fontSize: 13, color: "#ffffff" }}>
                   {revealedPasswords.has(account.id) ? account.password_encrypted : "••••••••"}
                 </span>
                 <button
                   onClick={() => togglePassword(account.id)}
                   style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 11 }}
-                  onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#c0c0c0"}
+                  onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#ffffff"}
                   onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"}
                 >
                   {revealedPasswords.has(account.id) ? "skrýt" : "zobrazit"}
@@ -328,7 +328,7 @@ function DetailAccountModal({
           {account.notes && (
             <div style={{ padding: "0.6rem 0" }}>
               <span style={{ fontSize: 12, color: "#525252", display: "block", marginBottom: 4 }}>Poznámka</span>
-              <p style={{ fontSize: 13, color: "#c0c0c0", margin: 0 }}>{account.notes}</p>
+              <p style={{ fontSize: 13, color: "#ffffff", margin: 0 }}>{account.notes}</p>
             </div>
           )}
         </div>
@@ -336,7 +336,7 @@ function DetailAccountModal({
         <div style={{ display: "flex", gap: "0.75rem", marginTop: "1.5rem" }}>
           <button
             onClick={onEdit}
-            style={{ flex: 1, padding: "0.75rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#c0c0c0", cursor: "pointer", fontSize: 13, fontWeight: 600 }}
+            style={{ flex: 1, padding: "0.75rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ffffff", cursor: "pointer", fontSize: 13, fontWeight: 600 }}
           >
             ✎ Upravit
           </button>
@@ -437,7 +437,7 @@ export default function NakupniUctyTab() {
       {!loading && accounts.length === 0 && (
         <div style={{ background: "#111111", border: "1px dashed #2a2a2a", borderRadius: 16, padding: "3rem", textAlign: "center" }}>
           <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>🔐</div>
-          <button onClick={() => setShowModal(true)} style={{ padding: "0.65rem 1.5rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#c0c0c0", cursor: "pointer", fontSize: 14 }}>
+          <button onClick={() => setShowModal(true)} style={{ padding: "0.65rem 1.5rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ffffff", cursor: "pointer", fontSize: 14 }}>
             + Přidat účet
           </button>
         </div>
@@ -467,7 +467,7 @@ export default function NakupniUctyTab() {
                         rel="noopener noreferrer"
                         onClick={e => e.stopPropagation()}
                         style={{ fontSize: 11, color: "#3a3a3a", textDecoration: "none" }}
-                        onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.color = "#c0c0c0"}
+                        onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.color = "#ffffff"}
                         onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.color = "#3a3a3a"}
                       >
                         {account.url.replace("https://", "").replace("http://", "").split("/")[0]} ↗
@@ -479,7 +479,7 @@ export default function NakupniUctyTab() {
                   <button
                     onClick={e => { e.stopPropagation(); setEditAccount(account); }}
                     style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 14, padding: 4 }}
-                    onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#c0c0c0"}
+                    onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#ffffff"}
                     onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"}
                   >
                     ✎
@@ -500,7 +500,7 @@ export default function NakupniUctyTab() {
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13 }}>
                     <span style={{ color: "#3a3a3a" }}>E-mail</span>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ color: "#c0c0c0" }}>{account.email}</span>
+                      <span style={{ color: "#ffffff" }}>{account.email}</span>
                       <button
                         onClick={e => { e.stopPropagation(); copyToClipboard(account.email!); }}
                         style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 11 }}
@@ -516,13 +516,13 @@ export default function NakupniUctyTab() {
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13 }}>
                     <span style={{ color: "#3a3a3a" }}>Heslo</span>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ color: "#c0c0c0", letterSpacing: revealedPasswords.has(account.id) ? "normal" : "0.1em" }}>
+                      <span style={{ color: "#ffffff", letterSpacing: revealedPasswords.has(account.id) ? "normal" : "0.1em" }}>
                         {revealedPasswords.has(account.id) ? account.password_encrypted : "••••••••"}
                       </span>
                       <button
                         onClick={e => { e.stopPropagation(); togglePassword(account.id); }}
                         style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 11 }}
-                        onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#c0c0c0"}
+                        onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#ffffff"}
                         onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"}
                       >
                         {revealedPasswords.has(account.id) ? "skrýt" : "zobrazit"}

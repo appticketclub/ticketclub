@@ -31,7 +31,7 @@ export default function ForgotPasswordClient() {
         </div>
 
         <div style={{ background: "#111111", border: "1px solid #1f1f1f", borderRadius: 20, padding: "2rem", position: "relative", overflow: "hidden" }}>
-          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)" }} />
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)" }} />
 
           {sent ? (
             <div style={{ textAlign: "center" as const }}>
@@ -40,7 +40,7 @@ export default function ForgotPasswordClient() {
               <p style={{ fontSize: 13, color: "#525252", lineHeight: 1.7, marginBottom: "1.5rem" }}>
                 Zkontrolujte svou emailovou schránku a klikněte na odkaz pro reset hesla.
               </p>
-              <a href="/prihlaseni" style={{ fontSize: 13, color: "#c0c0c0", textDecoration: "none" }}>
+              <a href="/prihlaseni" style={{ fontSize: 13, color: "#ffffff", textDecoration: "none" }}>
                 ← Zpět na přihlášení
               </a>
             </div>
@@ -66,7 +66,7 @@ export default function ForgotPasswordClient() {
                   onChange={e => setEmail(e.target.value)}
                   onKeyDown={e => e.key === "Enter" && handleSubmit()}
                   style={{ width: "100%", padding: "0.875rem 1rem", background: "#111111", border: "1px solid #1f1f1f", borderRadius: 12, color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" as const, transition: "border-color 0.2s" }}
-                  onFocus={e => (e.target as HTMLInputElement).style.borderColor = "#c0c0c0"}
+                  onFocus={e => (e.target as HTMLInputElement).style.borderColor = "#ffffff"}
                   onBlur={e => (e.target as HTMLInputElement).style.borderColor = "#1f1f1f"}
                 />
               </div>
@@ -74,7 +74,7 @@ export default function ForgotPasswordClient() {
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                style={{ width: "100%", padding: "0.95rem", background: loading ? "#2a2a2a" : "linear-gradient(135deg, #ffffff 0%, #c0c0c0 50%, #a0a0a0 100%)", border: "none", borderRadius: 12, color: "#000", fontWeight: 800, fontSize: 14, letterSpacing: "0.08em", cursor: loading ? "default" : "pointer" }}
+                style={{ width: "100%", padding: "0.95rem", background: loading ? "#2a2a2a" : "linear-gradient(135deg, #ffffff 0%, #ffffff 50%, #a0a0a0 100%)", border: "none", borderRadius: 12, color: "#000", fontWeight: 800, fontSize: 14, letterSpacing: "0.08em", cursor: loading ? "default" : "pointer" }}
               >
                 {loading ? "ODESÍLÁM..." : "ODESLAT ODKAZ"}
               </button>

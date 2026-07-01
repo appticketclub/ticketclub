@@ -93,7 +93,7 @@ export default function ProdejeTab() {
         }}>
           {[
             { label: "Celkem prodejů", value: sales.length, color: "#fff" },
-            { label: "Celkový příjem", value: format(totalRevenue, currency), color: "#c0c0c0" },
+            { label: "Celkový příjem", value: format(totalRevenue, currency), color: "#ffffff" },
             { label: "Celkový zisk", value: format(totalProfit, currency), color: totalProfit >= 0 ? "#34d399" : "#f87171" },
           ].map(s => (
             <div key={s.label} style={{
@@ -227,7 +227,7 @@ export default function ProdejeTab() {
                   </div>
 
                   {/* 7. Počet */}
-                  <div style={{ fontSize: 13, color: "#c0c0c0" }}>{sale.quantity_sold}×</div>
+                  <div style={{ fontSize: 13, color: "#ffffff" }}>{sale.quantity_sold}×</div>
 
                   {/* 8. Prodejní cena + ROI */}
                   <div>
@@ -244,7 +244,7 @@ export default function ProdejeTab() {
                     <button
                       onClick={e => { e.stopPropagation(); setEditSale(sale); }}
                       style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 14, padding: 4 }}
-                      onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#c0c0c0"}
+                      onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#ffffff"}
                       onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"}
                     >✎</button>
                   </div>
@@ -310,7 +310,7 @@ export default function ProdejeTab() {
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.75rem", marginBottom: "1.25rem" }}>
                       {[
                         { label: "Prodejní cena/ks", value: format(detailSale.sell_price, detailSale.currency as "EUR" | "CZK"), color: "#34d399" },
-                        { label: "Počet", value: `${detailSale.quantity_sold}×`, color: "#c0c0c0" },
+                        { label: "Počet", value: `${detailSale.quantity_sold}×`, color: "#ffffff" },
                         { label: "Celkem", value: format(revenue, detailSale.currency as "EUR" | "CZK"), color: "#34d399" },
                       ].map(card => (
                         <div key={card.label} style={{ background: "#0a0a0a", border: "1px solid #1f1f1f", borderRadius: 10, padding: "0.875rem", textAlign: "center" as const }}>
@@ -350,7 +350,7 @@ export default function ProdejeTab() {
                       ].filter(r => r.value).map((row, i, arr) => (
                         <div key={row.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "0.65rem 0", borderBottom: i < arr.length - 1 ? "1px solid #141414" : "none" }}>
                           <span style={{ fontSize: 12, color: "#525252" }}>{row.label}</span>
-                          <span style={{ fontSize: 13, fontWeight: 500, color: "#c0c0c0", textAlign: "right" as const, maxWidth: "60%" }}>{row.value}</span>
+                          <span style={{ fontSize: 13, fontWeight: 500, color: "#ffffff", textAlign: "right" as const, maxWidth: "60%" }}>{row.value}</span>
                         </div>
                       ))}
                     </div>
@@ -363,7 +363,7 @@ export default function ProdejeTab() {
             <div style={{ padding: "1rem 2rem", borderTop: "1px solid #1a1a1a", flexShrink: 0, display: "flex", gap: "0.75rem" }}>
               <button 
                 onClick={() => { setEditSale(detailSale); setDetailSale(null); }}
-                style={{ flex: 1, padding: "0.75rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#c0c0c0", cursor: "pointer", fontSize: 13, fontWeight: 600 }}
+                style={{ flex: 1, padding: "0.75rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ffffff", cursor: "pointer", fontSize: 13, fontWeight: 600 }}
               >✎ Upravit</button>
               <button 
                 onClick={() => setDetailSale(null)}

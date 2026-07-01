@@ -36,7 +36,7 @@ export default function KalkulackaTab() {
 
   const sliderStyle = {
     width: "100%", height: 4, cursor: "pointer",
-    accentColor: "#c0c0c0",
+    accentColor: "#ffffff",
   };
 
   const inputStyle = {
@@ -57,7 +57,7 @@ export default function KalkulackaTab() {
 
         {/* LEFT — Inputs */}
         <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 20, padding: "1.75rem", position: "relative", overflow: "hidden" }}>
-          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)" }} />
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)" }} />
 
           {/* Buy price */}
           <div style={{ marginBottom: "1.5rem" }}>
@@ -65,7 +65,7 @@ export default function KalkulackaTab() {
               <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252" }}>NÁKUPNÍ CENA</span>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <input type="number" value={buyPrice} onChange={e => setBuyPrice(e.target.value)} style={inputStyle} min={1} />
-                <span style={{ fontSize: 13, color: "#c0c0c0", fontWeight: 600 }}>{currency}</span>
+                <span style={{ fontSize: 13, color: "#ffffff", fontWeight: 600 }}>{currency}</span>
               </div>
             </div>
             <input type="range" min={1} max={2000} step={1} value={buyPriceNum} onChange={e => setBuyPrice(String(e.target.value))} style={sliderStyle} />
@@ -80,7 +80,7 @@ export default function KalkulackaTab() {
               <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252" }}>PRODEJNÍ CENA</span>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <input type="number" value={sellPrice} onChange={e => setSellPrice(e.target.value)} style={inputStyle} min={1} />
-                <span style={{ fontSize: 13, color: "#c0c0c0", fontWeight: 600 }}>{currency}</span>
+                <span style={{ fontSize: 13, color: "#ffffff", fontWeight: 600 }}>{currency}</span>
               </div>
             </div>
             <input type="range" min={1} max={5000} step={1} value={sellPriceNum} onChange={e => setSellPrice(String(e.target.value))} style={sliderStyle} />
@@ -148,7 +148,7 @@ export default function KalkulackaTab() {
               </div>
               <div>
                 <div style={{ fontSize: 11, color: "#525252" }}>Lístků</div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: "#c0c0c0" }}>{quantity}×</div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: "#ffffff" }}>{quantity}×</div>
               </div>
               <div>
                 <div style={{ fontSize: 11, color: "#525252" }}>Poplatek</div>
@@ -160,8 +160,8 @@ export default function KalkulackaTab() {
           {/* Detail breakdown */}
           <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.25rem 1.5rem" }}>
             {[
-              { label: "Nákupní cena / ks", value: `${buyPriceNum.toLocaleString("cs-CZ")} ${currency}`, color: "#c0c0c0" },
-              { label: "Prodejní cena / ks", value: `${sellPriceNum.toLocaleString("cs-CZ")} ${currency}`, color: "#c0c0c0" },
+              { label: "Nákupní cena / ks", value: `${buyPriceNum.toLocaleString("cs-CZ")} ${currency}`, color: "#ffffff" },
+              { label: "Prodejní cena / ks", value: `${sellPriceNum.toLocaleString("cs-CZ")} ${currency}`, color: "#ffffff" },
               { label: "Náklady celkem", value: `-${totalCost.toLocaleString("cs-CZ")} ${currency}`, color: "#f87171" },
               { label: "Příjem celkem", value: `+${totalRevenue.toLocaleString("cs-CZ")} ${currency}`, color: "#2dd4bf" },
               { label: `Poplatky (${feePercent}%)`, value: `-${Math.round(fees).toLocaleString("cs-CZ")} ${currency}`, color: "#fbbf24" },

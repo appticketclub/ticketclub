@@ -78,7 +78,7 @@ export default function RefreshBotClient() {
 
         <a
           href="mailto:pato.strnadel@gmail.com"
-          style={{ padding: "0.6rem 1.25rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#c0c0c0", fontSize: 13, fontWeight: 600, textDecoration: "none" }}
+          style={{ padding: "0.6rem 1.25rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ffffff", fontSize: 13, fontWeight: 600, textDecoration: "none" }}
         >
           ✉ pato.strnadel@gmail.com
         </a>

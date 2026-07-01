@@ -203,11 +203,11 @@ export default function KalendarTab() {
       <div id="calendar-grid" style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 20, overflow: "visible", position: "relative" }}>
         {/* Month navigation */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 1.5rem", borderBottom: "1px solid #1a1a1a" }}>
-          <button onClick={prevMonth} style={{ background: "none", border: "1px solid #2a2a2a", borderRadius: 8, color: "#c0c0c0", cursor: "pointer", padding: "6px 14px", fontSize: 16 }}>‹</button>
+          <button onClick={prevMonth} style={{ background: "none", border: "1px solid #2a2a2a", borderRadius: 8, color: "#ffffff", cursor: "pointer", padding: "6px 14px", fontSize: 16 }}>‹</button>
           <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff" }}>
             {MONTHS[month]} {year}
           </div>
-          <button onClick={nextMonth} style={{ background: "none", border: "1px solid #2a2a2a", borderRadius: 8, color: "#c0c0c0", cursor: "pointer", padding: "6px 14px", fontSize: 16 }}>›</button>
+          <button onClick={nextMonth} style={{ background: "none", border: "1px solid #2a2a2a", borderRadius: 8, color: "#ffffff", cursor: "pointer", padding: "6px 14px", fontSize: 16 }}>›</button>
         </div>
 
         {/* Day headers */}
@@ -310,7 +310,7 @@ export default function KalendarTab() {
                             }}> 
                               <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #f87171, transparent)", borderRadius: "10px 10px 0 0" }} /> 
                               {dateEvents.map(p => ( 
-                                <div key={p.id} style={{ fontSize: 12, color: "#c0c0c0", padding: "2px 0" }}> 
+                                <div key={p.id} style={{ fontSize: 12, color: "#ffffff", padding: "2px 0" }}> 
                                   🎟️ {p.event_name} 
                                   <span style={{ fontSize: 10, color: "#f87171", marginLeft: 6 }}> 
                                     {p.quantity_remaining ?? p.quantity}× neprodáno 
@@ -390,9 +390,9 @@ export default function KalendarTab() {
                     <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 6 }}>{evt.title}</div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 12px" }}>
                       <div style={{ fontSize: 11, color: "#525252" }}>Počet</div>
-                      <div style={{ fontSize: 11, color: "#c0c0c0", fontWeight: 600 }}>{evt.quantity}×</div>
+                      <div style={{ fontSize: 11, color: "#ffffff", fontWeight: 600 }}>{evt.quantity}×</div>
                       <div style={{ fontSize: 11, color: "#525252" }}>{isPurchase ? "Nákup celkem" : "Prodej celkem"}</div>
-                      <div style={{ fontSize: 11, color: "#c0c0c0", fontWeight: 600 }}>
+                      <div style={{ fontSize: 11, color: "#ffffff", fontWeight: 600 }}>
                         {isPurchase ? "-" : "+"}{format(evt.amount, evt.currency as "EUR" | "CZK")}
                       </div>
                       {!isPurchase && evt.profit !== undefined && (
@@ -406,7 +406,7 @@ export default function KalendarTab() {
                       {evt.platform && (
                         <>
                           <div style={{ fontSize: 11, color: "#525252" }}>Platforma</div>
-                          <div style={{ fontSize: 11, color: "#c0c0c0" }}>{evt.platform}</div>
+                          <div style={{ fontSize: 11, color: "#ffffff" }}>{evt.platform}</div>
                         </>
                       )}
                     </div>

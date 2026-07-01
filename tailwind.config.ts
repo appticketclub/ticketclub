@@ -31,7 +31,7 @@ const config: Config = {
         chrome: {
           100: "#ffffff",
           200: "#e8e8e8",
-          300: "#c0c0c0",
+          300: "#ffffff",
           400: "#a0a0a0",
           500: "#707070",
           600: "#404040",
@@ -56,7 +56,7 @@ const config: Config = {
           foreground: "var(--muted-foreground)",
         },
         accent: {
-          silver: "#c0c0c0",
+          silver: "#ffffff",
           white: "#ffffff",
           glow: "#ffffff15",
           DEFAULT: "var(--accent)",

@@ -149,7 +149,7 @@ export default function RegisterPage() {
               color: "#000", 
               cursor: "pointer", 
               transition: "opacity 0.2s", 
-              background: "linear-gradient(135deg, #ffffff 0%, #c0c0c0 50%, #a0a0a0 100%)", 
+              background: "linear-gradient(135deg, #ffffff 0%, #ffffff 50%, #a0a0a0 100%)", 
               opacity: loading ? 0.7 : 1 
             }}
           >

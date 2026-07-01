@@ -429,7 +429,7 @@ export default function TymStatistikyTab() {
                 style={{
                   padding: "0.875rem", fontSize: 13, fontWeight: 700,
                   background: "transparent", border: "1px solid #2a2a2a",
-                  borderRadius: 12, color: "#c0c0c0", cursor: "pointer",
+                  borderRadius: 12, color: "#ffffff", cursor: "pointer",
                   letterSpacing: "0.05em",
                 }}
               >

@@ -53,7 +53,7 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
         {/* Scrollable content area */}
         <div style={{ overflowY: "auto", flex: 1, padding: "1.25rem 1.5rem" }}>
           {/* Info text */}
-          <p style={{ fontSize: 12, color: "#c0c0c0", lineHeight: 1.6, margin: 0, marginBottom: "1rem", fontStyle: "italic" }}>
+          <p style={{ fontSize: 12, color: "#ffffff", lineHeight: 1.6, margin: 0, marginBottom: "1rem", fontStyle: "italic" }}>
             Předplatné zahrnuje Chrome Extension, Refresh Bot, Pre-Sale Bot a všechny budoucí doplňky.
           </p>
 
@@ -85,7 +85,7 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
                   width: "100%", padding: "0.65rem",
                   background: loading === "monthly" ? "#2a2a2a" : "transparent",
                   border: "1px solid #2a2a2a", borderRadius: 10,
-                  color: "#c0c0c0", fontWeight: 600, fontSize: 13,
+                  color: "#ffffff", fontWeight: 600, fontSize: 13,
                   cursor: loading === "monthly" ? "default" : "pointer",
                   marginTop: "auto",
                 }}

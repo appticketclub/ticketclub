@@ -118,7 +118,7 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
               }}
               onMouseEnter={e => {
                 if (!locked) {
-                  (e.currentTarget as HTMLDivElement).style.borderColor = "#c0c0c0";
+                  (e.currentTarget as HTMLDivElement).style.borderColor = "#ffffff";
                   (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)";
                 }
               }}
@@ -167,7 +167,7 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
                   </div>
                 </div>
               ) : (
-                <div style={{ fontSize: 13, color: "#c0c0c0", display: "flex", alignItems: "center", gap: 4 }}>
+                <div style={{ fontSize: 13, color: "#ffffff", display: "flex", alignItems: "center", gap: 4 }}>
                   Otevřít aplikaci →
                 </div>
               )}

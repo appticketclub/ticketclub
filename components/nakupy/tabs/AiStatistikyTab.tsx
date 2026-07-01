@@ -150,7 +150,7 @@ export default function AiStatistikyTab() {
                     <div style={{ fontSize: 16, flexShrink: 0, marginTop: 1 }}>{c.icon}</div>
                     <div>
                       <div style={{ fontSize: 13, fontWeight: 700, color: c.color, marginBottom: 4 }}>{insight.title}</div>
-                      <div style={{ fontSize: 13, color: "#c0c0c0", lineHeight: 1.5 }}>{insight.description}</div>
+                      <div style={{ fontSize: 13, color: "#ffffff", lineHeight: 1.5 }}>{insight.description}</div>
                     </div>
                   </div>
                 );
@@ -162,11 +162,11 @@ export default function AiStatistikyTab() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
             <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.25rem 1.5rem" }}>
               <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#3a3a3a", marginBottom: 8 }}>⏱️ TIMING ANALÝZA</div>
-              <p style={{ fontSize: 13, color: "#c0c0c0", lineHeight: 1.6 }}>{analysis.timing_analysis}</p>
+              <p style={{ fontSize: 13, color: "#ffffff", lineHeight: 1.6 }}>{analysis.timing_analysis}</p>
             </div>
             <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.25rem 1.5rem" }}>
               <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#3a3a3a", marginBottom: 8 }}>🏪 PLATFORMA ANALÝZA</div>
-              <p style={{ fontSize: 13, color: "#c0c0c0", lineHeight: 1.6 }}>{analysis.platform_analysis}</p>
+              <p style={{ fontSize: 13, color: "#ffffff", lineHeight: 1.6 }}>{analysis.platform_analysis}</p>
             </div>
           </div>
 

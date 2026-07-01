@@ -225,7 +225,7 @@ export function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Acco
         display: "flex", flexDirection: "column",
       }}>
         {/* Top chrome line */}
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)", zIndex: 1 }} />
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)", zIndex: 1 }} />
 
         {/* FIXED Header */}
         <div style={{
@@ -595,7 +595,7 @@ function EditPurchaseModal({ purchase, accounts, onClose, onSave }: {
         borderRadius: 20, zIndex: 101, 
         overflow: "hidden", display: "flex", flexDirection: "column", 
       }}> 
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)", zIndex: 1 }} /> 
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)", zIndex: 1 }} /> 
 
         {/* Fixed header */} 
         <div style={{ padding: "1.5rem 2rem 1rem", borderBottom: "1px solid #1a1a1a", flexShrink: 0, background: "#111111" }}> 
@@ -801,7 +801,7 @@ function PurchaseDetailModal({ purchase, onClose, onEdit, onDelete }: {
     return ( 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "0.6rem 0", borderBottom: "1px solid #141414" }}> 
         <span style={{ fontSize: 12, color: "#525252", flexShrink: 0, marginRight: 16 }}>{label}</span> 
-        <span style={{ fontSize: 13, color: "#c0c0c0", textAlign: "right" as const, fontWeight: 500 }}>{value}</span> 
+        <span style={{ fontSize: 13, color: "#ffffff", textAlign: "right" as const, fontWeight: 500 }}>{value}</span> 
       </div> 
     ); 
   }; 
@@ -818,7 +818,7 @@ function PurchaseDetailModal({ purchase, onClose, onEdit, onDelete }: {
         borderRadius: 20, zIndex: 101, 
         overflow: "hidden", display: "flex", flexDirection: "column", 
       }}> 
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)", zIndex: 1 }} /> 
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)", zIndex: 1 }} /> 
 
         {/* Header */} 
         <div style={{ padding: "1.5rem 2rem 1rem", borderBottom: "1px solid #1a1a1a", flexShrink: 0 }}> 
@@ -880,7 +880,7 @@ function PurchaseDetailModal({ purchase, onClose, onEdit, onDelete }: {
           {purchase.notes && ( 
             <div style={{ marginTop: "1rem", background: "#0a0a0a", border: "1px solid #1f1f1f", borderRadius: 10, padding: "0.875rem" }}> 
               <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 6 }}>POZNÁMKY</div> 
-              <p style={{ fontSize: 13, color: "#c0c0c0", lineHeight: 1.6, margin: 0 }}>{purchase.notes}</p> 
+              <p style={{ fontSize: 13, color: "#ffffff", lineHeight: 1.6, margin: 0 }}>{purchase.notes}</p> 
             </div> 
           )} 
         </div> 
@@ -895,7 +895,7 @@ function PurchaseDetailModal({ purchase, onClose, onEdit, onDelete }: {
           </button> 
           <button 
             onClick={onEdit} 
-            style={{ flex: 1, padding: "0.7rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#c0c0c0", cursor: "pointer", fontSize: 13, fontWeight: 600 }} 
+            style={{ flex: 1, padding: "0.7rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ffffff", cursor: "pointer", fontSize: 13, fontWeight: 600 }} 
           > 
             ✎ Upravit 
           </button> 
@@ -1093,7 +1093,7 @@ export default function NakupyTab() {
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #f87171, transparent)" }} />
             <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", marginBottom: "0.75rem" }}>Smazat nákup?</h2>
             <p style={{ fontSize: 13, color: "#525252", marginBottom: "0.5rem" }}>
-              <strong style={{ color: "#c0c0c0" }}>{deleteConfirm.event_name}</strong>
+              <strong style={{ color: "#ffffff" }}>{deleteConfirm.event_name}</strong>
             </p>
             <p style={{ fontSize: 13, color: "#525252", marginBottom: "1.5rem" }}>
               Kapitál bude navýšen o{" "}
@@ -1131,7 +1131,7 @@ export default function NakupyTab() {
             background: "#111111", border: "1px solid #2a2a2a",
             borderRadius: 20, padding: "2rem", zIndex: 101, overflow: "hidden",
           }}>
-            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)" }} />
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)" }} />
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
               <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Import z Excelu</h2>
@@ -1151,7 +1151,7 @@ export default function NakupyTab() {
                   display: "inline-flex", alignItems: "center", gap: 8,
                   padding: "8px 16px", fontSize: 12, fontWeight: 700,
                   background: "transparent", border: "1px solid #2a2a2a",
-                  borderRadius: 8, color: "#c0c0c0", textDecoration: "none",
+                  borderRadius: 8, color: "#ffffff", textDecoration: "none",
                   letterSpacing: "0.05em",
                 }}
               >
@@ -1249,7 +1249,7 @@ export default function NakupyTab() {
             style={{
               padding: "0.65rem 1.25rem", fontSize: 13, fontWeight: 600,
               background: "transparent", border: "1px solid #2a2a2a",
-              borderRadius: 10, color: "#c0c0c0", cursor: "pointer",
+              borderRadius: 10, color: "#ffffff", cursor: "pointer",
               display: "flex", alignItems: "center", gap: 6,
             }}
           >
@@ -1325,7 +1325,7 @@ export default function NakupyTab() {
           style={{
             padding: "0.6rem 0.875rem", fontSize: 13,
             background: "#111111", border: "1px solid #1f1f1f",
-            borderRadius: 10, color: "#c0c0c0", cursor: "pointer",
+            borderRadius: 10, color: "#ffffff", cursor: "pointer",
           }}
           title={sortDir === "asc" ? "Vzestupně" : "Sestupně"}
         >
@@ -1435,7 +1435,7 @@ export default function NakupyTab() {
         <div style={{ background: "#111111", border: "1px dashed #2a2a2a", borderRadius: 16, padding: "4rem", textAlign: "center" }}>
           <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>🎟️</div>
           <p style={{ color: "#525252", fontSize: 14, marginBottom: "1.5rem" }}>Zatím žádné nákupy. Přidejte svůj první nákup lístků.</p>
-          <button onClick={() => setShowModal(true)} style={{ padding: "0.65rem 1.5rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#c0c0c0", cursor: "pointer", fontSize: 14 }}>
+          <button onClick={() => setShowModal(true)} style={{ padding: "0.65rem 1.5rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ffffff", cursor: "pointer", fontSize: 14 }}>
             + Přidat nákup
           </button>
         </div>
@@ -1448,7 +1448,7 @@ export default function NakupyTab() {
           <p style={{ color: "#525252", fontSize: 14, marginBottom: "1.5rem" }}>Žádné nákupy neodpovídají vybraným filtrům.</p>
           <button 
             onClick={resetFilters} 
-            style={{ padding: "0.65rem 1.5rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#c0c0c0", cursor: "pointer", fontSize: 14 }}
+            style={{ padding: "0.65rem 1.5rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ffffff", cursor: "pointer", fontSize: 14 }}
           >
             Resetovat filtry
           </button>
@@ -1572,7 +1572,7 @@ export default function NakupyTab() {
                   <div style={{ fontSize: 13, color: "#525252" }}>{purchase.account_ref ?? "—"}</div>
 
                   {/* Quantity */}
-                  <div style={{ fontSize: 14, color: "#c0c0c0" }}>{purchase.quantity}×</div>
+                  <div style={{ fontSize: 14, color: "#ffffff" }}>{purchase.quantity}×</div>
 
                   {/* Total */}
                   <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>
@@ -1603,7 +1603,7 @@ export default function NakupyTab() {
                       onClick={() => setEditPurchase(purchase)} 
                       title="Upravit" 
                       style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 14, padding: 4 }} 
-                      onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#c0c0c0"} 
+                      onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#ffffff"} 
                       onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"} 
                     > 
                       ✎ 

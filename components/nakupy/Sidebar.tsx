@@ -88,14 +88,14 @@ export default function Sidebar({
               transition: "all 0.15s",
             }}
             onMouseEnter={e => {
-              if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = "#c0c0c0";
+              if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = "#ffffff";
             }}
             onMouseLeave={e => {
               if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = "#525252";
             }}
           >
             {item.label}
-            {isActive && <span style={{ marginLeft: "auto", width: 4, height: 4, borderRadius: "50%", background: "#c0c0c0" }} />}
+            {isActive && <span style={{ marginLeft: "auto", width: 4, height: 4, borderRadius: "50%", background: "#ffffff" }} />}
           </button>
         );
       })}
@@ -108,7 +108,7 @@ export default function Sidebar({
             padding: "0.6rem 0.75rem", borderRadius: 10,
             fontSize: 13, color: "#3a3a3a", textDecoration: "none",
           }}
-          onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.color = "#c0c0c0"}
+          onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.color = "#ffffff"}
           onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.color = "#3a3a3a"}
         >
           ← Zpět na přehled

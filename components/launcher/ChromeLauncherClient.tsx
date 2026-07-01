@@ -72,7 +72,7 @@ export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) 
 
       {/* How it works */}
       <div style={cardStyle}>
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)" }} />
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)" }} />
         <h2 style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", marginBottom: "1rem" }}>Jak to funguje</h2>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
           {[
@@ -88,14 +88,14 @@ export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) 
                 display: "flex", alignItems: "center", justifyContent: "center",
                 fontSize: 11, fontWeight: 800, color: "#000",
               }}>{item.step}</div>
-              <p style={{ fontSize: 13, color: "#c0c0c0", margin: 0, lineHeight: 1.5 }}>{item.text}</p>
+              <p style={{ fontSize: 13, color: "#ffffff", margin: 0, lineHeight: 1.5 }}>{item.text}</p>
             </div>
           ))}
         </div>
         {os === "mac" && (
           <div style={{ marginTop: "0.75rem", padding: "0.75rem 1rem", background: "#0a0a0a", border: "1px solid #1f1f1f", borderRadius: 10 }}>
             <p style={{ fontSize: 12, color: "#525252", margin: 0, lineHeight: 1.6 }}>
-              <strong style={{ color: "#c0c0c0" }}>Mac instrukce:</strong> Po stažení otevřete Terminal, napište{" "}
+              <strong style={{ color: "#ffffff" }}>Mac instrukce:</strong> Po stažení otevřete Terminal, napište{" "}
               <code style={{ background: "#1a1a1a", padding: "1px 6px", borderRadius: 4, color: "#a78bfa" }}>chmod +x ~/Downloads/ticketclub-launcher.sh</code>{" "}
               a pak{" "}
               <code style={{ background: "#1a1a1a", padding: "1px 6px", borderRadius: 4, color: "#a78bfa" }}>~/Downloads/ticketclub-launcher.sh</code>
@@ -137,7 +137,7 @@ export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) 
               <input
                 type="range" min={1} max={100} value={profilesCount}
                 onChange={e => setProfilesCount(Number(e.target.value))}
-                style={{ flex: 1, accentColor: "#c0c0c0" }}
+                style={{ flex: 1, accentColor: "#ffffff" }}
               />
               <span style={{ fontSize: 18, fontWeight: 700, color: "#fff", minWidth: 32, textAlign: "center" as const }}>
                 {profilesCount}

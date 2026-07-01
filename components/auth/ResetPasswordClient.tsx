@@ -42,7 +42,7 @@ export default function ResetPasswordClient() {
           <img src="/logo.png" alt="TicketClub" style={{ height: 40, width: "auto", objectFit: "contain" }} />
         </div>
         <div style={{ background: "#111111", border: "1px solid #1f1f1f", borderRadius: 20, padding: "2rem", position: "relative", overflow: "hidden" }}>
-          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)" }} />
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)" }} />
 
           {success ? (
             <div style={{ textAlign: "center" as const }}>
@@ -65,18 +65,18 @@ export default function ResetPasswordClient() {
                 <div>
                   <label style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", display: "block", marginBottom: "0.5rem" }}>NOVÉ HESLO</label>
                   <input type="password" placeholder="Min. 6 znaků" value={password} onChange={e => setPassword(e.target.value)} style={inputStyle}
-                    onFocus={e => (e.target as HTMLInputElement).style.borderColor = "#c0c0c0"}
+                    onFocus={e => (e.target as HTMLInputElement).style.borderColor = "#ffffff"}
                     onBlur={e => (e.target as HTMLInputElement).style.borderColor = "#1f1f1f"} />
                 </div>
                 <div>
                   <label style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", display: "block", marginBottom: "0.5rem" }}>POTVRDIT HESLO</label>
                   <input type="password" placeholder="Zopakujte heslo" value={confirm} onChange={e => setConfirm(e.target.value)} onKeyDown={e => e.key === "Enter" && handleReset()} style={inputStyle}
-                    onFocus={e => (e.target as HTMLInputElement).style.borderColor = "#c0c0c0"}
+                    onFocus={e => (e.target as HTMLInputElement).style.borderColor = "#ffffff"}
                     onBlur={e => (e.target as HTMLInputElement).style.borderColor = "#1f1f1f"} />
                 </div>
               </div>
 
-              <button onClick={handleReset} disabled={loading} style={{ width: "100%", padding: "0.95rem", background: loading ? "#2a2a2a" : "linear-gradient(135deg, #ffffff 0%, #c0c0c0 50%, #a0a0a0 100%)", border: "none", borderRadius: 12, color: "#000", fontWeight: 800, fontSize: 14, letterSpacing: "0.08em", cursor: loading ? "default" : "pointer" }}>
+              <button onClick={handleReset} disabled={loading} style={{ width: "100%", padding: "0.95rem", background: loading ? "#2a2a2a" : "linear-gradient(135deg, #ffffff 0%, #ffffff 50%, #a0a0a0 100%)", border: "none", borderRadius: 12, color: "#000", fontWeight: 800, fontSize: 14, letterSpacing: "0.08em", cursor: loading ? "default" : "pointer" }}>
                 {loading ? "UKLÁDÁM..." : "ZMĚNIT HESLO"}
               </button>
             </>

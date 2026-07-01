@@ -17,18 +17,18 @@ export default async function HomePage() {
         .nav-links a { color: #525252; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
         .nav-links a:hover { color: #fff; }
         .nav-cta { display: flex; gap: 0.75rem; }
-        .btn-ghost { padding: 8px 20px; background: transparent; border: 1px solid #2a2a2a; border-radius: 8px; color: #c0c0c0; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; transition: border-color 0.2s; }
-        .btn-ghost:hover { border-color: #c0c0c0; }
+        .btn-ghost { padding: 8px 20px; background: transparent; border: 1px solid #2a2a2a; border-radius: 8px; color: #ffffff; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; transition: border-color 0.2s; }
+        .btn-ghost:hover { border-color: #ffffff; }
         .btn-primary { padding: 8px 20px; background: linear-gradient(135deg, #ffffff, #a0a0a0); border: none; border-radius: 8px; color: #000; font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none; }
         section { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 8rem 4rem; position: relative; overflow: hidden; }
         .hero { flex-direction: column; text-align: center; }
         .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 100px; font-size: 12px; color: #525252; margin-bottom: 2rem; letter-spacing: 0.08em; }
         .hero h1 { font-size: clamp(3rem, 8vw, 7rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 1.5rem; }
-        .chrome { background: linear-gradient(135deg, #ffffff 0%, #c0c0c0 40%, #808080 70%, #c0c0c0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .chrome { background: linear-gradient(135deg, #ffffff 0%, #ffffff 40%, #808080 70%, #ffffff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
         .hero p { font-size: clamp(1rem, 2vw, 1.25rem); color: #525252; max-width: 600px; line-height: 1.7; margin-bottom: 3rem; }
         .hero-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
         .btn-hero { padding: 1rem 2.5rem; background: linear-gradient(135deg, #ffffff, #a0a0a0); border: none; border-radius: 12px; color: #000; font-size: 15px; font-weight: 800; cursor: pointer; text-decoration: none; letter-spacing: 0.05em; }
-        .btn-hero-ghost { padding: 1rem 2.5rem; background: transparent; border: 1px solid #2a2a2a; border-radius: 12px; color: #c0c0c0; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none; }
+        .btn-hero-ghost { padding: 1rem 2.5rem; background: transparent; border: 1px solid #2a2a2a; border-radius: 12px; color: #ffffff; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none; }
         .hero-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(192,192,192,0.04) 0%, transparent 70%); pointer-events: none; }
         .hero-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; }
         @media (max-width: 768px) {
@@ -147,7 +147,7 @@ export default async function HomePage() {
         footer p { font-size: 12px; color: #3a3a3a; }
         footer nav { display: flex; gap: 1.5rem; }
         footer nav a { font-size: 12px; color: #3a3a3a; text-decoration: none; }
-        footer nav a:hover { color: #c0c0c0; }
+        footer nav a:hover { color: #ffffff; }
         @media (max-width: 768px) {
           footer { padding: 2rem 1.5rem; flex-direction: column; text-align: center; }
         }

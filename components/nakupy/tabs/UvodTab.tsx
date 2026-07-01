@@ -216,7 +216,7 @@ export default function UvodTab() {
   if (loading) {
     return (
       <div style={{ display: "flex", alignItems: "center", gap: 12, color: "#525252" }}>
-        <div style={{ width: 16, height: 16, border: "2px solid #2a2a2a", borderTopColor: "#c0c0c0", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+        <div style={{ width: 16, height: 16, border: "2px solid #2a2a2a", borderTopColor: "#ffffff", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
         Načítání...
         <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
       </div>
@@ -242,7 +242,7 @@ export default function UvodTab() {
 
         <div style={{ background: "#111111", border: "1px solid #2a2a2a", borderRadius: 20, padding: "2rem", position: "relative", overflow: "hidden" }}>
           {/* Top chrome line */}
-          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)" }} />
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)" }} />
 
           <label style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", display: "block", marginBottom: "0.75rem" }}>
             POČÁTEČNÍ KAPITÁL
@@ -269,7 +269,7 @@ export default function UvodTab() {
             disabled={saving}
             style={{
               width: "100%", padding: "0.95rem",
-              background: saving ? "#2a2a2a" : "linear-gradient(135deg, #ffffff 0%, #c0c0c0 50%, #a0a0a0 100%)",
+              background: saving ? "#2a2a2a" : "linear-gradient(135deg, #ffffff 0%, #ffffff 50%, #a0a0a0 100%)",
               border: "none", borderRadius: 12,
               color: "#000", fontWeight: 800, fontSize: 14,
               letterSpacing: "0.08em", cursor: saving ? "default" : "pointer",
@@ -302,7 +302,7 @@ export default function UvodTab() {
             borderRadius: 8, color: "#525252", cursor: "pointer",
             transition: "border-color 0.15s, color 0.15s",
           }}
-          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#c0c0c0"; (e.currentTarget as HTMLButtonElement).style.color = "#c0c0c0"; }}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#ffffff"; (e.currentTarget as HTMLButtonElement).style.color = "#ffffff"; }}
           onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#2a2a2a"; (e.currentTarget as HTMLButtonElement).style.color = "#525252"; }}
         >
           Upravit kapitál
@@ -349,7 +349,7 @@ export default function UvodTab() {
       {/* Stat cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "1rem", marginBottom: "1.75rem" }}>
         {[
-          { label: "Počáteční kapitál", value: format(initialCapital, baseCurrency), color: "#c0c0c0", icon: "💰" },
+          { label: "Počáteční kapitál", value: format(initialCapital, baseCurrency), color: "#ffffff", icon: "💰" },
           { label: "Aktuální zůstatek", value: format(currentBalance, baseCurrency), color: "#ffffff", icon: "📊" },
           { label: "Investováno", value: format(stats.invested, baseCurrency), color: "#fbbf24", icon: "🎟️" },
           { label: "Celkový zisk", value: `${isProfit ? "+" : ""}${format(Math.abs(stats.profit), baseCurrency)}`, color: isProfit ? "#34d399" : "#f87171", icon: isProfit ? "📈" : "📉" },

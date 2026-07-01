@@ -198,7 +198,7 @@ export default function EvidenceTab() {
   const cellStyle = (width: number, isNum = false): React.CSSProperties => ({
     minWidth: width, maxWidth: width, width,
     padding: "0.6rem 0.75rem",
-    fontSize: 12, color: "#c0c0c0",
+    fontSize: 12, color: "#ffffff",
     borderRight: "1px solid #1a1a1a",
     textAlign: isNum ? "right" : "left",
     whiteSpace: "nowrap",
@@ -315,7 +315,7 @@ export default function EvidenceTab() {
         style={{
           ...cellStyle(width),
           textAlign: align,
-          color: color ?? "#c0c0c0",
+          color: color ?? "#ffffff",
           fontWeight: fontWeight,
           cursor: "text",
           userSelect: "none",
@@ -365,7 +365,7 @@ export default function EvidenceTab() {
 
     return (
       <td onClick={() => { setEditing(true); setVal(value ?? ""); }}
-        style={{ ...cellStyle(width), cursor: "text", color: color ?? "#c0c0c0" }} title="Klikněte pro úpravu"
+        style={{ ...cellStyle(width), cursor: "text", color: color ?? "#ffffff" }} title="Klikněte pro úpravu"
       >
         {value ? new Date(value).toLocaleDateString("cs-CZ") : "—"}
       </td>
@@ -544,16 +544,16 @@ export default function EvidenceTab() {
           <option value="sold_at">Datum prodeje</option>
         </select>
         <button onClick={() => setSortDir(d => d === "asc" ? "desc" : "asc")}
-          style={{ padding: "0.6rem 0.875rem", fontSize: 13, background: "#111111", border: "1px solid #1f1f1f", borderRadius: 10, color: "#c0c0c0", cursor: "pointer", whiteSpace: "nowrap" as const }}>
+          style={{ padding: "0.6rem 0.875rem", fontSize: 13, background: "#111111", border: "1px solid #1f1f1f", borderRadius: 10, color: "#ffffff", cursor: "pointer", whiteSpace: "nowrap" as const }}>
           {sortDir === "asc" ? "↑" : "↓"}
         </button>
         <button onClick={() => setShowFilters(!showFilters)}
-          style={{ padding: "0.6rem 0.875rem", fontSize: 13, background: showFilters ? "#2a2a2a" : "#111111", border: "1px solid #1f1f1f", borderRadius: 10, color: "#c0c0c0", cursor: "pointer" }}>
+          style={{ padding: "0.6rem 0.875rem", fontSize: 13, background: showFilters ? "#2a2a2a" : "#111111", border: "1px solid #1f1f1f", borderRadius: 10, color: "#ffffff", cursor: "pointer" }}>
           Filtry
         </button>
         <div style={{ marginLeft: "auto", display: "flex", gap: "0.5rem", flexWrap: "wrap" as const }}>
           <button onClick={() => setShowImport(true)}
-            style={{ padding: "0.6rem 1rem", fontSize: 13, fontWeight: 600, background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#c0c0c0", cursor: "pointer", whiteSpace: "nowrap" as const }}>
+            style={{ padding: "0.6rem 1rem", fontSize: 13, fontWeight: 600, background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ffffff", cursor: "pointer", whiteSpace: "nowrap" as const }}>
             Import
           </button>
           <button onClick={() => setShowAddModal(true)}
@@ -617,7 +617,7 @@ export default function EvidenceTab() {
         {[
           { label: "NÁKUPŮ", value: `${filtered.length}`, color: "#fff" },
           { label: "LÍSTKŮ CELKEM", value: `${filtered.reduce((s, r) => s + r.quantity, 0)}×`, color: "#fff" },
-          { label: "NÁKUP CELKEM", value: format(totalBuy, currency), color: "#c0c0c0" },
+          { label: "NÁKUP CELKEM", value: format(totalBuy, currency), color: "#ffffff" },
           { label: "PRODEJ CELKEM", value: format(totalSell, currency), color: "#34d399" },
           { label: "ZISK CELKEM", value: `${totalProfit >= 0 ? "+" : ""}${format(totalProfit, currency)}`, color: totalProfit >= 0 ? "#34d399" : "#f87171" },
           { label: "PRŮMĚRNÁ ZISKOVOST", value: `${avgRoi >= 0 ? "+" : ""}${avgRoi.toFixed(1)}%`, color: avgRoi >= 0 ? "#34d399" : "#f87171" },
@@ -903,7 +903,7 @@ export default function EvidenceTab() {
           <div style={{
             position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "100%", maxWidth: 520, maxHeight: "90vh", background: "#111111", border: "1px solid #2a2a2a", borderRadius: 20, zIndex: 101, overflow: "hidden", display: "flex", flexDirection: "column",
           }}>
-            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)" }} />
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)" }} />
             <div style={{ padding: "1.5rem 2rem 1rem", borderBottom: "1px solid #1a1a1a", flexShrink: 0 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
                 <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Import z Excelu</h2>
@@ -923,7 +923,7 @@ export default function EvidenceTab() {
                     display: "inline-flex", alignItems: "center", gap: 8,
                     padding: "8px 16px", fontSize: 12, fontWeight: 700,
                     background: "transparent", border: "1px solid #2a2a2a",
-                    borderRadius: 8, color: "#c0c0c0", textDecoration: "none",
+                    borderRadius: 8, color: "#ffffff", textDecoration: "none",
                     letterSpacing: "0.05em",
                   }}
                 >
@@ -995,7 +995,7 @@ export default function EvidenceTab() {
               {importResult?.success ? (
                 <button onClick={() => { setShowImport(false); setImportResult(null); }} style={{
                   width: "100%", padding: "0.8rem",
-                  background: "linear-gradient(135deg, #ffffff, #c0c0c0)",
+                  background: "linear-gradient(135deg, #ffffff, #ffffff)",
                   border: "none", borderRadius: 10, color: "#000",
                   fontWeight: 700, fontSize: 14, cursor: "pointer",
                 }}>
@@ -1085,7 +1085,7 @@ export default function EvidenceTab() {
                   setDownloadingBanner(false);
                 }}
                 disabled={downloadingBanner}
-                style={{ padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#c0c0c0", cursor: "pointer", fontSize: 13, fontWeight: 600 }}
+                style={{ padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ffffff", cursor: "pointer", fontSize: 13, fontWeight: 600 }}
               >
                 {downloadingBanner ? "⏳ Sťahujem..." : "⬇ Stáhnout"}
               </button>
@@ -1140,7 +1140,7 @@ export default function EvidenceTab() {
               background: "#111111", border: "1px solid #2a2a2a",
               borderRadius: 20, zIndex: 201, overflow: "hidden",
             }}>
-              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)" }} />
+              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)" }} />
 
               {/* Header */}
               <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #1a1a1a", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -1267,7 +1267,7 @@ export default function EvidenceTab() {
                     }}
                     style={{
                       padding: "0.8rem",
-                      background: "linear-gradient(135deg, #ffffff, #c0c0c0)",
+                      background: "linear-gradient(135deg, #ffffff, #ffffff)",
                       border: "none", borderRadius: 10,
                       color: "#000", cursor: "pointer",
                       fontSize: 13, fontWeight: 700,

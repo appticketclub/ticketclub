@@ -211,7 +211,7 @@ export default function DoporuceneAkceTab() {
                       position: "absolute", top: 10, left: 10,
                       fontSize: 11, fontWeight: 600, padding: "3px 8px",
                       background: "rgba(0,0,0,0.7)", border: "1px solid #2a2a2a",
-                      borderRadius: 6, color: "#c0c0c0",
+                      borderRadius: 6, color: "#ffffff",
                     }}>{event.segment}</span>
                   )}
                 </div>

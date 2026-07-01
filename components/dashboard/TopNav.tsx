@@ -62,7 +62,7 @@ export default function TopNav({ user, profile }: { user: any; profile: any }) {
             {/* Menu items */}
             <a href="/ucet" style={{
               display: "flex", alignItems: "center", gap: 10,
-              padding: "11px 16px", color: "#c0c0c0",
+              padding: "11px 16px", color: "#ffffff",
               textDecoration: "none", fontSize: 14,
               transition: "background 0.15s",
             }}

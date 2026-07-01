@@ -62,13 +62,13 @@ function generateTicketSVG(data: {
     <text x="28" y="110" font-size="16" font-weight="700" fill="#ffffff" font-family="Montserrat, monospace">${data.quantity}×</text> 
 
     <text x="180" y="95" font-size="9" fill="#525252" font-family="Montserrat, monospace" letter-spacing="1">KOUPENO</text> 
-    <text x="180" y="110" font-size="16" font-weight="700" fill="#c0c0c0" font-family="Montserrat, monospace">${fmt(data.buy_price * data.quantity)} ${data.currency}</text> 
+    <text x="180" y="110" font-size="16" font-weight="700" fill="#ffffff" font-family="Montserrat, monospace">${fmt(data.buy_price * data.quantity)} ${data.currency}</text> 
 
     <text x="370" y="95" font-size="9" fill="#525252" font-family="Montserrat, monospace" letter-spacing="1">NÁKUP / KS</text> 
-    <text x="370" y="110" font-size="16" font-weight="700" fill="#c0c0c0" font-family="Montserrat, monospace">${fmt(data.buy_price)} ${data.currency}</text> 
+    <text x="370" y="110" font-size="16" font-weight="700" fill="#ffffff" font-family="Montserrat, monospace">${fmt(data.buy_price)} ${data.currency}</text> 
 
     <text x="530" y="95" font-size="9" fill="#525252" font-family="Montserrat, monospace" letter-spacing="1">PRODEJ / KS</text> 
-    <text x="530" y="110" font-size="16" font-weight="700" fill="#c0c0c0" font-family="Montserrat, monospace">${fmt(data.sell_price)} ${data.currency}</text> 
+    <text x="530" y="110" font-size="16" font-weight="700" fill="#ffffff" font-family="Montserrat, monospace">${fmt(data.sell_price)} ${data.currency}</text> 
 
     <line x1="28" y1="120" x2="672" y2="120" stroke="#2a2a2a" stroke-width="0.5"/> 
 
@@ -344,7 +344,7 @@ export default function SellModal({ purchase, onClose, onSave }: {
         background: "#111111", border: "1px solid #2a2a2a",
         borderRadius: 20, padding: "2rem", zIndex: 101, overflow: "hidden",
       }}>
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)" }} />
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)" }} />
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.75rem" }}>
           <div>
@@ -469,7 +469,7 @@ export default function SellModal({ purchase, onClose, onSave }: {
               <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#3a3a3a", marginBottom: "0.75rem" }}>NÁHLED P&L</div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
                 {[
-                  { label: "Příjem", value: format(totalRevenue, purchase.currency as "EUR" | "CZK"), color: "#c0c0c0" },
+                  { label: "Příjem", value: format(totalRevenue, purchase.currency as "EUR" | "CZK"), color: "#ffffff" },
                   { label: "Nákupní náklady", value: `-${format(totalBuy, purchase.currency as "EUR" | "CZK")}`, color: "#f87171" },
                   { label: "Zisk", value: `${profit >= 0 ? "+" : ""}${format(Math.abs(profit), purchase.currency as "EUR" | "CZK")}`, color: profit >= 0 ? "#34d399" : "#f87171" },
                 ].map(item => (

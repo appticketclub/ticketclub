@@ -225,7 +225,7 @@ function BannerCard({ banner }: { banner: Banner }) {
               padding: "6px 14px", fontSize: 12, fontWeight: 700,
               background: "transparent",
               border: "1px solid #2a2a2a",
-              borderRadius: 8, color: "#c0c0c0",
+              borderRadius: 8, color: "#ffffff",
               cursor: "pointer", letterSpacing: "0.05em",
             }}
           >

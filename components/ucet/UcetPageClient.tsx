@@ -189,7 +189,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
 
       {/* Profile info */}
       <div style={cardStyle}>
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)" }} />
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)" }} />
         <h2 style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", marginBottom: "1.25rem" }}>Osobní údaje</h2>
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <div>
@@ -229,7 +229,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
         <button onClick={changePassword} disabled={changingPassword} style={{
           marginTop: "1.25rem", padding: "0.75rem 1.5rem",
           background: "transparent", border: "1px solid #2a2a2a",
-          borderRadius: 10, color: "#c0c0c0",
+          borderRadius: 10, color: "#ffffff",
           fontWeight: 600, fontSize: 13, cursor: "pointer",
         }}>
           {changingPassword ? "Měním..." : "Změnit heslo"}
@@ -266,7 +266,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
               padding: "0.75rem 1.5rem",
               background: "transparent",
               border: "1px solid #2a2a2a",
-              borderRadius: 10, color: "#c0c0c0",
+              borderRadius: 10, color: "#ffffff",
               fontWeight: 600, fontSize: 13,
               cursor: loadingPortal ? "default" : "pointer",
             }}
