@@ -58,6 +58,7 @@ const COLS = [
   { key: "delivered", label: "Doručeno", width: 90 },
   { key: "notes", label: "Poznámky", width: 160 },
   { key: "banner", label: "", width: 50 },
+  { key: "delete", label: "", width: 40 },
 ];
 
 export default function EvidenceTab() {
@@ -74,6 +75,9 @@ export default function EvidenceTab() {
   const [bannerRow, setBannerRow] = useState<EvidenceRow | null>(null);
   const [downloadingBanner, setDownloadingBanner] = useState(false);
   const bannerRef = useRef<HTMLDivElement>(null);
+
+  const [deleteConfirmRow, setDeleteConfirmRow] = useState<EvidenceRow | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const [saleUpdateModal, setSaleUpdateModal] = useState<{
     row: EvidenceRow;
@@ -185,6 +189,16 @@ export default function EvidenceTab() {
     setCityFilter("");
     setDateFrom("");
     setDateTo("");
+  }
+
+  async function handleDeletePurchase(row: EvidenceRow) {
+    setDeleting(true);
+    const supabase = createClient();
+    await supabase.from("sales").delete().eq("purchase_id", row.id);
+    await supabase.from("purchases").delete().eq("id", row.id);
+    setDeleteConfirmRow(null);
+    setDeleting(false);
+    loadData();
   }
 
   // Totals
@@ -884,6 +898,19 @@ export default function EvidenceTab() {
                         🎟
                       </button>
                     </td>
+
+                    {/* Delete button */}
+                    <td style={{ ...cellStyle(40), textAlign: "center" }}>
+                      <button
+                        onClick={() => setDeleteConfirmRow(row)}
+                        title="Smazat nákup"
+                        style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, color: "#3a3a3a", padding: 4, transition: "color 0.2s" }}
+                        onMouseEnter={e => (e.currentTarget.style.color = "#f87171")}
+                        onMouseLeave={e => (e.currentTarget.style.color = "#3a3a3a")}
+                      >
+                        🗑
+                      </button>
+                    </td>
                   </tr>
                 );
               })
@@ -1308,6 +1335,53 @@ export default function EvidenceTab() {
           </>
         );
       })()}
+
+      {/* Delete confirm modal */}
+      {deleteConfirmRow && (
+        <>
+          <div
+            onClick={() => setDeleteConfirmRow(null)}
+            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", zIndex: 300, backdropFilter: "blur(4px)" }}
+          />
+          <div style={{
+            position: "fixed", top: "50%", left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "100%", maxWidth: 400,
+            background: "#111111", border: "1px solid #2a2a2a",
+            borderRadius: 20, zIndex: 301, overflow: "hidden",
+          }}>
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #f87171, transparent)" }} />
+
+            <div style={{ padding: "1.5rem" }}>
+              <div style={{ fontSize: 32, marginBottom: "0.75rem", textAlign: "center" }}>🗑</div>
+              <h2 style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", margin: 0, marginBottom: "0.5rem", textAlign: "center" }}>
+                Smazat nákup?
+              </h2>
+              <p style={{ fontSize: 13, color: "#525252", textAlign: "center", marginBottom: "1.5rem" }}>
+                <strong style={{ color: "#fff" }}>{deleteConfirmRow.event_name}</strong>
+                <br />
+                Tato akce je nevratná. Smažou se i všechny prodeje spojené s tímto nákupem.
+              </p>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                <button
+                  onClick={() => setDeleteConfirmRow(null)}
+                  style={{ padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#525252", cursor: "pointer", fontSize: 13 }}
+                >
+                  Zrušit
+                </button>
+                <button
+                  onClick={() => handleDeletePurchase(deleteConfirmRow)}
+                  disabled={deleting}
+                  style={{ padding: "0.8rem", background: "linear-gradient(135deg, #f87171, #dc2626)", border: "none", borderRadius: 10, color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 700 }}
+                >
+                  {deleting ? "Mažu..." : "Smazat"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
