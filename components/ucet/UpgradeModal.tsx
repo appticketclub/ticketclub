@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 
 export default function UpgradeModal({ onClose }: { onClose: () => void }) {
   const [loading, setLoading] = useState<"monthly" | "yearly" | "pro_max_monthly" | "pro_max_yearly" | null>(null);
@@ -21,17 +22,19 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
     setLoading(null);
   }
 
-  return (
+  return createPortal(
     <>
-      <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.92)", zIndex: 200 }} />
+      <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.92)", zIndex: 999 }} />
       <div style={{
         position: "fixed", top: "50%", left: "50%",
         transform: "translate(-50%, -50%)",
         width: "calc(100% - 2rem)",
         maxWidth: 480,
         maxHeight: "90vh",
+        overflowY: "auto",
+        zIndex: 1000,
         background: "#111111", border: "1px solid #2a2a2a",
-        borderRadius: 20, zIndex: 201,
+        borderRadius: 20,
         overflow: "hidden",
         display: "flex", flexDirection: "column" as const,
       }}>
@@ -176,6 +179,7 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
           </p>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 }
