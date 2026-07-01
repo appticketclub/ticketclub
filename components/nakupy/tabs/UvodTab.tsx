@@ -366,7 +366,7 @@ export default function UvodTab() {
           onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.borderColor = "#2a2a2a"}
           onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.borderColor = "#1a1a1a"}
           >
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#3a3a3a", marginBottom: "0.75rem" }}>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ffffff", marginBottom: "0.75rem" }}>
               {card.label.toUpperCase()}
             </div>
             <div style={{ fontSize: "1.35rem", fontWeight: 700, color: card.color, letterSpacing: "-0.01em" }}>
@@ -391,7 +391,7 @@ export default function UvodTab() {
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: "#525252", marginBottom: 4 }}>EQUITY KŘIVKA</div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: "#ffffff", marginBottom: 4 }}>EQUITY KŘIVKA</div>
             <div style={{ fontSize: "1.5rem", fontWeight: 700, color: isProfit ? "#34d399" : "#f87171" }}>
               {isProfit ? "+" : ""}{format(Math.abs(stats.profit), baseCurrency)}
             </div>

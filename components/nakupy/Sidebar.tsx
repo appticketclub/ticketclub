@@ -61,7 +61,7 @@ export default function Sidebar({
         gap: "0.25rem",
         minHeight: "calc(100vh - 65px)",
       }}>
-      <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", color: "#3a3a3a", padding: "0 0.75rem", marginBottom: "0.5rem" }}>
+      <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", color: "#ffffff", padding: "0 0.75rem", marginBottom: "0.5rem" }}>
         SEZNAM NÁKUPŮ
       </p>
 
@@ -79,7 +79,7 @@ export default function Sidebar({
               borderRadius: 10,
               fontSize: 14,
               fontWeight: isActive ? 600 : 400,
-              color: isActive ? "#fff" : "#525252",
+              color: isActive ? "#34d399" : "#ffffff",
               background: isActive ? "#1a1a1a" : "transparent",
               border: isActive ? "1px solid #2a2a2a" : "1px solid transparent",
               cursor: "pointer",
@@ -88,14 +88,14 @@ export default function Sidebar({
               transition: "all 0.15s",
             }}
             onMouseEnter={e => {
-              if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = "#ffffff";
+              if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = "#34d399";
             }}
             onMouseLeave={e => {
-              if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = "#525252";
+              if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = "#ffffff";
             }}
           >
             {item.label}
-            {isActive && <span style={{ marginLeft: "auto", width: 4, height: 4, borderRadius: "50%", background: "#ffffff" }} />}
+            {isActive && <span style={{ marginLeft: "auto", width: 4, height: 4, borderRadius: "50%", background: "#34d399" }} />}
           </button>
         );
       })}
@@ -106,10 +106,10 @@ export default function Sidebar({
           style={{
             display: "flex", alignItems: "center", gap: "0.75rem",
             padding: "0.6rem 0.75rem", borderRadius: 10,
-            fontSize: 13, color: "#3a3a3a", textDecoration: "none",
+            fontSize: 13, color: "#ffffff", textDecoration: "none",
           }}
-          onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.color = "#ffffff"}
-          onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.color = "#3a3a3a"}
+          onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.color = "#34d399"}
+          onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.color = "#ffffff"}
         >
           ← Zpět na přehled
         </Link>

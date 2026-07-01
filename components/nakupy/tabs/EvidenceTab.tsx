@@ -500,10 +500,6 @@ export default function EvidenceTab() {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem" }}>
         <div>
           <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.25rem" }}>Evidence</h1>
-          <p style={{ fontSize: 13, color: "#3a3a3a" }}>Kompletní přehled všech nákupů a prodejů</p>
-          <div style={{ fontSize: 10, color: "#3a3a3a", marginTop: "0.5rem" }}>
-            ✏️ Klikněte na buňku pro úpravu
-          </div>
         </div>
       </div>
 
@@ -625,7 +621,7 @@ export default function EvidenceTab() {
           { label: "PENÍZE NA CESTĚ", value: format(moneyOnWay, currency), color: "#a78bfa" },
         ].map(s => (
           <div key={s.label} style={{ textAlign: "center" as const }}>
-            <div style={{ fontSize: 9, color: "#3a3a3a", letterSpacing: "0.08em", marginBottom: 3 }}>{s.label}</div>
+            <div style={{ fontSize: 9, color: "#ffffff", letterSpacing: "0.08em", marginBottom: 3 }}>{s.label}</div>
             <div style={{ fontSize: 13, fontWeight: 700, color: s.color }}>{s.value}</div>
           </div>
         ))}
@@ -654,7 +650,7 @@ export default function EvidenceTab() {
               {COLS.map(col => (
                 <th key={col.key} style={{
                   ...cellStyle(col.width),
-                  color: "#707070", fontWeight: 700,
+                  color: "#ffffff", fontWeight: 700,
                   fontSize: 10, letterSpacing: "0.08em",
                   whiteSpace: "pre-line",
                   lineHeight: 1.3, padding: "0.75rem",
