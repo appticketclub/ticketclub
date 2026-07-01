@@ -797,8 +797,8 @@ export default function EvidenceTab() {
                               });
                             }
 
-                            const newStatus = newQty >= row.quantity ? "sold" : newQty > 0 ? "partial" : "active";
                             const newRemaining = Math.max(0, row.quantity - newQty);
+                            const newStatus = newRemaining === 0 ? "sold" : newQty > 0 ? "partial" : "active";
                             await supabase.from("purchases").update({
                               status: newStatus,
                               quantity_remaining: newRemaining,
@@ -1319,10 +1319,11 @@ export default function EvidenceTab() {
                         }).eq("id", existingSales[0].id);
                       }
 
-                      const newStatus = newQty >= row.quantity ? "sold" : "partial";
+                      const newRemaining = Math.max(0, row.quantity - newQty);
+                      const newStatus = newRemaining === 0 ? "sold" : newQty > 0 ? "partial" : "active";
                       await supabase.from("purchases").update({
                         status: newStatus,
-                        quantity_remaining: Math.max(0, row.quantity - newQty),
+                        quantity_remaining: newRemaining,
                         updated_at: new Date().toISOString(),
                       }).eq("id", row.id);
 
