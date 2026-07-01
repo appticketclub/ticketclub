@@ -56,8 +56,6 @@ export function generateTicketSVG(data: {
 
     <text x="64" y="160" font-family="'Arial Black', Arial, sans-serif" font-size="80" font-weight="900" fill="#ffffff">${data.eventName.toUpperCase().substring(0, 18)}</text> 
 
-    <line x1="64" y1="188" x2="1216" y2="188" stroke="#222222" stroke-width="1.5"/> 
-
     <text x="64" y="236" font-family="Arial, sans-serif" font-size="18" fill="#444444" letter-spacing="3">NÁKUP CELKEM</text> 
     <text x="64" y="296" font-family="'Arial Black', Arial, sans-serif" font-size="${priceSize}" font-weight="900" fill="#888888">${buyStr}</text> 
 
@@ -66,8 +64,6 @@ export function generateTicketSVG(data: {
 
     <text x="930" y="236" font-family="Arial, sans-serif" font-size="18" fill="${isProfit ? '#4ade80' : '#f87171'}" letter-spacing="3">ZISK</text> 
     <text x="930" y="296" font-family="'Arial Black', Arial, sans-serif" font-size="${priceSize}" font-weight="900" fill="${profitColor}" filter="url(#profitGlow)">${profitStr}</text> 
-
-    <line x1="64" y1="336" x2="1216" y2="336" stroke="#222222" stroke-width="1.5"/> 
 
     <text x="64" y="400" font-family="Arial, sans-serif" font-size="24" fill="#444444">${data.quantity}× lístků</text> 
     <text x="360" y="400" font-family="Arial, sans-serif" font-size="24" fill="#444444">ROI ${isProfit ? '+' : ''}${data.roi.toFixed(1)}%</text> 
