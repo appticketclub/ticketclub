@@ -142,12 +142,11 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
           </div>
 
           {/* Divider */}
-          <div style={{ borderTop: "1px solid #2a2a2a", margin: "1rem 0" }} />
+          {/* <div style={{ borderTop: "1px solid #2a2a2a", margin: "1rem 0" }} />
 
           <div style={{ fontSize: 11, color: "#D4AF37", fontWeight: 700, letterSpacing: "0.1em", marginBottom: "0.75rem" }}>PRO MAX — NEOMEZENÉ PROFILY</div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
-            {/* Pro Max Monthly */}
             <div style={{ background: "linear-gradient(145deg, #0f0a00, #1a1200)", border: "1px solid rgba(212,175,55,0.4)", borderRadius: 16, padding: "1rem 1.25rem", cursor: "pointer", display: "flex", flexDirection: "column" as const }}
             onClick={() => handleCheckout("pro_max_monthly")}>
               <div style={{ fontSize: 13, fontWeight: 600, color: "#D4AF37", marginBottom: "0.75rem", letterSpacing: "0.08em" }}>MĚSÍČNÍ</div>
@@ -158,7 +157,6 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
               </button>
             </div>
 
-            {/* Pro Max Yearly */}
             <div style={{ background: "linear-gradient(145deg, #0f0a00, #1a1200)", border: "1px solid rgba(212,175,55,0.6)", borderRadius: 16, padding: "1rem 1.25rem", cursor: "pointer", position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" as const }}
             onClick={() => handleCheckout("pro_max_yearly")}>
               <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #D4AF37, transparent)" }} />
@@ -171,7 +169,7 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
                 {loading === "pro_max_yearly" ? "Načítám..." : "⭐ Vybrat →"}
               </button>
             </div>
-          </div>
+          </div> */}
 
           <p style={{ fontSize: 11, color: "#3a3a3a", textAlign: "center" as const, marginTop: "1rem" }}>
             Zrušit lze kdykoliv · Bezpečná platba přes Stripe
