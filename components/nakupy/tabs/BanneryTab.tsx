@@ -29,7 +29,15 @@ export function generateTicketSVG(data: {
   const isProfit = data.profit >= 0; 
   const profitColor = isProfit ? "#4ade80" : "#f87171"; 
   const fmt = (n: number) => n.toLocaleString("cs-CZ", { minimumFractionDigits: 0, maximumFractionDigits: 0 }); 
- 
+
+  const buyStr = fmt(data.buyPrice);
+  const sellStr = fmt(data.sellPrice);
+  const profitStr = fmt(Math.abs(data.profit));
+
+  const buyFontSize = buyStr.length > 6 ? 34 : 48;
+  const sellFontSize = sellStr.length > 6 ? 34 : 48;
+  const profitFontSize = profitStr.length > 6 ? 34 : 56;
+
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 480" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"> 
    <defs> 
      <filter id="profitGlow"> 
@@ -58,13 +66,13 @@ export function generateTicketSVG(data: {
 
    <!-- 3 stĺpce — NÁKUP, PREDAJ, ZISK --> 
    <text x="64" y="192" font-family="Arial, sans-serif" font-size="20" fill="#444444" letter-spacing="3">NÁKUP CELKEM</text> 
-   <text x="64" y="240" font-family="'Arial Black', Arial, sans-serif" font-size="48" font-weight="900" fill="#888888">${fmt(data.buyPrice)} ${data.currency}</text> 
+   <text x="64" y="240" font-family="'Arial Black', Arial, sans-serif" font-size="${buyFontSize}" font-weight="900" fill="#888888">${buyStr} ${data.currency}</text> 
 
    <text x="500" y="192" font-family="Arial, sans-serif" font-size="20" fill="#444444" letter-spacing="3">PRODEJ CELKEM</text> 
-   <text x="500" y="240" font-family="'Arial Black', Arial, sans-serif" font-size="48" font-weight="900" fill="#ffffff">${fmt(data.sellPrice)} ${data.currency}</text> 
+   <text x="500" y="240" font-family="'Arial Black', Arial, sans-serif" font-size="${sellFontSize}" font-weight="900" fill="#ffffff">${sellStr} ${data.currency}</text> 
 
    <text x="950" y="192" font-family="Arial, sans-serif" font-size="20" fill="${isProfit ? '#4ade80' : '#f87171'}" letter-spacing="3">ZISK</text> 
-   <text x="950" y="240" font-family="'Arial Black', Arial, sans-serif" font-size="56" font-weight="900" fill="${profitColor}" filter="url(#profitGlow)">${isProfit ? '+' : ''}${fmt(data.profit)} ${data.currency}</text> 
+   <text x="950" y="240" font-family="'Arial Black', Arial, sans-serif" font-size="${profitFontSize}" font-weight="900" fill="${profitColor}" filter="url(#profitGlow)">${isProfit ? '+' : ''}${profitStr} ${data.currency}</text> 
 
    <!-- Deliaaca čiara --> 
    <line x1="64" y1="268" x2="1216" y2="268" stroke="#222222" stroke-width="1.5"/> 
@@ -90,19 +98,56 @@ function BannerCard({ banner }: { banner: Banner }) {
     currency: banner.currency,
   });
 
-  async function handleShare() {
-    if (!cardRef.current) return;
-    try {
-      const { default: html2canvas } = await import("html2canvas");
-      
-      const canvas = await html2canvas(cardRef.current, { 
-        backgroundColor: "#0d0d0d", 
-        scale: 2, 
-        useCORS: true, 
-        allowTaint: true, 
-        logging: false, 
+  async function downloadBanner() {
+    const svgElement = cardRef.current?.querySelector("svg");
+    if (!svgElement) return;
+
+    const svgData = new XMLSerializer().serializeToString(svgElement);
+    const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+
+    const url = URL.createObjectURL(svgBlob);
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1280;
+      canvas.height = 480;
+      const ctx = canvas.getContext("2d")!;
+      ctx.fillStyle = "#111111";
+      ctx.fillRect(0, 0, 1280, 480);
+      ctx.drawImage(img, 0, 0, 1280, 480);
+      URL.revokeObjectURL(url);
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        const safeName = banner.event_name.replace(/\s+/g, "-").toLowerCase();
+        a.download = `ticketclub-${safeName}.png`;
+        a.click();
+        URL.revokeObjectURL(a.href);
       });
-      
+    };
+    img.src = url;
+  }
+
+  async function handleShare() {
+    const svgElement = cardRef.current?.querySelector("svg");
+    if (!svgElement) return;
+
+    const svgData = new XMLSerializer().serializeToString(svgElement);
+    const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+
+    const url = URL.createObjectURL(svgBlob);
+    const img = new Image();
+    img.onload = async () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1280;
+      canvas.height = 480;
+      const ctx = canvas.getContext("2d")!;
+      ctx.fillStyle = "#111111";
+      ctx.fillRect(0, 0, 1280, 480);
+      ctx.drawImage(img, 0, 0, 1280, 480);
+      URL.revokeObjectURL(url);
+
       canvas.toBlob(async (blob) => {
         if (!blob) return;
         const file = new File([blob], "ticketclub-flip.png", { type: "image/png" });
@@ -113,12 +158,13 @@ function BannerCard({ banner }: { banner: Banner }) {
           const a = document.createElement("a");
           a.href = url;
           const safeName = banner.event_name.replace(/\s+/g, "-").toLowerCase();
-          a.download = "ticketclub-" + safeName + ".png";
+          a.download = `ticketclub-${safeName}.png`;
           a.click();
           URL.revokeObjectURL(url);
         }
       });
-    } catch (e) { console.error(e); }
+    };
+    img.src = url;
   }
 
   return (
@@ -146,30 +192,7 @@ function BannerCard({ banner }: { banner: Banner }) {
         <div style={{ display: "flex", gap: "0.5rem" }}>
           {/* Download button */}
           <button
-            onClick={async () => {
-              if (!cardRef.current) return;
-              try {
-                const { default: html2canvas } = await import("html2canvas");
-                const canvas = await html2canvas(cardRef.current, { 
-                  backgroundColor: "#0d0d0d", 
-                  scale: 2, 
-                  useCORS: true, 
-                  allowTaint: true, 
-                  logging: false, 
-                });
-                
-                canvas.toBlob((blob) => {
-                  if (!blob) return;
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement("a");
-                  a.href = url;
-                  const safeName = banner.event_name.replace(/\s+/g, "-").toLowerCase();
-                  a.download = "ticketclub-" + safeName + ".png";
-                  a.click();
-                  URL.revokeObjectURL(url);
-                });
-              } catch (e) { console.error(e); }
-            }}
+            onClick={downloadBanner}
             style={{
               padding: "6px 14px", fontSize: 12, fontWeight: 700,
               background: "transparent",

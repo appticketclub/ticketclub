@@ -1049,7 +1049,7 @@ export default function EvidenceTab() {
 
             {/* Banner preview */}
             <div ref={bannerRef} style={{ padding: "1rem" }}>
-              <div style={{ width: "100%", aspectRatio: "16/9", overflow: "hidden", borderRadius: 8 }}>
+              <div style={{ width: "100%", aspectRatio: "8/3", overflow: "hidden", borderRadius: 8 }}>
                 <div dangerouslySetInnerHTML={{ __html: generateTicketSVG({
                   eventName: bannerRow.event_name,
                   quantity: bannerRow.quantity,
@@ -1068,19 +1068,34 @@ export default function EvidenceTab() {
                 onClick={async () => {
                   setDownloadingBanner(true);
                   try {
-                    const html2canvas = (await import("html2canvas")).default;
-                    const el = bannerRef.current?.querySelector("div") as HTMLElement;
-                    if (!el) return;
-                    const canvas = await html2canvas(el, { backgroundColor: "#0c0c0c", scale: 2, useCORS: true });
-                    canvas.toBlob(blob => {
-                      if (!blob) return;
-                      const url = URL.createObjectURL(blob);
-                      const a = document.createElement("a");
-                      a.href = url;
-                      a.download = `${bannerRow.event_name}-banner.png`;
-                      a.click();
+                    const svgElement = bannerRef.current?.querySelector("svg");
+                    if (!svgElement) return;
+
+                    const svgData = new XMLSerializer().serializeToString(svgElement);
+                    const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+
+                    const url = URL.createObjectURL(svgBlob);
+                    const img = new Image();
+                    img.onload = () => {
+                      const canvas = document.createElement("canvas");
+                      canvas.width = 1280;
+                      canvas.height = 480;
+                      const ctx = canvas.getContext("2d")!;
+                      ctx.fillStyle = "#111111";
+                      ctx.fillRect(0, 0, 1280, 480);
+                      ctx.drawImage(img, 0, 0, 1280, 480);
                       URL.revokeObjectURL(url);
-                    });
+                      canvas.toBlob((blob) => {
+                        if (!blob) return;
+                        const a = document.createElement("a");
+                        a.href = URL.createObjectURL(blob);
+                        const safeName = bannerRow.event_name.replace(/\s+/g, "-").toLowerCase();
+                        a.download = `${safeName}-banner.png`;
+                        a.click();
+                        URL.revokeObjectURL(a.href);
+                      });
+                    };
+                    img.src = url;
                   } catch (e) { console.error(e); }
                   setDownloadingBanner(false);
                 }}
@@ -1092,20 +1107,36 @@ export default function EvidenceTab() {
               <button
                 onClick={async () => {
                   try {
-                    const html2canvas = (await import("html2canvas")).default;
-                    const el = bannerRef.current?.querySelector("div") as HTMLElement;
-                    if (!el) return;
-                    const canvas = await html2canvas(el, { backgroundColor: "#0c0c0c", scale: 2, useCORS: true });
-                    canvas.toBlob(async blob => {
-                      if (!blob) return;
-                      const file = new File([blob], `${bannerRow.event_name}-banner.png`, { type: "image/png" });
-                      if (navigator.share && navigator.canShare({ files: [file] })) {
-                        await navigator.share({ files: [file], title: bannerRow.event_name });
-                      } else {
-                        const url = URL.createObjectURL(blob);
-                        window.open(url, "_blank");
-                      }
-                    });
+                    const svgElement = bannerRef.current?.querySelector("svg");
+                    if (!svgElement) return;
+
+                    const svgData = new XMLSerializer().serializeToString(svgElement);
+                    const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+
+                    const url = URL.createObjectURL(svgBlob);
+                    const img = new Image();
+                    img.onload = async () => {
+                      const canvas = document.createElement("canvas");
+                      canvas.width = 1280;
+                      canvas.height = 480;
+                      const ctx = canvas.getContext("2d")!;
+                      ctx.fillStyle = "#111111";
+                      ctx.fillRect(0, 0, 1280, 480);
+                      ctx.drawImage(img, 0, 0, 1280, 480);
+                      URL.revokeObjectURL(url);
+                      canvas.toBlob(async (blob) => {
+                        if (!blob) return;
+                        const safeName = bannerRow.event_name.replace(/\s+/g, "-").toLowerCase();
+                        const file = new File([blob], `${safeName}-banner.png`, { type: "image/png" });
+                        if (navigator.share && navigator.canShare({ files: [file] })) {
+                          await navigator.share({ files: [file], title: bannerRow.event_name });
+                        } else {
+                          const url = URL.createObjectURL(blob);
+                          window.open(url, "_blank");
+                        }
+                      });
+                    };
+                    img.src = url;
                   } catch (e) { console.error(e); }
                 }}
                 style={{ padding: "0.8rem", background: "linear-gradient(135deg, #D4AF37, #b8960f)", border: "none", borderRadius: 10, color: "#000", cursor: "pointer", fontSize: 13, fontWeight: 700 }}

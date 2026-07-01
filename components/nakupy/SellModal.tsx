@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useCurrency } from "@/lib/context/CurrencyContext";
 import { EXCHANGES } from "@/lib/constants/exchanges";
 import { clearCache } from "@/lib/hooks/useDataCache";
+import { generateTicketSVG } from "./tabs/BanneryTab";
 
 const PLATFORMS = EXCHANGES;
 
@@ -33,62 +34,12 @@ type BannerData = {
   currency: string;
 };
 
-function generateTicketSVG(data: { 
-  event_name: string; 
-  quantity: number; 
-  buy_price: number; 
-  sell_price: number; 
-  profit: number; 
-  roi: number; 
-  currency: string; 
-}) { 
-  const isProfit = data.profit >= 0; 
-  const color = isProfit ? "#34d399" : "#f87171"; 
-  const fmt = (n: number) => n.toLocaleString("cs-CZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); 
-
-  return `<svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" width="700" height="220"> 
-    <defs> 
-      <style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');</style> 
-    </defs> 
-    <path d="M20,0 L680,0 Q700,0 700,20 L700,200 Q700,220 680,220 L20,220 Q0,220 0,200 L0,20 Q0,0 20,0 Z" fill="#0d0d0d" stroke="#D4AF37" stroke-width="2"/> 
-
-    <text x="28" y="30" font-size="10" font-weight="700" fill="#D4AF37" letter-spacing="2" font-family="Montserrat, monospace">TICKETCLUB</text> 
-    <text x="28" y="52" font-size="18" font-weight="900" fill="#ffffff" font-family="Montserrat, monospace">${data.event_name.substring(0, 35)}</text> 
-    <text x="28" y="68" font-size="10" fill="#525252" font-family="Montserrat, monospace">UZAVŘENÝ FLIP</text> 
-
-    <line x1="28" y1="78" x2="672" y2="78" stroke="#2a2a2a" stroke-width="0.5"/> 
-
-    <text x="28" y="95" font-size="9" fill="#525252" font-family="Montserrat, monospace" letter-spacing="1">POČET LÍSTKŮ</text> 
-    <text x="28" y="110" font-size="16" font-weight="700" fill="#ffffff" font-family="Montserrat, monospace">${data.quantity}×</text> 
-
-    <text x="180" y="95" font-size="9" fill="#525252" font-family="Montserrat, monospace" letter-spacing="1">KOUPENO</text> 
-    <text x="180" y="110" font-size="16" font-weight="700" fill="#ffffff" font-family="Montserrat, monospace">${fmt(data.buy_price * data.quantity)} ${data.currency}</text> 
-
-    <text x="370" y="95" font-size="9" fill="#525252" font-family="Montserrat, monospace" letter-spacing="1">NÁKUP / KS</text> 
-    <text x="370" y="110" font-size="16" font-weight="700" fill="#ffffff" font-family="Montserrat, monospace">${fmt(data.buy_price)} ${data.currency}</text> 
-
-    <text x="530" y="95" font-size="9" fill="#525252" font-family="Montserrat, monospace" letter-spacing="1">PRODEJ / KS</text> 
-    <text x="530" y="110" font-size="16" font-weight="700" fill="#ffffff" font-family="Montserrat, monospace">${fmt(data.sell_price)} ${data.currency}</text> 
-
-    <line x1="28" y1="120" x2="672" y2="120" stroke="#2a2a2a" stroke-width="0.5"/> 
-
-    <text x="28" y="140" font-size="9" fill="#525252" font-family="Montserrat, monospace" letter-spacing="1">ZISK</text> 
-    <text x="28" y="165" font-size="36" font-weight="900" fill="${color}" font-family="Montserrat, monospace">${isProfit ? "+" : ""}${fmt(data.profit)} ${data.currency}</text> 
-
-    <text x="28" y="182" font-size="9" fill="#525252" font-family="Montserrat, monospace" letter-spacing="1">ROI</text> 
-    <text x="28" y="197" font-size="14" font-weight="700" fill="${color}" font-family="Montserrat, monospace">${isProfit ? "+" : ""}${data.roi.toFixed(1)}%</text> 
-
-    <line x1="28" y1="205" x2="672" y2="205" stroke="#2a2a2a" stroke-width="0.5"/> 
-    <text x="28" y="216" font-size="9" fill="#3a3a3a" font-family="Montserrat, monospace">ticketclub.vip</text> 
-  </svg>`; 
-}
-
 function PnlBanner({ data, currency }: { data: any; currency: string }) {
   const svg = generateTicketSVG({
-    event_name: data.event_name,
+    eventName: data.event_name,
     quantity: data.quantity,
-    buy_price: data.buy_price,
-    sell_price: data.sell_price,
+    buyPrice: data.buy_price * data.quantity,
+    sellPrice: data.sell_price,
     profit: data.profit,
     roi: data.roi,
     currency: currency,
@@ -230,33 +181,44 @@ export default function SellModal({ purchase, onClose, onSave }: {
   }
 
   async function handleShare() {
-    const banner = document.getElementById("pnl-banner");
-    if (!banner) return;
+    const svgElement = document.getElementById("pnl-banner")?.querySelector("svg");
+    if (!svgElement) return;
     try {
-      const { default: html2canvas } = await import("html2canvas");
-      const canvas = await html2canvas(banner, {
-        backgroundColor: "#0d0b1a",
-        scale: 2,
-      });
-      canvas.toBlob(async (blob) => {
-        if (!blob) return;
-        const file = new File([blob], "ticketclub-flip.png", { type: "image/png" });
-        if (navigator.share && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            files: [file],
-            title: "Můj flip na TicketClub",
-          });
-        } else {
-          // Fallback — download
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          const safeName = purchase.event_name.replace(/\s+/g, "-").toLowerCase();
-          a.download = "ticketclub-" + safeName + ".png";
-          a.click();
-          URL.revokeObjectURL(url);
-        }
-      });
+      const svgData = new XMLSerializer().serializeToString(svgElement);
+      const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+
+      const url = URL.createObjectURL(svgBlob);
+      const img = new Image();
+      img.onload = async () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = 1280;
+        canvas.height = 480;
+        const ctx = canvas.getContext("2d")!;
+        ctx.fillStyle = "#111111";
+        ctx.fillRect(0, 0, 1280, 480);
+        ctx.drawImage(img, 0, 0, 1280, 480);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(async (blob) => {
+          if (!blob) return;
+          const file = new File([blob], "ticketclub-flip.png", { type: "image/png" });
+          if (navigator.share && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: "Můj flip na TicketClub",
+            });
+          } else {
+            // Fallback — download
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            const safeName = purchase.event_name.replace(/\s+/g, "-").toLowerCase();
+            a.download = "ticketclub-" + safeName + ".png";
+            a.click();
+            URL.revokeObjectURL(url);
+          }
+        });
+      };
+      img.src = url;
     } catch (e) {
       console.error(e);
     }
