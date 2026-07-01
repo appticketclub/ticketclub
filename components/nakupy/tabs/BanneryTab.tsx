@@ -30,59 +30,47 @@ export function generateTicketSVG(data: {
   const profitColor = isProfit ? "#4ade80" : "#f87171"; 
   const fmt = (n: number) => n.toLocaleString("cs-CZ", { minimumFractionDigits: 0, maximumFractionDigits: 0 }); 
 
-  const buyStr = fmt(data.buyPrice);
-  const sellStr = fmt(data.sellPrice);
-  const profitStr = fmt(Math.abs(data.profit));
+  const buyStr = `${fmt(data.buyPrice)} ${data.currency}`; 
+  const sellStr = `${fmt(data.sellPrice)} ${data.currency}`; 
+  const profitStr = `${isProfit ? '+' : ''}${fmt(data.profit)} ${data.currency}`; 
 
-  const buyFontSize = buyStr.length > 6 ? 34 : 48;
-  const sellFontSize = sellStr.length > 6 ? 34 : 48;
-  const profitFontSize = profitStr.length > 6 ? 34 : 56;
+  const maxLen = Math.max(buyStr.length, sellStr.length, profitStr.length); 
+  const priceSize = maxLen > 12 ? 28 : maxLen > 9 ? 36 : maxLen > 7 ? 42 : 48; 
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 480" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"> 
-   <defs> 
-     <filter id="profitGlow"> 
-       <feGaussianBlur stdDeviation="8" result="blur"/> 
-       <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge> 
-     </filter> 
-   </defs> 
+    <defs> 
+      <filter id="profitGlow"> 
+        <feGaussianBlur stdDeviation="8" result="blur"/> 
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge> 
+      </filter> 
+    </defs> 
 
-   <!-- Pozadie --> 
-   <rect width="1280" height="480" fill="#111111" rx="0"/> 
+    <rect width="1280" height="480" fill="#111111"/> 
+    <rect x="0" y="0" width="1280" height="8" fill="${isProfit ? '#4ade80' : '#f87171'}"/> 
 
-   <!-- Zelený pruh navrchu --> 
-   <rect x="0" y="0" width="1280" height="8" fill="${isProfit ? '#4ade80' : '#f87171'}"/> 
+    <text x="64" y="56" font-family="Arial, sans-serif" font-size="22" fill="${isProfit ? '#4ade80' : '#f87171'}" letter-spacing="4">UZAVŘENÝ FLIP · P&amp;L REPORT</text> 
 
-   <!-- Label hore --> 
-   <text x="64" y="56" font-family="Arial, sans-serif" font-size="22" fill="${isProfit ? '#4ade80' : '#f87171'}" letter-spacing="4">UZAVŘENÝ FLIP · P&amp;L REPORT</text> 
+    <image href="/logo.png" x="1060" y="20" width="200" height="70" preserveAspectRatio="xMidYMid meet" opacity="0.9"/> 
 
-   <!-- Logo vpravo --> 
-   <image href="/logo.png" x="1060" y="20" width="200" height="70" preserveAspectRatio="xMidYMid meet" opacity="0.9"/> 
+    <text x="64" y="130" font-family="'Arial Black', Arial, sans-serif" font-size="72" font-weight="900" fill="#ffffff">${data.eventName.toUpperCase().substring(0, 18)}</text> 
 
-   <!-- Názov eventu --> 
-   <text x="64" y="130" font-family="'Arial Black', Arial, sans-serif" font-size="72" font-weight="900" fill="#ffffff">${data.eventName.toUpperCase().substring(0, 18)}</text> 
+    <line x1="64" y1="152" x2="1216" y2="152" stroke="#222222" stroke-width="1.5"/> 
 
-   <!-- Deliaaca čiara --> 
-   <line x1="64" y1="152" x2="1216" y2="152" stroke="#222222" stroke-width="1.5"/> 
+    <text x="64" y="192" font-family="Arial, sans-serif" font-size="18" fill="#444444" letter-spacing="3">NÁKUP CELKEM</text> 
+    <text x="64" y="${192 + priceSize + 4}" font-family="'Arial Black', Arial, sans-serif" font-size="${priceSize}" font-weight="900" fill="#888888">${buyStr}</text> 
 
-   <!-- 3 stĺpce — NÁKUP, PREDAJ, ZISK --> 
-   <text x="64" y="192" font-family="Arial, sans-serif" font-size="20" fill="#444444" letter-spacing="3">NÁKUP CELKEM</text> 
-   <text x="64" y="240" font-family="'Arial Black', Arial, sans-serif" font-size="${buyFontSize}" font-weight="900" fill="#888888">${buyStr} ${data.currency}</text> 
+    <text x="490" y="192" font-family="Arial, sans-serif" font-size="18" fill="#444444" letter-spacing="3">PRODEJ CELKEM</text> 
+    <text x="490" y="${192 + priceSize + 4}" font-family="'Arial Black', Arial, sans-serif" font-size="${priceSize}" font-weight="900" fill="#ffffff">${sellStr}</text> 
 
-   <text x="500" y="192" font-family="Arial, sans-serif" font-size="20" fill="#444444" letter-spacing="3">PRODEJ CELKEM</text> 
-   <text x="500" y="240" font-family="'Arial Black', Arial, sans-serif" font-size="${sellFontSize}" font-weight="900" fill="#ffffff">${sellStr} ${data.currency}</text> 
+    <text x="930" y="192" font-family="Arial, sans-serif" font-size="18" fill="${isProfit ? '#4ade80' : '#f87171'}" letter-spacing="3">ZISK</text> 
+    <text x="930" y="${192 + priceSize + 4}" font-family="'Arial Black', Arial, sans-serif" font-size="${priceSize}" font-weight="900" fill="${profitColor}" filter="url(#profitGlow)">${profitStr}</text> 
 
-   <text x="950" y="192" font-family="Arial, sans-serif" font-size="20" fill="${isProfit ? '#4ade80' : '#f87171'}" letter-spacing="3">ZISK</text> 
-   <text x="950" y="240" font-family="'Arial Black', Arial, sans-serif" font-size="${profitFontSize}" font-weight="900" fill="${profitColor}" filter="url(#profitGlow)">${isProfit ? '+' : ''}${profitStr} ${data.currency}</text> 
+    <line x1="64" y1="300" x2="1216" y2="300" stroke="#222222" stroke-width="1.5"/> 
 
-   <!-- Deliaaca čiara --> 
-   <line x1="64" y1="268" x2="1216" y2="268" stroke="#222222" stroke-width="1.5"/> 
+    <text x="64" y="340" font-family="Arial, sans-serif" font-size="22" fill="#444444">${data.quantity}× lístků</text> 
+    <text x="320" y="340" font-family="Arial, sans-serif" font-size="22" fill="#444444">ROI ${isProfit ? '+' : ''}${data.roi.toFixed(1)}%</text> 
 
-   <!-- Spodný riadok --> 
-   <text x="64" y="312" font-family="Arial, sans-serif" font-size="22" fill="#444444">${data.quantity}× lístků</text> 
-   <text x="320" y="312" font-family="Arial, sans-serif" font-size="22" fill="#444444">ROI ${isProfit ? '+' : ''}${data.roi.toFixed(1)}%</text> 
-
-   <!-- ticketclub.vip zelené vpravo dole --> 
-   <text x="1216" y="312" font-family="'Arial Black', Arial, sans-serif" font-size="22" font-weight="900" fill="${isProfit ? '#4ade80' : '#f87171'}" text-anchor="end" letter-spacing="1">ticketclub.vip</text> 
+    <text x="1216" y="340" font-family="'Arial Black', Arial, sans-serif" font-size="22" font-weight="900" fill="${isProfit ? '#4ade80' : '#f87171'}" text-anchor="end" letter-spacing="1">ticketclub.vip</text> 
  </svg>`; 
 }
 
