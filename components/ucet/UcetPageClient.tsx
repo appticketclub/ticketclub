@@ -75,7 +75,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
 
   const labelStyle = {
     fontSize: 11, fontWeight: 600 as const,
-    letterSpacing: "0.08em", color: "#525252",
+    letterSpacing: "0.08em", color: "#ffffff",
     display: "block" as const, marginBottom: "0.4rem",
   };
 
@@ -180,11 +180,11 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
     <div>
       {/* Header */}
       <div style={{ marginBottom: "2rem" }}>
-        <a href="/dostupne-sluzby" style={{ fontSize: 13, color: "#525252", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: "1rem" }}>
+        <a href="/dostupne-sluzby" style={{ fontSize: 13, color: "#ffffff", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: "1rem" }}>
           ← Zpět na přehled
         </a>
         <h1 style={{ fontSize: "1.75rem", fontWeight: 700, color: "#fff", marginBottom: "0.25rem" }}>Můj účet</h1>
-        <p style={{ fontSize: 13, color: "#3a3a3a" }}>{user.email}</p>
+        <p style={{ fontSize: 13, color: "#ffffff" }}>{user.email}</p>
       </div>
 
       {/* Profile info */}
@@ -194,7 +194,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <div>
             <label style={labelStyle}>E-MAIL</label>
-            <div style={{ ...inputStyle, color: "#525252", cursor: "default" }}>{user.email}</div>
+            <div style={{ ...inputStyle, color: "#ffffff", cursor: "default" }}>{user.email}</div>
           </div>
           <div>
             <label style={labelStyle}>CELÉ JMÉNO</label>
@@ -251,7 +251,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
               ? subscription?.plan_interval === "yearly" ? "⭐ PRO Roční" : "⭐ PRO Měsíční"
               : "FREE"}
           </div>
-          <span style={{ fontSize: 13, color: "#525252" }}>
+          <span style={{ fontSize: 13, color: "#ffffff" }}>
             {subscription?.plan === "pro"
               ? `Aktivní do ${subscription.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString("cs-CZ") : "—"}`
               : "Základní plán"}
@@ -275,7 +275,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
           </button>
         ) : (
           <div>
-            <p style={{ fontSize: 13, color: "#525252", marginBottom: "1rem" }}>
+            <p style={{ fontSize: 13, color: "#ffffff", marginBottom: "1rem" }}>
               Základní plán — odemkněte všechny funkce
             </p>
             <button
@@ -300,12 +300,12 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
         <div style={cardStyle}>
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #7c3aed, transparent)" }} />
           <h2 style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>Extension licence</h2>
-          <p style={{ fontSize: 12, color: "#3a3a3a", marginBottom: "1.25rem" }}>
+          <p style={{ fontSize: 12, color: "#ffffff", marginBottom: "1.25rem" }}>
             Použijte tento klíč pro aktivaci TicketClub Extension v Chrome.
           </p>
 
           {loadingKey ? (
-            <div style={{ fontSize: 13, color: "#525252" }}>Načítám klíč...</div>
+            <div style={{ fontSize: 13, color: "#ffffff" }}>Načítám klíč...</div>
           ) : extensionKey ? (
             <div>
               <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", marginBottom: "0.75rem" }}>
@@ -327,7 +327,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
                 </div>
                 <button
                   onClick={() => setShowKey(!showKey)}
-                  style={{ padding: "0.75rem 1rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#525252", cursor: "pointer", fontSize: 12, whiteSpace: "nowrap" as const }}
+                  style={{ padding: "0.75rem 1rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ffffff", cursor: "pointer", fontSize: 12, whiteSpace: "nowrap" as const }}
                 >
                   {showKey ? "Skrýt" : "Zobrazit"}
                 </button>
@@ -340,7 +340,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
                   Kopírovat
                 </button>
               </div>
-              <p style={{ fontSize: 11, color: "#3a3a3a" }}>
+              <p style={{ fontSize: 11, color: "#ffffff" }}>
                 Klíč je unikátní pro váš účet. Nesdílejte ho s nikým.
               </p>
             </div>
@@ -357,7 +357,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
         <div style={{ ...cardStyle, opacity: 0.6 }}>
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #7c3aed, transparent)" }} />
           <h2 style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>Extension licence</h2>
-          <p style={{ fontSize: 13, color: "#525252", marginBottom: "1rem" }}>
+          <p style={{ fontSize: 13, color: "#ffffff", marginBottom: "1rem" }}>
             Licenční klíč je dostupný pouze pro Pro uživatele.
           </p>
           <a href="/ucet" style={{ fontSize: 13, color: "#7c3aed", fontWeight: 600, textDecoration: "none" }}>
@@ -370,12 +370,12 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
       <div style={{ ...cardStyle, border: "1px solid rgba(248,113,113,0.2)", background: "#110a0a" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, rgba(248,113,113,0.4), transparent)" }} />
         <h2 style={{ fontSize: "1rem", fontWeight: 700, color: "#f87171", marginBottom: "0.5rem" }}>Nebezpečná zóna</h2>
-        <p style={{ fontSize: 13, color: "#525252", marginBottom: "1.5rem" }}>Tyto akce jsou nevratné. Postupujte opatrně.</p>
+        <p style={{ fontSize: 13, color: "#ffffff", marginBottom: "1.5rem" }}>Tyto akce jsou nevratné. Postupujte opatrně.</p>
 
         {/* Reset account */}
         <div style={{ padding: "1.25rem", background: "#0a0a0a", border: "1px solid #2a2a2a", borderRadius: 12, marginBottom: "1rem" }}>
           <div style={{ fontSize: 14, fontWeight: 600, color: "#fbbf24", marginBottom: 4 }}>Resetovat účet</div>
-          <p style={{ fontSize: 12, color: "#525252", marginBottom: "1rem" }}>
+          <p style={{ fontSize: 12, color: "#ffffff", marginBottom: "1rem" }}>
             Smaže všechny nákupy, prodeje, bannery a vynuluje kapitál. Účet zůstane aktivní.
           </p>
           <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
@@ -407,7 +407,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
         {/* Delete account */}
         <div style={{ padding: "1.25rem", background: "#0a0a0a", border: "1px solid rgba(248,113,113,0.2)", borderRadius: 12 }}>
           <div style={{ fontSize: 14, fontWeight: 600, color: "#f87171", marginBottom: 4 }}>Smazat účet</div>
-          <p style={{ fontSize: 12, color: "#525252", marginBottom: "1rem" }}>
+          <p style={{ fontSize: 12, color: "#ffffff", marginBottom: "1rem" }}>
             Trvale smaže váš účet a všechna data. Tato akce je nevratná.
           </p>
           <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
