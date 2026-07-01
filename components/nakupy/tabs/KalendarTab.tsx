@@ -149,7 +149,7 @@ export default function KalendarTab() {
   );
 
   console.log("[kalendar] purchases:", purchases);
-  console.log("[kalendar] unsoldDates:", [...unsoldDates]);
+  console.log("[kalendar] unsoldDates:", Array.from(unsoldDates));
 
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
