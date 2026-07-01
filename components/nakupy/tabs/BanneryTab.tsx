@@ -37,7 +37,7 @@ export function generateTicketSVG(data: {
   const maxLen = Math.max(buyStr.length, sellStr.length, profitStr.length); 
   const priceSize = maxLen > 12 ? 28 : maxLen > 9 ? 36 : maxLen > 7 ? 42 : 48; 
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 480" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"> 
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 560" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"> 
     <defs> 
       <filter id="profitGlow"> 
         <feGaussianBlur stdDeviation="8" result="blur"/> 
@@ -45,34 +45,34 @@ export function generateTicketSVG(data: {
       </filter> 
     </defs> 
 
-    <rect width="1280" height="480" rx="24" fill="#111111"/> 
+    <rect width="1280" height="560" rx="24" fill="#111111"/> 
     <rect x="0" y="0" width="1280" height="8" rx="6" fill="${isProfit ? '#4ade80' : '#f87171'}"/> 
-    <rect width="1280" height="480" rx="24" fill="none" stroke="${isProfit ? '#4ade80' : '#f87171'}" stroke-width="1.5" opacity="0.35"/> 
-    <rect x="2" y="2" width="1276" height="476" rx="22" fill="none" stroke="${isProfit ? '#4ade80' : '#f87171'}" stroke-width="8" opacity="0.06"/> 
+    <rect width="1280" height="560" rx="24" fill="none" stroke="${isProfit ? '#4ade80' : '#f87171'}" stroke-width="1.5" opacity="0.35"/> 
+    <rect x="2" y="2" width="1276" height="556" rx="22" fill="none" stroke="${isProfit ? '#4ade80' : '#f87171'}" stroke-width="8" opacity="0.06"/> 
 
-    <text x="64" y="56" font-family="Arial, sans-serif" font-size="22" fill="${isProfit ? '#4ade80' : '#f87171'}" letter-spacing="4">UZAVŘENÝ FLIP · P&amp;L REPORT</text> 
+    <text x="64" y="72" font-family="Arial, sans-serif" font-size="22" fill="${isProfit ? '#4ade80' : '#f87171'}" letter-spacing="4">UZAVŘENÝ FLIP · P&amp;L REPORT</text> 
 
-    <image href="/logo.png" x="1060" y="20" width="200" height="70" preserveAspectRatio="xMidYMid meet" opacity="0.9"/> 
+    <image href="/logo.png" x="1060" y="36" width="200" height="70" preserveAspectRatio="xMidYMid meet" opacity="0.9"/> 
 
-    <text x="64" y="130" font-family="'Arial Black', Arial, sans-serif" font-size="72" font-weight="900" fill="#ffffff">${data.eventName.toUpperCase().substring(0, 18)}</text> 
+    <text x="64" y="160" font-family="'Arial Black', Arial, sans-serif" font-size="80" font-weight="900" fill="#ffffff">${data.eventName.toUpperCase().substring(0, 18)}</text> 
 
-    <line x1="64" y1="152" x2="1216" y2="152" stroke="#222222" stroke-width="1.5"/> 
+    <line x1="64" y1="188" x2="1216" y2="188" stroke="#222222" stroke-width="1.5"/> 
 
-    <text x="64" y="192" font-family="Arial, sans-serif" font-size="18" fill="#444444" letter-spacing="3">NÁKUP CELKEM</text> 
-    <text x="64" y="${192 + priceSize + 4}" font-family="'Arial Black', Arial, sans-serif" font-size="${priceSize}" font-weight="900" fill="#888888">${buyStr}</text> 
+    <text x="64" y="236" font-family="Arial, sans-serif" font-size="18" fill="#444444" letter-spacing="3">NÁKUP CELKEM</text> 
+    <text x="64" y="296" font-family="'Arial Black', Arial, sans-serif" font-size="${priceSize}" font-weight="900" fill="#888888">${buyStr}</text> 
 
-    <text x="490" y="192" font-family="Arial, sans-serif" font-size="18" fill="#444444" letter-spacing="3">PRODEJ CELKEM</text> 
-    <text x="490" y="${192 + priceSize + 4}" font-family="'Arial Black', Arial, sans-serif" font-size="${priceSize}" font-weight="900" fill="#ffffff">${sellStr}</text> 
+    <text x="490" y="236" font-family="Arial, sans-serif" font-size="18" fill="#444444" letter-spacing="3">PRODEJ CELKEM</text> 
+    <text x="490" y="296" font-family="'Arial Black', Arial, sans-serif" font-size="${priceSize}" font-weight="900" fill="#ffffff">${sellStr}</text> 
 
-    <text x="930" y="192" font-family="Arial, sans-serif" font-size="18" fill="${isProfit ? '#4ade80' : '#f87171'}" letter-spacing="3">ZISK</text> 
-    <text x="930" y="${192 + priceSize + 4}" font-family="'Arial Black', Arial, sans-serif" font-size="${priceSize}" font-weight="900" fill="${profitColor}" filter="url(#profitGlow)">${profitStr}</text> 
+    <text x="930" y="236" font-family="Arial, sans-serif" font-size="18" fill="${isProfit ? '#4ade80' : '#f87171'}" letter-spacing="3">ZISK</text> 
+    <text x="930" y="296" font-family="'Arial Black', Arial, sans-serif" font-size="${priceSize}" font-weight="900" fill="${profitColor}" filter="url(#profitGlow)">${profitStr}</text> 
 
-    <line x1="64" y1="300" x2="1216" y2="300" stroke="#222222" stroke-width="1.5"/> 
+    <line x1="64" y1="336" x2="1216" y2="336" stroke="#222222" stroke-width="1.5"/> 
 
-    <text x="64" y="340" font-family="Arial, sans-serif" font-size="22" fill="#444444">${data.quantity}× lístků</text> 
-    <text x="320" y="340" font-family="Arial, sans-serif" font-size="22" fill="#444444">ROI ${isProfit ? '+' : ''}${data.roi.toFixed(1)}%</text> 
+    <text x="64" y="400" font-family="Arial, sans-serif" font-size="24" fill="#444444">${data.quantity}× lístků</text> 
+    <text x="360" y="400" font-family="Arial, sans-serif" font-size="24" fill="#444444">ROI ${isProfit ? '+' : ''}${data.roi.toFixed(1)}%</text> 
 
-    <text x="1216" y="340" font-family="'Arial Black', Arial, sans-serif" font-size="22" font-weight="900" fill="${isProfit ? '#4ade80' : '#f87171'}" text-anchor="end" letter-spacing="1">ticketclub.vip</text> 
+    <text x="1216" y="400" font-family="'Arial Black', Arial, sans-serif" font-size="24" font-weight="900" fill="${isProfit ? '#4ade80' : '#f87171'}" text-anchor="end" letter-spacing="1">ticketclub.vip</text> 
  </svg>`; 
 }
 
@@ -100,11 +100,11 @@ function BannerCard({ banner }: { banner: Banner }) {
     img.onload = () => {
       const canvas = document.createElement("canvas");
       canvas.width = 1280;
-      canvas.height = 480;
+      canvas.height = 560;
       const ctx = canvas.getContext("2d")!;
       ctx.fillStyle = "#111111";
-      ctx.fillRect(0, 0, 1280, 480);
-      ctx.drawImage(img, 0, 0, 1280, 480);
+      ctx.fillRect(0, 0, 1280, 560);
+      ctx.drawImage(img, 0, 0, 1280, 560);
       URL.revokeObjectURL(url);
       canvas.toBlob((blob) => {
         if (!blob) return;
@@ -131,11 +131,11 @@ function BannerCard({ banner }: { banner: Banner }) {
     img.onload = async () => {
       const canvas = document.createElement("canvas");
       canvas.width = 1280;
-      canvas.height = 480;
+      canvas.height = 560;
       const ctx = canvas.getContext("2d")!;
       ctx.fillStyle = "#111111";
-      ctx.fillRect(0, 0, 1280, 480);
-      ctx.drawImage(img, 0, 0, 1280, 480);
+      ctx.fillRect(0, 0, 1280, 560);
+      ctx.drawImage(img, 0, 0, 1280, 560);
       URL.revokeObjectURL(url);
 
       canvas.toBlob(async (blob) => {
@@ -166,7 +166,7 @@ function BannerCard({ banner }: { banner: Banner }) {
         overflow: "hidden",
         border: "1px solid #1a1a1a",
       }}>
-        <div style={{ width: "100%", aspectRatio: "8/3", overflow: "hidden" }}>
+        <div style={{ width: "100%", aspectRatio: "1280/560", overflow: "hidden" }}>
           <div
             style={{ width: "100%", height: "100%", lineHeight: 0 }}
             dangerouslySetInnerHTML={{ __html: svg }}
