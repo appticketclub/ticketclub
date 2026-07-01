@@ -36,7 +36,7 @@ export default function KalkulackaTab() {
 
   const sliderStyle = {
     width: "100%", height: 4, cursor: "pointer",
-    accentColor: "#ffffff",
+    accentColor: "#eeeeeeff",
   };
 
   const inputStyle = {
