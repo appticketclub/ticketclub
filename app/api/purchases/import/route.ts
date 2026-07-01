@@ -67,15 +67,16 @@ export async function POST(request: NextRequest) {
         const quantity = parseInt(row[4]) || 1;
         const buyPriceTotal = parseFloat(String(row[5]).replace(",", ".")) || 0;
         const buyPrice = quantity > 0 ? buyPriceTotal / quantity : buyPriceTotal;
-        const sellPriceTotal = parseFloat(String(row[6]).replace(",", ".")) || 0;
-        const exchange = String(row[7] || "").trim() || null;
-        const accountRef = String(row[8] || "").trim() || null;
-        const ticketType = String(row[9] || "").trim() || null;
-        const soldAtRaw = parseDate(row[10]);
+        const quantitySold = parseInt(row[6]) || 0;
+        const sellPriceTotal = parseFloat(String(row[7]).replace(",", ".")) || 0;
+        const exchange = String(row[8] || "").trim() || null;
+        const accountRef = String(row[9] || "").trim() || null;
+        const ticketType = String(row[10] || "").trim() || null;
+        const soldAtRaw = parseDate(row[11]);
         const soldAt = soldAtRaw ? new Date(soldAtRaw).toISOString() : null;
-        const paidOut = String(row[11] || "").trim().toUpperCase() === "ANO";
-        const delivered = String(row[12] || "").trim().toUpperCase() === "ANO";
-        const notes = String(row[13] || "").trim() || null;
+        const paidOut = String(row[12] || "").trim().toUpperCase() === "ANO";
+        const delivered = String(row[13] || "").trim().toUpperCase() === "ANO";
+        const notes = String(row[14] || "").trim() || null;
 
         if (!eventName) continue;
 
@@ -89,10 +90,10 @@ export async function POST(request: NextRequest) {
             event_date: eventDate,
             event_actual_date: eventActualDate,
             quantity,
-            quantity_remaining: sellPriceTotal > 0 ? 0 : quantity,
+            quantity_remaining: quantity - quantitySold,
             buy_price: buyPrice,
             currency: "EUR",
-            status: sellPriceTotal > 0 ? "sold" : "active",
+            status: quantitySold >= quantity ? "sold" : quantitySold > 0 ? "partial" : "active",
             exchange,
             account_ref: accountRef,
             ticket_type_custom: ticketType,
@@ -108,13 +109,13 @@ export async function POST(request: NextRequest) {
           continue;
         }
 
-        // If sell price exists — insert sale and banner
-        if (sellPriceTotal > 0 && purchase) {
-          const sellPricePerTicket = sellPriceTotal / quantity;
+        // If quantity sold and sell price exist — insert sale and banner
+        if (quantitySold > 0 && sellPriceTotal > 0 && purchase) {
+          const sellPricePerTicket = sellPriceTotal / quantitySold;
           const { error: saleError } = await supabase.from("sales").insert({
             user_id: user.id,
             purchase_id: purchase.id,
-            quantity_sold: quantity,
+            quantity_sold: quantitySold,
             sell_price: sellPricePerTicket,
             currency: "EUR",
             sold_at: soldAt ?? new Date().toISOString(),
@@ -127,7 +128,7 @@ export async function POST(request: NextRequest) {
           // Generate banner
           const profit = sellPriceTotal - buyPriceTotal; 
           const roi = buyPriceTotal > 0 ? (profit / buyPriceTotal) * 100 : 0; 
- 
+
           await supabase.from("banners").insert({ 
             user_id: user.id, 
             purchase_id: purchase.id, 

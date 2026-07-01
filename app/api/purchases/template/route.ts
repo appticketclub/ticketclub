@@ -11,6 +11,7 @@ export async function GET() {
     "Datum koncertu",
     "Počet lístků",
     "Nákupní cena celkem (EUR)",
+    "Počet prodaných lístků",
     "Prodejní cena celkem (EUR)",
     "Burza",
     "Účet",
@@ -28,6 +29,7 @@ export async function GET() {
     "15.08.2026",
     "2",
     "300",
+    "0",
     "500",
     "Viagogo",
     "ucet1@gmail.com",
@@ -42,9 +44,9 @@ export async function GET() {
 
   ws["!cols"] = [
     { wch: 14 }, { wch: 25 }, { wch: 15 }, { wch: 14 },
-    { wch: 12 }, { wch: 22 }, { wch: 22 }, { wch: 15 },
-    { wch: 22 }, { wch: 18 }, { wch: 14 }, { wch: 18 },
-    { wch: 16 }, { wch: 20 },
+    { wch: 12 }, { wch: 22 }, { wch: 22 }, { wch: 22 },
+    { wch: 15 }, { wch: 22 }, { wch: 18 }, { wch: 14 },
+    { wch: 18 }, { wch: 16 }, { wch: 20 },
   ];
 
   XLSX.utils.book_append_sheet(wb, ws, "Evidence");
