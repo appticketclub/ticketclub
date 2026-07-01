@@ -148,6 +148,9 @@ export default function KalendarTab() {
       .map(p => p.event_actual_date.split("T")[0])
   );
 
+  console.log("[kalendar] purchases:", purchases);
+  console.log("[kalendar] unsoldDates:", [...unsoldDates]);
+
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   // Monday first
