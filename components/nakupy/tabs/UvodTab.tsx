@@ -10,6 +10,7 @@ import { useCurrency } from "@/lib/context/CurrencyContext";
 import { getCached, setCached } from "@/lib/hooks/useDataCache";
 
 const timeRangeOptions = [
+  { id: "all", label: "Za celou dobu" },
   { id: "year", label: "Rok" },
   { id: "half_year", label: "Půl roku" },
   { id: "month", label: "Měsíc" },
@@ -30,7 +31,7 @@ export default function UvodTab() {
   const [stats, setStats] = useState({ invested: 0, profit: 0, balance: 0 });
   const [initialCapital, setInitialCapital] = useState(0);
   const [currentBalance, setCurrentBalance] = useState(0);
-  const [timeRange, setTimeRange] = useState<TimeRange>("year");
+  const [timeRange, setTimeRange] = useState<TimeRange>("all");
   const [customFrom, setCustomFrom] = useState("");
   const [customTo, setCustomTo] = useState("");
 
@@ -41,7 +42,8 @@ export default function UvodTab() {
     const now = new Date();
     const from = new Date();
 
-    if (timeRange === "week") from.setDate(now.getDate() - 7);
+    if (timeRange === "all") return { from: "", to: "" };
+    else if (timeRange === "week") from.setDate(now.getDate() - 7);
     else if (timeRange === "month") from.setMonth(now.getMonth() - 1);
     else if (timeRange === "half_year") from.setMonth(now.getMonth() - 6);
     else if (timeRange === "year") from.setFullYear(now.getFullYear() - 1);
