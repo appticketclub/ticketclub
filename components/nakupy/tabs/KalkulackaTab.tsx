@@ -50,7 +50,7 @@ export default function KalkulackaTab() {
     <div>
       <div style={{ marginBottom: "1.75rem" }}>
         <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.25rem" }}>Kalkulačka</h1>
-        <p style={{ fontSize: 13, color: "#3a3a3a" }}>Orientační kalkulačka zisků</p>
+        <p style={{ fontSize: 13, color: "#ffffff" }}>Orientační kalkulačka zisků</p>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1.25rem" }}>
