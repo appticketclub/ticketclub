@@ -75,6 +75,13 @@ export default function EvidenceTab() {
   const [downloadingBanner, setDownloadingBanner] = useState(false);
   const bannerRef = useRef<HTMLDivElement>(null);
 
+  const [saleUpdateModal, setSaleUpdateModal] = useState<{
+    row: EvidenceRow;
+    newQty: number;
+  } | null>(null);
+  const [saleUpdatePrice, setSaleUpdatePrice] = useState("");
+  const [saleUpdateMode, setSaleUpdateMode] = useState<"add" | "subtract">("add");
+
   // Filter states
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -743,6 +750,16 @@ export default function EvidenceTab() {
                           onChange={async e => {
                             const newQty = parseInt(e.target.value);
                             setEditValue(String(newQty));
+
+                            // If already has sales and increasing quantity, show update modal
+                            if (row.quantity_sold > 0 && newQty > row.quantity_sold) {
+                              setEditingCell(null);
+                              setSaleUpdatePrice("");
+                              setSaleUpdateModal({ row, newQty });
+                              return;
+                            }
+
+                            // Otherwise proceed normally
                             const supabase = createClient();
                             const { data: { user } } = await supabase.auth.getUser();
                             if (!user) return;
@@ -1099,6 +1116,171 @@ export default function EvidenceTab() {
           </div>
         </>
       )}
+
+      {/* Sale Update Modal */}
+      {saleUpdateModal && (() => {
+        const { row, newQty } = saleUpdateModal;
+        const currentProfit = row.profit;
+        const additionalQty = newQty - row.quantity_sold;
+        const additionalPrice = parseFloat(saleUpdatePrice.replace(",", ".")) || 0;
+        const newSellTotal = row.sell_price_total + (saleUpdateMode === "add" ? additionalPrice : -additionalPrice);
+        const newProfit = newSellTotal - (row.buy_price * row.quantity);
+        const profitDiff = newProfit - currentProfit;
+
+        return (
+          <>
+            <div
+              onClick={() => setSaleUpdateModal(null)}
+              style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", zIndex: 200, backdropFilter: "blur(4px)" }}
+            />
+            <div style={{
+              position: "fixed", top: "50%", left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "100%", maxWidth: 420,
+              background: "#111111", border: "1px solid #2a2a2a",
+              borderRadius: 20, zIndex: 201, overflow: "hidden",
+            }}>
+              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c0c0c0, transparent)" }} />
+
+              {/* Header */}
+              <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #1a1a1a", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <h2 style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Aktualizovat prodej</h2>
+                  <p style={{ fontSize: 13, color: "#525252", marginTop: 2 }}>{row.event_name}</p>
+                </div>
+                <button onClick={() => setSaleUpdateModal(null)} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button>
+              </div>
+
+              <div style={{ padding: "1.5rem" }}>
+                {/* Current profit */}
+                <div style={{ background: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: 12, padding: "1rem", marginBottom: "1.25rem" }}>
+                  <div style={{ fontSize: 11, color: "#525252", letterSpacing: "0.08em", marginBottom: 4 }}>AKTUÁLNÍ ZISK CELKEM</div>
+                  <div style={{ fontSize: 22, fontWeight: 800, color: currentProfit >= 0 ? "#34d399" : "#f87171" }}>
+                    {currentProfit >= 0 ? "+" : ""}{currentProfit.toFixed(2)} {row.currency}
+                  </div>
+                  <div style={{ fontSize: 12, color: "#525252", marginTop: 2 }}>
+                    Prodáno: {row.quantity_sold}/{row.quantity} lístků · Přidáváte: +{additionalQty} lístků
+                  </div>
+                </div>
+
+                {/* Price input */}
+                <div style={{ marginBottom: "1rem" }}>
+                  <div style={{ fontSize: 11, color: "#525252", letterSpacing: "0.08em", marginBottom: 8 }}>CENA ZA NOVÉ LÍSTKY</div>
+                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                    <button
+                      onClick={() => setSaleUpdateMode("add")}
+                      style={{
+                        padding: "0.6rem 1rem", fontSize: 16, fontWeight: 700,
+                        background: saleUpdateMode === "add" ? "#34d399" : "#1a1a1a",
+                        border: "1px solid #2a2a2a", borderRadius: 8,
+                        color: saleUpdateMode === "add" ? "#000" : "#525252",
+                        cursor: "pointer", minWidth: 44,
+                      }}
+                    >+</button>
+                    <button
+                      onClick={() => setSaleUpdateMode("subtract")}
+                      style={{
+                        padding: "0.6rem 1rem", fontSize: 16, fontWeight: 700,
+                        background: saleUpdateMode === "subtract" ? "#f87171" : "#1a1a1a",
+                        border: "1px solid #2a2a2a", borderRadius: 8,
+                        color: saleUpdateMode === "subtract" ? "#000" : "#525252",
+                        cursor: "pointer", minWidth: 44,
+                      }}
+                    >−</button>
+                    <input
+                      autoFocus
+                      type="number"
+                      placeholder="0.00"
+                      value={saleUpdatePrice}
+                      onChange={e => setSaleUpdatePrice(e.target.value)}
+                      style={{
+                        flex: 1, padding: "0.6rem 1rem",
+                        background: "#0a0a0a", border: "1px solid #2a2a2a",
+                        borderRadius: 8, color: "#fff", fontSize: 16,
+                        fontWeight: 600, outline: "none",
+                        textAlign: "right",
+                      }}
+                    />
+                    <div style={{ padding: "0.6rem 0.75rem", background: "#0a0a0a", border: "1px solid #2a2a2a", borderRadius: 8, color: "#525252", fontSize: 13, display: "flex", alignItems: "center" }}>
+                      {row.currency}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Preview */}
+                {additionalPrice > 0 && (
+                  <div style={{ background: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: 12, padding: "1rem", marginBottom: "1.25rem" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                      <span style={{ fontSize: 12, color: "#525252" }}>Nový zisk celkem</span>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: newProfit >= 0 ? "#34d399" : "#f87171" }}>
+                        {newProfit >= 0 ? "+" : ""}{newProfit.toFixed(2)} {row.currency}
+                      </span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                      <span style={{ fontSize: 12, color: "#525252" }}>Změna</span>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: profitDiff >= 0 ? "#34d399" : "#f87171" }}>
+                        {profitDiff >= 0 ? "+" : ""}{profitDiff.toFixed(2)} {row.currency}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Buttons */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                  <button
+                    onClick={() => setSaleUpdateModal(null)}
+                    style={{ padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#525252", cursor: "pointer", fontSize: 13 }}
+                  >
+                    Zrušit
+                  </button>
+                  <button
+                    onClick={async () => {
+                      const supabase = createClient();
+                      const { data: { user } } = await supabase.auth.getUser();
+                      if (!user) return;
+
+                      const newSellTotalFinal = row.sell_price_total + (saleUpdateMode === "add" ? additionalPrice : -additionalPrice);
+                      const { data: existingSales } = await supabase
+                        .from("sales")
+                        .select("id, quantity_sold")
+                        .eq("purchase_id", row.id)
+                        .limit(1);
+
+                      if (existingSales?.[0]) {
+                        const newSellPerTicket = newSellTotalFinal / newQty;
+                        await supabase.from("sales").update({
+                          quantity_sold: newQty,
+                          sell_price: Math.round(newSellPerTicket * 100) / 100,
+                          updated_at: new Date().toISOString(),
+                        }).eq("id", existingSales[0].id);
+                      }
+
+                      const newStatus = newQty >= row.quantity ? "sold" : "partial";
+                      await supabase.from("purchases").update({
+                        status: newStatus,
+                        quantity_remaining: Math.max(0, row.quantity - newQty),
+                        updated_at: new Date().toISOString(),
+                      }).eq("id", row.id);
+
+                      setSaleUpdateModal(null);
+                      loadData();
+                    }}
+                    style={{
+                      padding: "0.8rem",
+                      background: "linear-gradient(135deg, #ffffff, #c0c0c0)",
+                      border: "none", borderRadius: 10,
+                      color: "#000", cursor: "pointer",
+                      fontSize: 13, fontWeight: 700,
+                    }}
+                  >
+                    Uložit
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
+        );
+      })()}
     </div>
   );
 }
