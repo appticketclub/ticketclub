@@ -45,8 +45,10 @@ export function generateTicketSVG(data: {
       </filter> 
     </defs> 
 
-    <rect width="1280" height="480" fill="#111111"/> 
-    <rect x="0" y="0" width="1280" height="8" fill="${isProfit ? '#4ade80' : '#f87171'}"/> 
+    <rect width="1280" height="480" rx="24" fill="#111111"/> 
+    <rect x="0" y="0" width="1280" height="8" rx="6" fill="${isProfit ? '#4ade80' : '#f87171'}"/> 
+    <rect width="1280" height="480" rx="24" fill="none" stroke="${isProfit ? '#4ade80' : '#f87171'}" stroke-width="1.5" opacity="0.35"/> 
+    <rect x="2" y="2" width="1276" height="476" rx="22" fill="none" stroke="${isProfit ? '#4ade80' : '#f87171'}" stroke-width="8" opacity="0.06"/> 
 
     <text x="64" y="56" font-family="Arial, sans-serif" font-size="22" fill="${isProfit ? '#4ade80' : '#f87171'}" letter-spacing="4">UZAVŘENÝ FLIP · P&amp;L REPORT</text> 
 
