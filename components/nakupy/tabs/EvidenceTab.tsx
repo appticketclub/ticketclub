@@ -1206,14 +1206,24 @@ export default function EvidenceTab() {
               </div>
 
               <div style={{ padding: "1.5rem" }}>
-                {/* Current profit */}
+                {/* Sale history */}
                 <div style={{ background: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: 12, padding: "1rem", marginBottom: "1.25rem" }}>
-                  <div style={{ fontSize: 11, color: "#525252", letterSpacing: "0.08em", marginBottom: 4 }}>AKTUÁLNÍ ZISK CELKEM</div>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: currentProfit >= 0 ? "#34d399" : "#f87171" }}>
-                    {currentProfit >= 0 ? "+" : ""}{currentProfit.toFixed(2)} {row.currency}
-                  </div>
-                  <div style={{ fontSize: 12, color: "#525252", marginTop: 2 }}>
-                    Prodáno: {row.quantity_sold}/{row.quantity} lístků · Přidáváte: +{additionalQty} lístků
+                  <div style={{ fontSize: 10, color: "#525252", letterSpacing: "0.08em", marginBottom: 8 }}>HISTORIE PRODEJŮ</div>
+                  {row.quantity_sold > 0 ? (
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                      <span style={{ fontSize: 13, color: "#888" }}>Předchozí:</span>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{row.quantity_sold}× lístků</span>
+                      <span style={{ fontSize: 13, color: "#525252" }}>za</span>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: "#34d399" }}>{row.sell_price_total.toFixed(2)} {row.currency}</span>
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: 13, color: "#525252" }}>Žádné předchozí prodeje</div>
+                  )}
+                  <div style={{ borderTop: "1px solid #1a1a1a", marginTop: 8, paddingTop: 8, display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ fontSize: 13, color: "#888" }}>Přidáváte:</span>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: "#c9a227" }}>+{additionalQty}× lístků</span>
+                    <span style={{ fontSize: 13, color: "#525252" }}>· Celkem prodáno:</span>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{newQty}/{row.quantity}</span>
                   </div>
                 </div>
 
