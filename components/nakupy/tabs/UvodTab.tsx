@@ -21,16 +21,13 @@ const timeRangeOptions = [
 type TimeRange = (typeof timeRangeOptions)[number]["id"];
 
 export default function UvodTab() {
-  const [capital, setCapitalState] = useState<number | null>(null);
   const { format } = useCurrency();
   const [loading, setLoading] = useState(true);
-  const [input, setInput] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
   const [chartData, setChartData] = useState<any[]>([]);
   const [stats, setStats] = useState({ invested: 0, profit: 0, balance: 0 });
-  const [initialCapital, setInitialCapital] = useState(0);
-  const [currentBalance, setCurrentBalance] = useState(0);
+  const [soldProfit, setSoldProfit] = useState(0);
+  const [totalBuy, setTotalBuy] = useState(0);
+  const [avgRoi, setAvgRoi] = useState(0);
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
   const [customFrom, setCustomFrom] = useState("");
   const [customTo, setCustomTo] = useState("");
@@ -67,11 +64,11 @@ export default function UvodTab() {
     if (!force) {
       const cached = getCached(cacheKey, 60000);
       if (cached) {
-        setCapitalState(cached.capitalState);
-        setCurrentBalance(cached.currentBalance);
         setBaseCurrency(cached.baseCurrency);
-        setInitialCapital(cached.initialCapital);
         setStats(cached.stats);
+        setSoldProfit(cached.soldProfit);
+        setTotalBuy(cached.totalBuy);
+        setAvgRoi(cached.avgRoi);
         setChartData(cached.chartData);
         setLoading(false);
         return;
@@ -79,141 +76,135 @@ export default function UvodTab() {
     }
 
     getCapital().then(async (data) => {
-      if (data?.capital_initial && data.capital_initial > 0) {
-        setCapitalState(data.capital_initial);
-        setCurrentBalance(data.capital ?? data.capital_initial);
-        setBaseCurrency((data.capital_currency ?? "EUR") as "EUR" | "CZK");
-        setInitialCapital(data.capital_initial);
-        const currentBal = data.capital ?? data.capital_initial;
-        const { from, to } = getDateRange();
+      const currentBal = data?.capital ?? data?.capital_initial ?? 0;
+      setBaseCurrency((data?.capital_currency ?? "EUR") as "EUR" | "CZK");
+      const { from, to } = getDateRange();
 
-        // Load capital history for chart
-        let historyQuery = supabase 
-          .from("capital_history") 
-          .select("balance_after, created_at") 
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: true }) 
-          .limit(50);
+      // Load capital history for chart
+      let historyQuery = supabase 
+        .from("capital_history") 
+        .select("balance_after, created_at") 
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: true }) 
+        .limit(50);
 
-        if (from) historyQuery = historyQuery.gte("created_at", from);
-        if (to) historyQuery = historyQuery.lte("created_at", to);
+      if (from) historyQuery = historyQuery.gte("created_at", from);
+      if (to) historyQuery = historyQuery.lte("created_at", to);
 
-        const { data: history } = await historyQuery;
+      const { data: history } = await historyQuery;
 
-        // Load purchases and sales for stats (if tables exist)
-        let invested = 0;
-        let profit = 0;
-        let purchases: any[] = [];
-        let sales: any[] = [];
+      // Load purchases and sales for stats (if tables exist)
+      let invested = 0;
+      let profit = 0;
+      let purchases: any[] = [];
+      let sales: any[] = [];
+      let calcSoldProfit = 0;
+      let calcTotalBuy = 0;
+      let calcAvgRoi = 0;
+      
+      try {
+        const purchasesQuery = supabase
+          .from("purchases")
+          .select("id, event_name, buy_price, quantity, quantity_remaining, status, currency, created_at")
+          .eq("user_id", user.id);
+
+        let salesQuery = supabase
+          .from("sales")
+          .select("sell_price, quantity_sold, fees, purchases(buy_price), sold_at, purchase_id")
+          .eq("user_id", user.id);
+
+        if (from) salesQuery = salesQuery.gte("sold_at", from);
+        if (to) salesQuery = salesQuery.lte("sold_at", to);
+
+        const [{ data: p }, { data: s }] = await Promise.all([
+          purchasesQuery,
+          salesQuery,
+        ]);
+
+        purchases = p ?? [];
+        sales = s ?? [];
+
+        console.log("Sales loaded:", sales?.length, sales);
+
+        // Only closed (sold) purchases
+        const soldPurchases = purchases.filter(p => p.status === "sold");
+        const soldSales = sales.filter(s => soldPurchases.some(p => p.id === s.purchase_id));
+
+        const soldRevenue = soldSales.reduce((acc, s) => acc + (s.sell_price ?? 0) * (s.quantity_sold ?? 0), 0);
+        const soldCost = soldSales.reduce((acc, s) => {
+          const purchase = soldPurchases.find(p => p.id === s.purchase_id);
+          return acc + (purchase?.buy_price ?? 0) * (s.quantity_sold ?? 0);
+        }, 0);
+        calcSoldProfit = soldRevenue - soldCost;
+        calcTotalBuy = soldCost;
+        calcAvgRoi = soldCost > 0 ? (calcSoldProfit / soldCost) * 100 : 0;
+
+        // Calculate total invested
+        const totalInvested = purchases 
+          .filter(p => p.status === "active" || p.status === "partial") 
+          .reduce((sum, p) => { 
+            const remaining = p.quantity_remaining ?? p.quantity; 
+            return sum + (p.buy_price * Math.max(0, remaining)); 
+          }, 0);
+        invested = totalInvested;
+        profit = sales.reduce((sum, sale: any) => {
+          const purchase = Array.isArray(sale.purchases) ? sale.purchases[0] : sale.purchases;
+          const buyCost = (purchase?.buy_price ?? 0) * (sale.quantity_sold ?? 0);
+          const revenue = (sale.sell_price ?? 0) * (sale.quantity_sold ?? 0);
+          const fees = sale.fees ?? 0;
+          return sum + (revenue - buyCost - fees);
+        }, 0) ?? 0;
         
-        try {
-          const purchasesQuery = supabase
-            .from("purchases")
-            .select("id, event_name, buy_price, quantity, quantity_remaining, status, currency, created_at")
-            .eq("user_id", user.id);
-
-          let salesQuery = supabase
-            .from("sales")
-            .select("sell_price, quantity_sold, fees, purchases(buy_price), sold_at")
-            .eq("user_id", user.id);
-
-          if (from) salesQuery = salesQuery.gte("sold_at", from);
-          if (to) salesQuery = salesQuery.lte("sold_at", to);
-
-          const [{ data: p }, { data: s }] = await Promise.all([
-            purchasesQuery,
-            salesQuery,
-          ]);
-
-          purchases = p ?? [];
-          sales = s ?? [];
-
-          console.log("Sales loaded:", sales?.length, sales);
-
-          // Calculate total invested
-          const totalInvested = purchases 
-            .filter(p => p.status === "active" || p.status === "partial") 
-            .reduce((sum, p) => { 
-              const remaining = p.quantity_remaining ?? p.quantity; 
-              return sum + (p.buy_price * Math.max(0, remaining)); 
-            }, 0);
-          invested = totalInvested;
-          profit = sales.reduce((sum, sale: any) => {
-            const purchase = Array.isArray(sale.purchases) ? sale.purchases[0] : sale.purchases;
-            const buyCost = (purchase?.buy_price ?? 0) * (sale.quantity_sold ?? 0);
-            const revenue = (sale.sell_price ?? 0) * (sale.quantity_sold ?? 0);
-            const fees = sale.fees ?? 0;
-            return sum + (revenue - buyCost - fees);
-          }, 0) ?? 0;
-          
-          console.log("Profit calculated:", profit);
-        } catch {
-          // Tables might not exist yet
-        }
-
-        const stats = { invested, profit, balance: currentBal };
-        setStats(stats);
-
-        // Build chart data
-        const initialCap = data.capital_initial ?? data.capital ?? 0; 
-        const chartCurrentBal = data.capital ?? initialCap; 
-        let chartData: any[] = [];
-
-        if (history && history.length > 0) { 
-          // Always start with initial capital as first point 
-          chartData = [ 
-            { date: "Start", hodnota: Math.round(initialCap) }, 
-            ...history.map((h: any) => ({ 
-              date: new Date(h.created_at).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" }), 
-              hodnota: Math.round(h.balance_after), 
-            })), 
-          ]; 
-        } else { 
-          // No history yet — flat line at initial capital 
-          chartData = [ 
-            { date: "Start", hodnota: Math.round(initialCap) }, 
-            { date: "Nyní", hodnota: Math.round(chartCurrentBal) }, 
-          ]; 
-        }
-
-        setChartData(chartData);
-
-        // Cache the data
-        setCached(cacheKey, {
-          capitalState: data.capital_initial,
-          currentBalance,
-          baseCurrency: (data.capital_currency ?? "EUR") as "EUR" | "CZK",
-          initialCapital: data.capital_initial,
-          stats,
-          chartData,
-        });
+        console.log("Profit calculated:", profit);
+      } catch {
+        // Tables might not exist yet
       }
+
+      const stats = { invested, profit, balance: currentBal };
+      setStats(stats);
+      setSoldProfit(calcSoldProfit);
+      setTotalBuy(calcTotalBuy);
+      setAvgRoi(calcAvgRoi);
+
+      // Build chart data
+      const initialCap = data?.capital_initial ?? data?.capital ?? 0; 
+      const chartCurrentBal = data?.capital ?? initialCap; 
+      let chartData: any[] = [];
+
+      if (history && history.length > 0) { 
+        // Always start with initial capital as first point 
+        chartData = [ 
+          { date: "Start", hodnota: Math.round(initialCap) }, 
+          ...history.map((h: any) => ({ 
+            date: new Date(h.created_at).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" }), 
+            hodnota: Math.round(h.balance_after), 
+          })), 
+        ]; 
+      } else { 
+        // No history yet — flat line at initial capital 
+        chartData = [ 
+          { date: "Start", hodnota: Math.round(initialCap) }, 
+          { date: "Nyní", hodnota: Math.round(chartCurrentBal) }, 
+        ]; 
+      }
+
+      setChartData(chartData);
+
+      // Cache the data
+      setCached(cacheKey, {
+        baseCurrency: (data?.capital_currency ?? "EUR") as "EUR" | "CZK",
+        stats,
+        soldProfit: calcSoldProfit,
+        totalBuy: calcTotalBuy,
+        avgRoi: calcAvgRoi,
+        chartData,
+      });
       setLoading(false);
     });
   }
 
   useEffect(() => { loadData(); }, []);
   useEffect(() => { loadData(true); }, [timeRange, customFrom, customTo]);
-
-  async function handleSave() {
-    const amount = parseFloat(input.replace(",", ".").replace(/\s/g, ""));
-    if (isNaN(amount) || amount <= 0) return setError("Zadejte platnou částku.");
-    setSaving(true);
-    setError("");
-    const result = await setCapital(amount, "EUR");
-    if (result?.error) setError(result.error);
-    else {
-      setCapitalState(amount);
-      setInitialCapital(amount);
-      setCurrentBalance(amount);
-      setStats({ invested: 0, profit: 0, balance: amount });
-      setChartData([
-        { date: "Start", hodnota: Math.round(amount) },
-        { date: "Nyní", hodnota: Math.round(amount) },
-      ]);
-    }
-    setSaving(false);
-  }
 
   if (loading) {
     return (
@@ -225,68 +216,9 @@ export default function UvodTab() {
     );
   }
 
-  // SETUP SCREEN
-  if (capital === null || capital === 0) {
-    return (
-      <div style={{ maxWidth: 500 }}>
-        <h1 style={{ fontSize: "1.75rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>
-          Nastavte svůj kapitál
-        </h1>
-        <p style={{ color: "#525252", marginBottom: "2rem", lineHeight: 1.7 }}>
-          Zadejte počáteční kapitál, se kterým chcete obchodovat. Tento údaj slouží ke sledování vašeho zůstatku a výkonnosti.
-        </p>
-
-        {error && (
-          <div style={{ marginBottom: "1rem", padding: "12px 16px", borderRadius: 10, background: "#2a0a0a", border: "1px solid #7f1d1d", color: "#fca5a5", fontSize: 14 }}>
-            {error}
-          </div>
-        )}
-
-        <div style={{ background: "#111111", border: "1px solid #2a2a2a", borderRadius: 20, padding: "2rem", position: "relative", overflow: "hidden" }}>
-          {/* Top chrome line */}
-          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)" }} />
-
-          <label style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", display: "block", marginBottom: "0.75rem" }}>
-            POČÁTEČNÍ KAPITÁL
-          </label>
-
-          <div style={{ marginBottom: "1.5rem" }}>
-              <input
-                type="text"
-                placeholder="50 000"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSave()}
-                style={{
-                  width: "100%", padding: "0.875rem 1.125rem",
-                  background: "#0a0a0a", border: "1px solid #2a2a2a",
-                  borderRadius: 12, color: "#fff", fontSize: 18,
-                  fontWeight: 600, outline: "none", letterSpacing: "0.02em",
-                }}
-              />
-            </div>
-
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            style={{
-              width: "100%", padding: "0.95rem",
-              background: saving ? "#2a2a2a" : "linear-gradient(135deg, #ffffff 0%, #ffffff 50%, #a0a0a0 100%)",
-              border: "none", borderRadius: 12,
-              color: "#000", fontWeight: 800, fontSize: 14,
-              letterSpacing: "0.08em", cursor: saving ? "default" : "pointer",
-              transition: "opacity 0.2s",
-            }}
-          >
-            {saving ? "UKLÁDÁM..." : "ZAČÍT SLEDOVAT"}
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   // MAIN DASHBOARD
   const isProfit = stats.profit >= 0;
+  const isSoldProfit = soldProfit >= 0;
 
   return (
     <div>
@@ -296,19 +228,6 @@ export default function UvodTab() {
           <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.25rem" }}>Přehled portfolia</h1>
           <p style={{ fontSize: 13, color: "#3a3a3a" }}>Aktualizováno právě teď</p>
         </div>
-        <button
-          onClick={() => setCapitalState(null)}
-          style={{
-            padding: "7px 16px", fontSize: 12, fontWeight: 500,
-            background: "transparent", border: "1px solid #2a2a2a",
-            borderRadius: 8, color: "#525252", cursor: "pointer",
-            transition: "border-color 0.15s, color 0.15s",
-          }}
-          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#ffffff"; (e.currentTarget as HTMLButtonElement).style.color = "#ffffff"; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#2a2a2a"; (e.currentTarget as HTMLButtonElement).style.color = "#525252"; }}
-        >
-          Upravit kapitál
-        </button>
       </div>
 
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.25rem", flexWrap: "wrap" as const }}>
@@ -351,10 +270,10 @@ export default function UvodTab() {
       {/* Stat cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "1rem", marginBottom: "1.75rem" }}>
         {[
-          { label: "Počáteční kapitál", value: format(initialCapital, baseCurrency), color: "#ffffff", icon: "💰" },
-          { label: "Aktuální zůstatek", value: format(currentBalance, baseCurrency), color: "#ffffff", icon: "📊" },
+          { label: "Nákup celkem", value: format(totalBuy, baseCurrency), color: "#ffffff", icon: "🛒" },
+          { label: "Zisk celkem", value: `${isSoldProfit ? "+" : ""}${format(Math.abs(soldProfit), baseCurrency)}`, color: isSoldProfit ? "#34d399" : "#f87171", icon: isSoldProfit ? "📈" : "📉" },
           { label: "Investováno", value: format(stats.invested, baseCurrency), color: "#fbbf24", icon: "🎟️" },
-          { label: "Celkový zisk", value: `${isProfit ? "+" : ""}${format(Math.abs(stats.profit), baseCurrency)}`, color: isProfit ? "#34d399" : "#f87171", icon: isProfit ? "📈" : "📉" },
+          { label: "Průměrná ziskovost", value: `${avgRoi >= 0 ? "+" : ""}${avgRoi.toFixed(1)}%`, color: avgRoi >= 0 ? "#34d399" : "#f87171", icon: "%" },
         ].map((card) => (
           <div key={card.label} style={{
             background: "#111111",
