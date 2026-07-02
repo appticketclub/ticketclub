@@ -144,7 +144,7 @@ export default function UvodTab() {
         calcAvgRoi = soldCost > 0 ? (calcSoldProfit / soldCost) * 100 : 0;
 
         // Build chart data from sales grouped by date — only sold purchases 
-        const chartDataByDate: Record<string, { date: string; revenue: number; cost: number }> = {}; 
+        const chartDataByDate: Record<string, { date: string; rawDate: any; revenue: number; cost: number }> = {}; 
  
         for (const sale of soldSales as any[]) { 
           const dateRaw = sale.sold_at ?? sale.created_at; 
