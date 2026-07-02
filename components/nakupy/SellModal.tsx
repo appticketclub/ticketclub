@@ -39,7 +39,7 @@ function PnlBanner({ data, currency }: { data: any; currency: string }) {
   const svg = generateTicketSVG({
     eventName: data.event_name,
     quantity: data.quantity,
-    quantitySold: data.quantity_sold,
+    quantity_sold: data.quantity_sold,
     buyPrice: data.buy_price * data.quantity,
     sellPrice: data.sell_price,
     profit: data.profit,
@@ -196,11 +196,11 @@ export default function SellModal({ purchase, onClose, onSave }: {
       img.onload = async () => {
         const canvas = document.createElement("canvas");
         canvas.width = 1280;
-        canvas.height = 480;
+        canvas.height = 600;
         const ctx = canvas.getContext("2d")!;
         ctx.fillStyle = "#111111";
-        ctx.fillRect(0, 0, 1280, 480);
-        ctx.drawImage(img, 0, 0, 1280, 480);
+        ctx.fillRect(0, 0, 1280, 600);
+        ctx.drawImage(img, 0, 0, 1280, 600);
         URL.revokeObjectURL(url);
         canvas.toBlob(async (blob) => {
           if (!blob) return;

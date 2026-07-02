@@ -21,7 +21,7 @@ type Banner = {
 export function generateTicketSVG(data: { 
   eventName: string; 
   quantity: number; 
-  quantitySold?: number;
+  quantity_sold?: number;
   buyPrice: number; 
   sellPrice: number; 
   profit: number; 
@@ -35,47 +35,63 @@ export function generateTicketSVG(data: {
   const buyStr = `${fmt(data.buyPrice)} ${data.currency}`; 
   const sellStr = `${fmt(data.sellPrice)} ${data.currency}`; 
   const profitStr = `${isProfit ? '+' : ''}${fmt(data.profit)} ${data.currency}`;
-  const sold = data.quantitySold ?? data.quantity; 
 
   const maxLen = Math.max(buyStr.length, sellStr.length, profitStr.length); 
   const priceSize = maxLen > 12 ? 28 : maxLen > 9 ? 36 : maxLen > 7 ? 42 : 48; 
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 560" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"> 
-    <defs> 
-      <filter id="profitGlow"> 
-        <feGaussianBlur stdDeviation="8" result="blur"/> 
-        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge> 
-      </filter> 
-    </defs> 
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 600" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"> 
 
-    <rect width="1280" height="560" rx="24" fill="#111111"/> 
-    <rect width="1280" height="560" rx="24" fill="none" stroke="${isProfit ? '#4ade80' : '#f87171'}" stroke-width="1.5" opacity="0.35"/> 
-    <rect x="2" y="2" width="1276" height="556" rx="22" fill="none" stroke="${isProfit ? '#4ade80' : '#f87171'}" stroke-width="8" opacity="0.06"/> 
+  <rect width="1280" height="600" rx="24" fill="#111111"/> 
+  <rect width="1280" height="600" rx="24" fill="none" stroke="${isProfit ? '#4ade80' : '#f87171'}" stroke-width="1.5" opacity="0.35"/> 
+  <rect x="2" y="2" width="1276" height="596" rx="22" fill="none" stroke="${isProfit ? '#4ade80' : '#f87171'}" stroke-width="8" opacity="0.06"/> 
 
-    <text x="64" y="72" font-family="Arial, sans-serif" font-size="22" fill="${isProfit ? '#4ade80' : '#f87171'}" letter-spacing="4">UZAVŘENÝ FLIP · P&amp;L REPORT</text> 
+  <!-- UZAVŘENÝ FLIP badge vpravo hore --> 
+  <rect x="910" y="30" width="340" height="48" rx="24" fill="none" stroke="${isProfit ? '#4ade80' : '#f87171'}" stroke-width="1" opacity="0.5"/> 
+  <text x="1080" y="60" font-family="Arial, sans-serif" font-size="20" fill="${isProfit ? '#4ade80' : '#f87171'}" letter-spacing="3" text-anchor="middle">UZAVŘENÝ FLIP</text> 
 
-    <image href="/logo.png" x="1060" y="36" width="200" height="70" preserveAspectRatio="xMidYMid meet" opacity="0.9"/> 
+  <!-- Názov eventu — menší --> 
+  <text x="64" y="72" font-family="'Arial Black', Arial, sans-serif" font-size="52" font-weight="900" fill="#ffffff">${data.eventName.toUpperCase().substring(0, 20)}</text> 
 
-    <text x="64" y="160" font-family="'Arial Black', Arial, sans-serif" font-size="80" font-weight="900" fill="#ffffff">${data.eventName.toUpperCase().substring(0, 18)}</text> 
+  <!-- Logo vpravo --> 
+  <image href="/logo.png" x="1060" y="88" width="200" height="70" preserveAspectRatio="xMidYMid meet" opacity="0.9"/> 
 
-    <line x1="64" y1="188" x2="1216" y2="188" stroke="#222222" stroke-width="1.5"/> 
+  <!-- Separator --> 
+  <line x1="64" y1="110" x2="1216" y2="110" stroke="#222222" stroke-width="1.5"/> 
 
-    <text x="64" y="236" font-family="Arial, sans-serif" font-size="18" fill="#444444" letter-spacing="3">NÁKUP CELKEM</text> 
-    <text x="64" y="296" font-family="'Arial Black', Arial, sans-serif" font-size="${priceSize}" font-weight="900" fill="#888888">${buyStr}</text> 
+  <!-- 3 stĺpce hore --> 
+  <text x="64" y="148" font-family="Arial, sans-serif" font-size="18" fill="#ffffff" letter-spacing="3">POČET LÍSTKŮ</text> 
+  <text x="64" y="196" font-family="'Arial Black', Arial, sans-serif" font-size="42" font-weight="900" fill="#ffffff">${data.quantity_sold ?? data.quantity}×</text> 
 
-    <text x="490" y="236" font-family="Arial, sans-serif" font-size="18" fill="#444444" letter-spacing="3">PRODEJ CELKEM</text> 
-    <text x="490" y="296" font-family="'Arial Black', Arial, sans-serif" font-size="${priceSize}" font-weight="900" fill="#ffffff">${sellStr}</text> 
+  <line x1="380" y1="114" x2="380" y2="216" stroke="#222222" stroke-width="1.5"/> 
 
-    <text x="930" y="236" font-family="Arial, sans-serif" font-size="18" fill="${isProfit ? '#4ade80' : '#f87171'}" letter-spacing="3">ZISK</text> 
-    <text x="930" y="296" font-family="'Arial Black', Arial, sans-serif" font-size="${priceSize}" font-weight="900" fill="${profitColor}" filter="url(#profitGlow)">${profitStr}</text> 
+  <text x="410" y="148" font-family="Arial, sans-serif" font-size="18" fill="#ffffff" letter-spacing="3">NÁKUP CELKEM</text> 
+  <text x="410" y="196" font-family="'Arial Black', Arial, sans-serif" font-size="${priceSize}" font-weight="900" fill="#888888">${buyStr}</text> 
 
-    <line x1="64" y1="336" x2="1216" y2="336" stroke="#222222" stroke-width="1.5"/> 
+  <line x1="840" y1="114" x2="840" y2="216" stroke="#222222" stroke-width="1.5"/> 
 
-    <text x="64" y="400" font-family="Arial, sans-serif" font-size="24" fill="#444444">${sold}× lístků prodáno z ${data.quantity}</text> 
-    <text x="360" y="400" font-family="Arial, sans-serif" font-size="24" fill="#444444">ROI ${isProfit ? '+' : ''}${data.roi.toFixed(1)}%</text> 
+  <text x="870" y="148" font-family="Arial, sans-serif" font-size="18" fill="#ffffff" letter-spacing="3">PRODEJ CELKEM</text> 
+  <text x="870" y="196" font-family="'Arial Black', Arial, sans-serif" font-size="${priceSize}" font-weight="900" fill="#ffffff">${sellStr}</text> 
 
-    <text x="1216" y="400" font-family="'Arial Black', Arial, sans-serif" font-size="24" font-weight="900" fill="${isProfit ? '#4ade80' : '#f87171'}" text-anchor="end" letter-spacing="1">ticketclub.vip</text> 
- </svg>`; 
+  <!-- Separator --> 
+  <line x1="64" y1="228" x2="1216" y2="228" stroke="#222222" stroke-width="1.5"/> 
+
+  <!-- ZISK --> 
+  <text x="64" y="272" font-family="Arial, sans-serif" font-size="20" fill="${isProfit ? '#4ade80' : '#f87171'}" letter-spacing="3">ZISK</text> 
+  <text x="64" y="390" font-family="'Arial Black', Arial, sans-serif" font-size="110" font-weight="900" fill="${profitColor}">${profitStr}</text> 
+
+  <!-- ROI --> 
+  <text x="64" y="434" font-family="Arial, sans-serif" font-size="22" fill="${isProfit ? '#4ade80' : '#f87171'}">ROI ${isProfit ? '+' : ''}${data.roi.toFixed(1)}%</text> 
+
+  <!-- Separator --> 
+  <line x1="64" y1="460" x2="1216" y2="460" stroke="#222222" stroke-width="1.5"/> 
+
+  <!-- Spodok --> 
+  <text x="64" y="494" font-family="Arial, sans-serif" font-size="22" fill="#ffffff">${data.quantity_sold ?? data.quantity}× lístků prodáno z ${data.quantity}</text> 
+
+  <!-- Logo TC vpravo dole --> 
+  <image href="/logo.png" x="1060" y="460" width="200" height="70" preserveAspectRatio="xMidYMid meet" opacity="0.15"/> 
+
+</svg>`; 
 }
 
 function BannerCard({ banner }: { banner: Banner }) {
@@ -83,7 +99,7 @@ function BannerCard({ banner }: { banner: Banner }) {
   const svg = generateTicketSVG({
     eventName: banner.event_name,
     quantity: banner.quantity,
-    quantitySold: banner.quantity_sold,
+    quantity_sold: banner.quantity_sold,
     buyPrice: banner.buy_price * banner.quantity,
     sellPrice: banner.sell_price,
     profit: banner.profit,
@@ -103,11 +119,11 @@ function BannerCard({ banner }: { banner: Banner }) {
     img.onload = () => {
       const canvas = document.createElement("canvas");
       canvas.width = 1280;
-      canvas.height = 560;
+      canvas.height = 600;
       const ctx = canvas.getContext("2d")!;
       ctx.fillStyle = "#111111";
-      ctx.fillRect(0, 0, 1280, 560);
-      ctx.drawImage(img, 0, 0, 1280, 560);
+      ctx.fillRect(0, 0, 1280, 600);
+      ctx.drawImage(img, 0, 0, 1280, 600);
       URL.revokeObjectURL(url);
       canvas.toBlob((blob) => {
         if (!blob) return;
@@ -134,11 +150,11 @@ function BannerCard({ banner }: { banner: Banner }) {
     img.onload = async () => {
       const canvas = document.createElement("canvas");
       canvas.width = 1280;
-      canvas.height = 560;
+      canvas.height = 600;
       const ctx = canvas.getContext("2d")!;
       ctx.fillStyle = "#111111";
-      ctx.fillRect(0, 0, 1280, 560);
-      ctx.drawImage(img, 0, 0, 1280, 560);
+      ctx.fillRect(0, 0, 1280, 600);
+      ctx.drawImage(img, 0, 0, 1280, 600);
       URL.revokeObjectURL(url);
 
       canvas.toBlob(async (blob) => {
@@ -169,7 +185,7 @@ function BannerCard({ banner }: { banner: Banner }) {
         overflow: "hidden",
         border: "1px solid #1a1a1a",
       }}>
-        <div style={{ width: "100%", aspectRatio: "1280/560", overflow: "hidden" }}>
+        <div style={{ width: "100%", aspectRatio: "1280/600", overflow: "hidden" }}>
           <div
             style={{ width: "100%", height: "100%", lineHeight: 0 }}
             dangerouslySetInnerHTML={{ __html: svg }}

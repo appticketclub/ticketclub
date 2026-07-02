@@ -1081,11 +1081,11 @@ export default function EvidenceTab() {
 
             {/* Banner preview */}
             <div ref={bannerRef} style={{ padding: "1rem" }}>
-              <div style={{ width: "100%", aspectRatio: "8/3", overflow: "hidden", borderRadius: 8 }}>
+              <div style={{ width: "100%", aspectRatio: "1280/600", overflow: "hidden", borderRadius: 8 }}>
                 <div dangerouslySetInnerHTML={{ __html: generateTicketSVG({
                   eventName: bannerRow.event_name,
                   quantity: bannerRow.quantity,
-                  quantitySold: bannerRow.quantity_sold,
+                  quantity_sold: bannerRow.quantity_sold,
                   buyPrice: bannerRow.buy_price * bannerRow.quantity,
                   sellPrice: bannerRow.sell_price_total,
                   profit: bannerRow.profit,
@@ -1112,11 +1112,11 @@ export default function EvidenceTab() {
                     img.onload = () => {
                       const canvas = document.createElement("canvas");
                       canvas.width = 1280;
-                      canvas.height = 480;
+                      canvas.height = 600;
                       const ctx = canvas.getContext("2d")!;
                       ctx.fillStyle = "#111111";
-                      ctx.fillRect(0, 0, 1280, 480);
-                      ctx.drawImage(img, 0, 0, 1280, 480);
+                      ctx.fillRect(0, 0, 1280, 600);
+                      ctx.drawImage(img, 0, 0, 1280, 600);
                       URL.revokeObjectURL(url);
                       canvas.toBlob((blob) => {
                         if (!blob) return;
@@ -1151,11 +1151,11 @@ export default function EvidenceTab() {
                     img.onload = async () => {
                       const canvas = document.createElement("canvas");
                       canvas.width = 1280;
-                      canvas.height = 480;
+                      canvas.height = 600;
                       const ctx = canvas.getContext("2d")!;
                       ctx.fillStyle = "#111111";
-                      ctx.fillRect(0, 0, 1280, 480);
-                      ctx.drawImage(img, 0, 0, 1280, 480);
+                      ctx.fillRect(0, 0, 1280, 600);
+                      ctx.drawImage(img, 0, 0, 1280, 600);
                       URL.revokeObjectURL(url);
                       canvas.toBlob(async (blob) => {
                         if (!blob) return;
