@@ -249,7 +249,7 @@ export default function SellModal({ purchase, onClose, onSave }: {
             <h2 style={{ fontSize: "1.4rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>
               Gratulujeme k úspěšnému prodeji!
             </h2>
-            <p style={{ fontSize: 14, color: "#525252" }}>
+            <p style={{ fontSize: 14, color: "#ededed"  }}>
               Váš flip byl uložen do P&L bannerů.
             </p>
           </div>
@@ -277,7 +277,7 @@ export default function SellModal({ purchase, onClose, onSave }: {
             style={{
               width: "100%", marginTop: "0.75rem", padding: "0.75rem",
               background: "transparent", border: "1px solid #2a2a2a",
-              borderRadius: 12, color: "#525252", cursor: "pointer", fontSize: 14,
+              borderRadius: 12, color: "#ededed" , cursor: "pointer", fontSize: 14,
             }}
           >
             Zavřít
@@ -296,7 +296,7 @@ export default function SellModal({ purchase, onClose, onSave }: {
   };
   const labelStyle = {
     fontSize: 11, fontWeight: 600 as const,
-    letterSpacing: "0.08em", color: "#525252",
+    letterSpacing: "0.08em", color: "#ededed" ,
     display: "block" as const, marginBottom: "0.4rem",
   };
 
@@ -315,9 +315,9 @@ export default function SellModal({ purchase, onClose, onSave }: {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.75rem" }}>
           <div>
             <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Zaznamenat prodej</h2>
-            <p style={{ fontSize: 12, color: "#525252", marginTop: 4 }}>{purchase.event_name}</p>
+            <p style={{ fontSize: 12, color: "#ededed" , marginTop: 4 }}>{purchase.event_name}</p>
           </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 22 }}>×</button>
         </div>
 
         {error && (
@@ -331,7 +331,7 @@ export default function SellModal({ purchase, onClose, onSave }: {
             <div>
               <label style={labelStyle}>POČET PRODANÝCH LÍSTKŮ</label>
               <input type="number" min="1" max={purchase.quantity_remaining} value={qty} onChange={e => setQty(e.target.value)} style={inputStyle} />
-              <div style={{ fontSize: 11, color: "#3a3a3a", marginTop: 4 }}>Max: {purchase.quantity_remaining}</div>
+              <div style={{ fontSize: 11, color: "#ededed" , marginTop: 4 }}>Max: {purchase.quantity_remaining}</div>
             </div>
             <div style={{ gridColumn: "1 / -1" }}>
               {/* Price mode toggle */}
@@ -348,7 +348,7 @@ export default function SellModal({ purchase, onClose, onSave }: {
                       background: priceMode === mode.id ? "linear-gradient(135deg, #ffffff, #a0a0a0)" : "transparent",
                       border: priceMode === mode.id ? "none" : "1px solid #2a2a2a",
                       borderRadius: 8,
-                      color: priceMode === mode.id ? "#000" : "#525252",
+                      color: priceMode === mode.id ? "#000" : "#ededed",
                       cursor: "pointer", transition: "all 0.15s",
                     }}
                   >
@@ -368,7 +368,7 @@ export default function SellModal({ purchase, onClose, onSave }: {
                       onChange={e => setSellPrice(e.target.value)}
                       style={{ ...inputStyle, paddingRight: "3rem" }}
                     />
-                    <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#525252", fontWeight: 600 }}>
+                    <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#ededed" , fontWeight: 600 }}>
                       {purchase.currency}
                     </span>
                   </div>
@@ -384,7 +384,7 @@ export default function SellModal({ purchase, onClose, onSave }: {
                       onChange={e => setTotalSellPrice(e.target.value)}
                       style={{ ...inputStyle, paddingRight: "3rem" }}
                     />
-                    <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#525252", fontWeight: 600 }}>
+                    <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#ededed" , fontWeight: 600 }}>
                       {purchase.currency}
                     </span>
                   </div>
@@ -393,7 +393,7 @@ export default function SellModal({ purchase, onClose, onSave }: {
 
               {/* Price preview for total mode */}
               {priceMode === "total" && sellNum > 0 && (
-                <div style={{ fontSize: 12, color: "#525252", marginTop: 4 }}>
+                <div style={{ fontSize: 12, color: "#ededed" , marginTop: 4 }}>
                   = {sellNum.toLocaleString("cs-CZ")} {purchase.currency} / lístek
                 </div>
               )}
@@ -432,7 +432,7 @@ export default function SellModal({ purchase, onClose, onSave }: {
           {/* Live P&L preview */}
           {sellNum > 0 && (
             <div style={{ background: "#0a0a0a", border: "1px solid #2a2a2a", borderRadius: 12, padding: "1rem 1.25rem" }}>
-              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#3a3a3a", marginBottom: "0.75rem" }}>NÁHLED P&L</div>
+              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: "0.75rem" }}>NÁHLED P&L</div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
                 {[
                   { label: "Příjem", value: format(totalRevenue, purchase.currency as "EUR" | "CZK"), color: "#ffffff" },
@@ -440,13 +440,13 @@ export default function SellModal({ purchase, onClose, onSave }: {
                   { label: "Zisk", value: `${profit >= 0 ? "+" : ""}${format(Math.abs(profit), purchase.currency as "EUR" | "CZK")}`, color: profit >= 0 ? "#34d399" : "#f87171" },
                 ].map(item => (
                   <div key={item.label} style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: 11, color: "#3a3a3a", marginBottom: 4 }}>{item.label}</div>
+                    <div style={{ fontSize: 11, color: "#ededed" , marginBottom: 4 }}>{item.label}</div>
                     <div style={{ fontSize: 14, fontWeight: 700, color: item.color }}>{item.value}</div>
                   </div>
                 ))}
               </div>
               <div style={{ textAlign: "center", marginTop: "0.75rem", paddingTop: "0.75rem", borderTop: "1px solid #1a1a1a" }}>
-                <span style={{ fontSize: 12, color: "#3a3a3a" }}>ROI: </span>
+                <span style={{ fontSize: 12, color: "#ededed"  }}>ROI: </span>
                 <span style={{ fontSize: 14, fontWeight: 700, color: profit >= 0 ? "#34d399" : "#f87171" }}>
                   {profit >= 0 ? "+" : ""}{roi.toFixed(1)}%
                 </span>
@@ -456,7 +456,7 @@ export default function SellModal({ purchase, onClose, onSave }: {
         </div>
 
         <div style={{ display: "flex", gap: "0.75rem", marginTop: "1.75rem" }}>
-          <button onClick={onClose} style={{ flex: 1, padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#525252", cursor: "pointer", fontSize: 14 }}>
+          <button onClick={onClose} style={{ flex: 1, padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ededed" , cursor: "pointer", fontSize: 14 }}>
             Zrušit
           </button>
           <button

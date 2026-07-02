@@ -426,7 +426,7 @@ export default function EvidenceTab() {
                   save(e.target.value);
                 }
               }}
-              style={{ width: "100%", padding: "0.5rem", background: "#0d0d2a", border: "2px solid #7c3aed", borderBottom: showCustom ? "1px solid #3a3a3a" : "2px solid #7c3aed", color: "#fff", fontSize: 12, outline: "none", boxSizing: "border-box" as const }}
+              style={{ width: "100%", padding: "0.5rem", background: "#0d0d2a", border: "2px solid #7c3aed", borderBottom: showCustom ? "1px solid #ededed" : "2px solid #7c3aed", color: "#fff", fontSize: 12, outline: "none", boxSizing: "border-box" as const }}
             >
               <option value="">— Vyberte —</option>
               {options.map(o => <option key={o} value={o}>{o}</option>)}
@@ -505,7 +505,7 @@ export default function EvidenceTab() {
     );
   }
 
-  if (loading) return <div style={{ color: "#525252", fontSize: 14 }}>Načítání...</div>;
+  if (loading) return <div style={{ color: "#ededed", fontSize: 14 }}>Načítání...</div>;
 
   return (
     <div>
@@ -583,7 +583,7 @@ export default function EvidenceTab() {
           gap: "0.75rem",
         }}>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 6 }}>DORUČENO</div>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed", marginBottom: 6 }}>DORUČENO</div>
             <select value={deliveredFilter} onChange={e => setDeliveredFilter(e.target.value)} style={{ width: "100%", padding: "0.6rem 0.75rem", background: "#111111", border: "1px solid #1f1f1f", borderRadius: 8, color: "#fff", fontSize: 13, outline: "none", cursor: "pointer", boxSizing: "border-box" }}>
               <option value="all">Vše</option>
               <option value="yes">✓ Doručeno</option>
@@ -591,22 +591,22 @@ export default function EvidenceTab() {
             </select>
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 6 }}>BURZA</div>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed", marginBottom: 6 }}>BURZA</div>
             <select value={exchangeFilter} onChange={e => setExchangeFilter(e.target.value)} style={{ width: "100%", padding: "0.6rem 0.75rem", background: "#111111", border: "1px solid #1f1f1f", borderRadius: 8, color: "#fff", fontSize: 13, outline: "none", cursor: "pointer", boxSizing: "border-box" }}>
               <option value="">Všechny burzy</option>
               {EXCHANGES.map(e => <option key={e} value={e}>{e}</option>)}
             </select>
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 6 }}>MĚSTO</div>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed", marginBottom: 6 }}>MĚSTO</div>
             <input type="text" placeholder="Praha..." value={cityFilter} onChange={e => setCityFilter(e.target.value)} style={{ width: "100%", padding: "0.6rem 0.75rem", background: "#111111", border: "1px solid #1f1f1f", borderRadius: 8, color: "#fff", fontSize: 13, outline: "none", boxSizing: "border-box" }} />
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 6 }}>DATUM OD</div>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed", marginBottom: 6 }}>DATUM OD</div>
             <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} style={{ width: "100%", padding: "0.6rem 0.75rem", background: "#111111", border: "1px solid #1f1f1f", borderRadius: 8, color: "#fff", fontSize: 13, outline: "none", colorScheme: "dark", boxSizing: "border-box" }} />
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 6 }}>DATUM DO</div>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed", marginBottom: 6 }}>DATUM DO</div>
             <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} style={{ width: "100%", padding: "0.6rem 0.75rem", background: "#111111", border: "1px solid #1f1f1f", borderRadius: 8, color: "#fff", fontSize: 13, outline: "none", colorScheme: "dark", boxSizing: "border-box" }} />
           </div>
         </div>
@@ -681,7 +681,7 @@ export default function EvidenceTab() {
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={COLS.length} style={{ padding: "3rem", textAlign: "center", color: "#525252", fontSize: 14 }}>
+                <td colSpan={COLS.length} style={{ padding: "3rem", textAlign: "center", color: "#ededed", fontSize: 14 }}>
                   Žádné záznamy
                 </td>
               </tr>
@@ -834,14 +834,14 @@ export default function EvidenceTab() {
                         style={{ ...cellStyle(80), textAlign: "center", cursor: "pointer" }}
                         title="Klikněte pro úpravu"
                       >
-                        <span style={{ fontSize: 12, color: row.quantity_sold > 0 ? "#34d399" : "#525252" }}>
+                        <span style={{ fontSize: 12, color: row.quantity_sold > 0 ? "#34d399" : "#ededed" }}>
                           {row.quantity_sold}/{row.quantity}
                         </span>
                       </td>
                     )}
 
                     {/* Prodejní cena celkem — EDITABLE */}
-                    <EditableCell rowId={row.id} field="sell_price_total" value={row.sell_price_total > 0 ? row.sell_price_total.toFixed(2) : null} width={130} align="right" color={row.sell_price_total > 0 ? "#34d399" : "#3a3a3a"} />
+                    <EditableCell rowId={row.id} field="sell_price_total" value={row.sell_price_total > 0 ? row.sell_price_total.toFixed(2) : null} width={130} align="right" color={row.sell_price_total > 0 ? "#34d399" : "#ededed"} />
 
                     {/* Celkový zisk — READ ONLY */}
                     <td style={{ ...cellStyle(120), textAlign: "right", color: row.profit >= 0 ? "#34d399" : "#f87171", fontWeight: 700, cursor: "default" }} title="Pouze pro čtení">
@@ -877,7 +877,7 @@ export default function EvidenceTab() {
                       await supabase.from("purchases").update({ paid_out: !row.paid_out }).eq("id", row.id);
                       loadData();
                     }} style={{ ...cellStyle(90), textAlign: "center", cursor: "pointer" }}>
-                      <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 4, background: row.paid_out ? "#0a2a1a" : "#2a2a1a", color: row.paid_out ? "#34d399" : "#3a3a3a", fontWeight: 600 }}>
+                      <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 4, background: row.paid_out ? "#0a2a1a" : "#2a2a1a", color: row.paid_out ? "#34d399" : "#ededed", fontWeight: 600 }}>
                         {row.paid_out ? "ANO" : "NIE"}
                       </span>
                     </td>
@@ -888,20 +888,20 @@ export default function EvidenceTab() {
                       await supabase.from("purchases").update({ delivered: !row.delivered }).eq("id", row.id);
                       loadData();
                     }} style={{ ...cellStyle(90), textAlign: "center", cursor: "pointer" }}>
-                      <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 4, background: row.delivered ? "#0a2a1a" : "#1a1a1a", color: row.delivered ? "#34d399" : "#3a3a3a", fontWeight: 600 }}>
+                      <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 4, background: row.delivered ? "#0a2a1a" : "#1a1a1a", color: row.delivered ? "#34d399" : "#ededed", fontWeight: 600 }}>
                         {row.delivered ? "ANO" : "NIE"}
                       </span>
                     </td>
 
                     {/* Poznámky */}
-                    <EditableCell rowId={row.id} field="notes" value={row.notes} width={160} color="#525252" />
+                    <EditableCell rowId={row.id} field="notes" value={row.notes} width={160} color="#ededed" />
 
                     {/* Banner button */}
                     <td style={{ ...cellStyle(50), textAlign: "center" }}>
                       <button
                         onClick={() => setBannerRow(row)}
                         title="Vygenerovat banner"
-                        style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, color: row.sell_price_total > 0 ? "#D4AF37" : "#3a3a3a", padding: 4 }}
+                        style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, color: row.sell_price_total > 0 ? "#D4AF37" : "#ededed", padding: 4 }}
                         disabled={row.sell_price_total <= 0}
                       >
                         🎟
@@ -913,9 +913,9 @@ export default function EvidenceTab() {
                       <button
                         onClick={() => setDeleteConfirmRow(row)}
                         title="Smazat nákup"
-                        style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, color: "#3a3a3a", padding: 4, transition: "color 0.2s" }}
+                        style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, color: "#ededed", padding: 4, transition: "color 0.2s" }}
                         onMouseEnter={e => (e.currentTarget.style.color = "#f87171")}
-                        onMouseLeave={e => (e.currentTarget.style.color = "#3a3a3a")}
+                        onMouseLeave={e => (e.currentTarget.style.color = "#ededed")}
                       >
                         🗑
                       </button>
@@ -939,13 +939,13 @@ export default function EvidenceTab() {
             <div style={{ padding: "1.5rem 2rem 1rem", borderBottom: "1px solid #1a1a1a", flexShrink: 0 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
                 <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Import z Excelu</h2>
-                <button onClick={() => { setShowImport(false); setImportResult(null); }} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button>
+                <button onClick={() => { setShowImport(false); setImportResult(null); }} style={{ background: "none", border: "none", color: "#ededed", cursor: "pointer", fontSize: 22 }}>×</button>
               </div>
 
               {/* Step 1 — Download template */}
               <div style={{ background: "#0a0a0a", border: "1px solid #1f1f1f", borderRadius: 12, padding: "1rem 1.25rem", marginBottom: "1rem" }}>
-                <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 8 }}>KROK 1 — STÁHNĚTE ŠABLONU</div>
-                <p style={{ fontSize: 13, color: "#525252", marginBottom: 12, lineHeight: 1.5 }}>
+                <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed", marginBottom: 8 }}>KROK 1 — STÁHNĚTE ŠABLONU</div>
+                <p style={{ fontSize: 13, color: "#ededed", marginBottom: 12, lineHeight: 1.5 }}>
                   Stáhněte Excel šablonu, vyplňte vaše nákupy a nahrajte zpět.
                 </p>
                 <a
@@ -965,7 +965,7 @@ export default function EvidenceTab() {
 
               {/* Step 2 — Upload */}
               <div style={{ background: "#0a0a0a", border: "1px solid #1f1f1f", borderRadius: 12, padding: "1rem 1.25rem", marginBottom: "1.5rem" }}>
-                <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 8 }}>KROK 2 — NAHRÁJTE VYPLNĚNOU ŠABLONU</div>
+                <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed", marginBottom: 8 }}>KROK 2 — NAHRÁJTE VYPLNĚNOU ŠABLONU</div>
 
                 {importResult?.success ? (
                   <div style={{ padding: "12px", background: "#0a2a1a", border: "1px solid rgba(52,211,153,0.3)", borderRadius: 10, textAlign: "center" }}>
@@ -987,7 +987,7 @@ export default function EvidenceTab() {
                   <label style={{
                     display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
                     padding: "2rem", border: "1px dashed #2a2a2a", borderRadius: 10,
-                    cursor: importing ? "default" : "pointer", color: "#525252",
+                    cursor: importing ? "default" : "pointer", color: "#ededed",
                     fontSize: 13, gap: 8,
                   }}>
                     <span style={{ fontSize: "2rem" }}>📂</span>
@@ -1037,7 +1037,7 @@ export default function EvidenceTab() {
                 <button onClick={() => { setShowImport(false); setImportResult(null); }} style={{
                   width: "100%", padding: "0.8rem",
                   background: "transparent", border: "1px solid #2a2a2a",
-                  borderRadius: 10, color: "#525252", cursor: "pointer", fontSize: 14,
+                  borderRadius: 10, color: "#ededed", cursor: "pointer", fontSize: 14,
                 }}>
                   Zrušit
                 </button>
@@ -1074,9 +1074,9 @@ export default function EvidenceTab() {
             <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #1a1a1a", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
                 <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>P&L Banner</h2>
-                <p style={{ fontSize: 13, color: "#525252", marginTop: 2 }}>{bannerRow.event_name}</p>
+                <p style={{ fontSize: 13, color: "#ededed", marginTop: 2 }}>{bannerRow.event_name}</p>
               </div>
-              <button onClick={() => setBannerRow(null)} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button>
+              <button onClick={() => setBannerRow(null)} style={{ background: "none", border: "none", color: "#ededed", cursor: "pointer", fontSize: 22 }}>×</button>
             </div>
 
             {/* Banner preview */}
@@ -1210,36 +1210,36 @@ export default function EvidenceTab() {
               <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #1a1a1a", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                   <h2 style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Aktualizovat prodej</h2>
-                  <p style={{ fontSize: 13, color: "#525252", marginTop: 2 }}>{row.event_name}</p>
+                  <p style={{ fontSize: 13, color: "#ededed", marginTop: 2 }}>{row.event_name}</p>
                 </div>
-                <button onClick={() => setSaleUpdateModal(null)} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button>
+                <button onClick={() => setSaleUpdateModal(null)} style={{ background: "none", border: "none", color: "#ededed", cursor: "pointer", fontSize: 22 }}>×</button>
               </div>
 
               <div style={{ padding: "1.5rem" }}>
                 {/* Sale history */}
                 <div style={{ background: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: 12, padding: "1rem", marginBottom: "1.25rem" }}>
-                  <div style={{ fontSize: 10, color: "#525252", letterSpacing: "0.08em", marginBottom: 8 }}>HISTORIE PRODEJŮ</div>
+                  <div style={{ fontSize: 10, color: "#ededed", letterSpacing: "0.08em", marginBottom: 8 }}>HISTORIE PRODEJŮ</div>
                   {row.quantity_sold > 0 ? (
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                       <span style={{ fontSize: 13, color: "#888" }}>Předchozí:</span>
                       <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{row.quantity_sold}× lístků</span>
-                      <span style={{ fontSize: 13, color: "#525252" }}>za</span>
+                      <span style={{ fontSize: 13, color: "#ededed" }}>za</span>
                       <span style={{ fontSize: 14, fontWeight: 700, color: "#34d399" }}>{row.sell_price_total.toFixed(2)} {row.currency}</span>
                     </div>
                   ) : (
-                    <div style={{ fontSize: 13, color: "#525252" }}>Žádné předchozí prodeje</div>
+                    <div style={{ fontSize: 13, color: "#ededed" }}>Žádné předchozí prodeje</div>
                   )}
                   <div style={{ borderTop: "1px solid #1a1a1a", marginTop: 8, paddingTop: 8, display: "flex", alignItems: "center", gap: 8 }}>
                     <span style={{ fontSize: 13, color: "#888" }}>Přidáváte:</span>
                     <span style={{ fontSize: 14, fontWeight: 700, color: "#c9a227" }}>+{additionalQty}× lístků</span>
-                    <span style={{ fontSize: 13, color: "#525252" }}>· Celkem prodáno:</span>
+                    <span style={{ fontSize: 13, color: "#ededed" }}>· Celkem prodáno:</span>
                     <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{newQty}/{row.quantity}</span>
                   </div>
                 </div>
 
                 {/* Price input */}
                 <div style={{ marginBottom: "1rem" }}>
-                  <div style={{ fontSize: 11, color: "#525252", letterSpacing: "0.08em", marginBottom: 8 }}>CENA ZA NOVÉ LÍSTKY</div>
+                  <div style={{ fontSize: 11, color: "#ededed", letterSpacing: "0.08em", marginBottom: 8 }}>CENA ZA NOVÉ LÍSTKY</div>
                   <div style={{ display: "flex", gap: "0.5rem" }}>
                     <button
                       onClick={() => setSaleUpdateMode("add")}
@@ -1247,7 +1247,7 @@ export default function EvidenceTab() {
                         padding: "0.6rem 1rem", fontSize: 16, fontWeight: 700,
                         background: saleUpdateMode === "add" ? "#34d399" : "#1a1a1a",
                         border: "1px solid #2a2a2a", borderRadius: 8,
-                        color: saleUpdateMode === "add" ? "#000" : "#525252",
+                        color: saleUpdateMode === "add" ? "#000" : "#ededed",
                         cursor: "pointer", minWidth: 44,
                       }}
                     >+</button>
@@ -1257,7 +1257,7 @@ export default function EvidenceTab() {
                         padding: "0.6rem 1rem", fontSize: 16, fontWeight: 700,
                         background: saleUpdateMode === "subtract" ? "#f87171" : "#1a1a1a",
                         border: "1px solid #2a2a2a", borderRadius: 8,
-                        color: saleUpdateMode === "subtract" ? "#000" : "#525252",
+                        color: saleUpdateMode === "subtract" ? "#000" : "#ededed",
                         cursor: "pointer", minWidth: 44,
                       }}
                     >−</button>
@@ -1275,7 +1275,7 @@ export default function EvidenceTab() {
                         textAlign: "right",
                       }}
                     />
-                    <div style={{ padding: "0.6rem 0.75rem", background: "#0a0a0a", border: "1px solid #2a2a2a", borderRadius: 8, color: "#525252", fontSize: 13, display: "flex", alignItems: "center" }}>
+                    <div style={{ padding: "0.6rem 0.75rem", background: "#0a0a0a", border: "1px solid #2a2a2a", borderRadius: 8, color: "#ededed", fontSize: 13, display: "flex", alignItems: "center" }}>
                       {row.currency}
                     </div>
                   </div>
@@ -1285,13 +1285,13 @@ export default function EvidenceTab() {
                 {additionalPrice > 0 && (
                   <div style={{ background: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: 12, padding: "1rem", marginBottom: "1.25rem" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                      <span style={{ fontSize: 12, color: "#525252" }}>Nový zisk celkem</span>
+                      <span style={{ fontSize: 12, color: "#ededed" }}>Nový zisk celkem</span>
                       <span style={{ fontSize: 13, fontWeight: 700, color: newProfit >= 0 ? "#34d399" : "#f87171" }}>
                         {newProfit >= 0 ? "+" : ""}{newProfit.toFixed(2)} {row.currency}
                       </span>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <span style={{ fontSize: 12, color: "#525252" }}>Změna</span>
+                      <span style={{ fontSize: 12, color: "#ededed" }}>Změna</span>
                       <span style={{ fontSize: 13, fontWeight: 700, color: profitDiff >= 0 ? "#34d399" : "#f87171" }}>
                         {profitDiff >= 0 ? "+" : ""}{profitDiff.toFixed(2)} {row.currency}
                       </span>
@@ -1303,7 +1303,7 @@ export default function EvidenceTab() {
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
                   <button
                     onClick={() => setSaleUpdateModal(null)}
-                    style={{ padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#525252", cursor: "pointer", fontSize: 13 }}
+                    style={{ padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ededed", cursor: "pointer", fontSize: 13 }}
                   >
                     Zrušit
                   </button>
@@ -1378,7 +1378,7 @@ export default function EvidenceTab() {
               <h2 style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", margin: 0, marginBottom: "0.5rem", textAlign: "center" }}>
                 Smazat nákup?
               </h2>
-              <p style={{ fontSize: 13, color: "#525252", textAlign: "center", marginBottom: "1.5rem" }}>
+              <p style={{ fontSize: 13, color: "#ededed", textAlign: "center", marginBottom: "1.5rem" }}>
                 <strong style={{ color: "#fff" }}>{deleteConfirmRow.event_name}</strong>
                 <br />
                 Tato akce je nevratná. Smažou se i všechny prodeje spojené s tímto nákupem.
@@ -1387,7 +1387,7 @@ export default function EvidenceTab() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
                 <button
                   onClick={() => setDeleteConfirmRow(null)}
-                  style={{ padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#525252", cursor: "pointer", fontSize: 13 }}
+                  style={{ padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ededed", cursor: "pointer", fontSize: 13 }}
                 >
                   Zrušit
                 </button>

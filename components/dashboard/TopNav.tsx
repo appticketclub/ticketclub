@@ -56,7 +56,7 @@ export default function TopNav({ user, profile }: { user: any; profile: any }) {
               <p style={{ fontSize: 13, fontWeight: 600, color: "#fff", margin: 0 }}>
                 {profile?.full_name ?? "Uživatel"}
               </p>
-              <p style={{ fontSize: 12, color: "#525252", margin: 0 }}>{user?.email}</p>
+              <p style={{ fontSize: 12, color: "#ededed" , margin: 0 }}>{user?.email}</p>
             </div>
 
             {/* Menu items */}

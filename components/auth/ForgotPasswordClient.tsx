@@ -37,7 +37,7 @@ export default function ForgotPasswordClient() {
             <div style={{ textAlign: "center" as const }}>
               <div style={{ fontSize: 48, marginBottom: "1rem" }}>📧</div>
               <h1 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#fff", marginBottom: "0.75rem" }}>Email odeslán!</h1>
-              <p style={{ fontSize: 13, color: "#525252", lineHeight: 1.7, marginBottom: "1.5rem" }}>
+              <p style={{ fontSize: 13, color: "#ededed" , lineHeight: 1.7, marginBottom: "1.5rem" }}>
                 Zkontrolujte svou emailovou schránku a klikněte na odkaz pro reset hesla.
               </p>
               <a href="/prihlaseni" style={{ fontSize: 13, color: "#ffffff", textDecoration: "none" }}>
@@ -47,7 +47,7 @@ export default function ForgotPasswordClient() {
           ) : (
             <>
               <h1 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>Reset hesla</h1>
-              <p style={{ fontSize: 13, color: "#525252", marginBottom: "1.5rem" }}>
+              <p style={{ fontSize: 13, color: "#ededed" , marginBottom: "1.5rem" }}>
                 Zadejte svůj email a pošleme vám odkaz pro reset hesla.
               </p>
 
@@ -58,7 +58,7 @@ export default function ForgotPasswordClient() {
               )}
 
               <div style={{ marginBottom: "1.25rem" }}>
-                <label style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", display: "block", marginBottom: "0.5rem" }}>EMAIL</label>
+                <label style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , display: "block", marginBottom: "0.5rem" }}>EMAIL</label>
                 <input
                   type="email"
                   placeholder="vas@email.com"
@@ -80,7 +80,7 @@ export default function ForgotPasswordClient() {
               </button>
 
               <div style={{ textAlign: "center" as const, marginTop: "1.25rem" }}>
-                <a href="/prihlaseni" style={{ fontSize: 13, color: "#525252", textDecoration: "none" }}>
+                <a href="/prihlaseni" style={{ fontSize: 13, color: "#ededed" , textDecoration: "none" }}>
                   ← Zpět na přihlášení
                 </a>
               </div>

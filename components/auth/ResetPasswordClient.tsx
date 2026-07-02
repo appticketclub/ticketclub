@@ -48,12 +48,12 @@ export default function ResetPasswordClient() {
             <div style={{ textAlign: "center" as const }}>
               <div style={{ fontSize: 48, marginBottom: "1rem" }}>✅</div>
               <h1 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>Heslo změněno!</h1>
-              <p style={{ fontSize: 13, color: "#525252" }}>Přesměrování na přihlášení...</p>
+              <p style={{ fontSize: 13, color: "#ededed"  }}>Přesměrování na přihlášení...</p>
             </div>
           ) : (
             <>
               <h1 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>Nové heslo</h1>
-              <p style={{ fontSize: 13, color: "#525252", marginBottom: "1.5rem" }}>Zadejte své nové heslo.</p>
+              <p style={{ fontSize: 13, color: "#ededed" , marginBottom: "1.5rem" }}>Zadejte své nové heslo.</p>
 
               {error && (
                 <div style={{ marginBottom: "1rem", padding: "10px 14px", borderRadius: 8, background: "#2a0a0a", border: "1px solid #7f1d1d", color: "#fca5a5", fontSize: 13 }}>
@@ -63,13 +63,13 @@ export default function ResetPasswordClient() {
 
               <div style={{ display: "flex", flexDirection: "column" as const, gap: "1rem", marginBottom: "1.25rem" }}>
                 <div>
-                  <label style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", display: "block", marginBottom: "0.5rem" }}>NOVÉ HESLO</label>
+                  <label style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , display: "block", marginBottom: "0.5rem" }}>NOVÉ HESLO</label>
                   <input type="password" placeholder="Min. 6 znaků" value={password} onChange={e => setPassword(e.target.value)} style={inputStyle}
                     onFocus={e => (e.target as HTMLInputElement).style.borderColor = "#ffffff"}
                     onBlur={e => (e.target as HTMLInputElement).style.borderColor = "#1f1f1f"} />
                 </div>
                 <div>
-                  <label style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", display: "block", marginBottom: "0.5rem" }}>POTVRDIT HESLO</label>
+                  <label style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , display: "block", marginBottom: "0.5rem" }}>POTVRDIT HESLO</label>
                   <input type="password" placeholder="Zopakujte heslo" value={confirm} onChange={e => setConfirm(e.target.value)} onKeyDown={e => e.key === "Enter" && handleReset()} style={inputStyle}
                     onFocus={e => (e.target as HTMLInputElement).style.borderColor = "#ffffff"}
                     onBlur={e => (e.target as HTMLInputElement).style.borderColor = "#1f1f1f"} />

@@ -110,7 +110,7 @@ export default function KalkulackaTab() {
                   background: platformIdx === i ? "linear-gradient(135deg, #ffffff, #a0a0a0)" : "transparent",
                   border: platformIdx === i ? "none" : "1px solid #2a2a2a",
                   borderRadius: 8,
-                  color: platformIdx === i ? "#000" : "#525252", cursor: "pointer",
+                  color: platformIdx === i ? "#000" : "#ededed", cursor: "pointer",
                 }}>
                   {p.name} {p.fee > 0 ? `(${p.fee}%)` : ""}
                 </button>
@@ -179,7 +179,7 @@ export default function KalkulackaTab() {
 
           {/* Break-even */}
           <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.25rem 1.5rem" }}>
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#3a3a3a", marginBottom: "0.75rem" }}>BREAK-EVEN ANALÝZA</div>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed", marginBottom: "0.75rem" }}>BREAK-EVEN ANALÝZA</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
               <div>
                 <div style={{ fontSize: 11, color: "#ffffff", marginBottom: 4 }}>Min. prodejní cena</div>

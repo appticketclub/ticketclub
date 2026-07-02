@@ -109,7 +109,7 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
               onClick={() => { if (!locked) router.push(service.href); }}
               style={{
                 background: "#111111",
-                border: `1px solid ${locked ? "#1a1a1a" : "#3a3a3a"}`,
+                border: `1px solid ${locked ? "#1a1a1a" : "#ededed"}`,
                 borderRadius: 16, padding: "1.5rem",
                 cursor: locked ? "default" : "pointer",
                 opacity: locked ? 0.6 : 1,
@@ -123,7 +123,7 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
                 }
               }}
               onMouseLeave={e => {
-                (e.currentTarget as HTMLDivElement).style.borderColor = locked ? "#1a1a1a" : "#3a3a3a";
+                (e.currentTarget as HTMLDivElement).style.borderColor = locked ? "#1a1a1a" : "#ededed";
                 (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
               }}
             >
@@ -133,7 +133,7 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
                   position: "absolute", top: 12, right: 12,
                   padding: "3px 10px", borderRadius: 6, fontSize: 11, fontWeight: 700,
                   background: isPro ? "linear-gradient(135deg, #7c3aed, #5b21b6)" : "#1a1a1a",
-                  color: isPro ? "#fff" : "#525252",
+                  color: isPro ? "#fff" : "#ededed",
                   border: isPro ? "none" : "1px solid #2a2a2a",
                 }}>
                   {isPro ? "PRO" : "🔒 PRO"}
@@ -145,14 +145,14 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
               <div style={{
                 width: 52, height: 52, borderRadius: 14,
                 background: "linear-gradient(135deg, #2a2a2a, #1a1a1a)",
-                border: "1px solid #3a3a3a",
+                border: "1px solid #ededed",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 fontSize: "1.5rem", marginBottom: "1.25rem",
               }}>
                 {service.icon}
               </div>
 
-              <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: locked ? "#525252" : "#fff", marginBottom: "0.5rem" }}>
+              <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: locked ? "#ededed" : "#fff", marginBottom: "0.5rem" }}>
                 {service.title}
               </h3>
               <p style={{ fontSize: "0.875rem", color: "#f5f5f5", lineHeight: 1.6, marginBottom: "1.5rem" }}>

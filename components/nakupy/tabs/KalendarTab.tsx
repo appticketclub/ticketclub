@@ -181,23 +181,23 @@ export default function KalendarTab() {
       <style>{`
         #calendar-popup::-webkit-scrollbar { width: 4px; }
         #calendar-popup::-webkit-scrollbar-track { background: #1a1a1a; }
-        #calendar-popup::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 2px; }
+        #calendar-popup::-webkit-scrollbar-thumb { background: #ededed; border-radius: 2px; }
       `}</style>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.75rem" }}>
         <div>
           <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.25rem" }}>Kalendář</h1>
-          <p style={{ fontSize: 13, color: "#3a3a3a" }}>{events.length} událostí celkem</p>
+          <p style={{ fontSize: 13, color: "#ededed"  }}>{events.length} událostí celkem</p>
         </div>
         {/* Legend */}
         <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#f87171" }} />
-            <span style={{ fontSize: 12, color: "#525252" }}>Nákup</span>
+            <span style={{ fontSize: 12, color: "#ededed"  }}>Nákup</span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#34d399" }} />
-            <span style={{ fontSize: 12, color: "#525252" }}>Prodej</span>
+            <span style={{ fontSize: 12, color: "#ededed"  }}>Prodej</span>
           </div>
         </div>
       </div>
@@ -216,7 +216,7 @@ export default function KalendarTab() {
         {/* Day headers */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", borderBottom: "1px solid #1a1a1a" }}>
           {DAYS.map(d => (
-            <div key={d} style={{ padding: "0.75rem", textAlign: "center", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#3a3a3a" }}>
+            <div key={d} style={{ padding: "0.75rem", textAlign: "center", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed"  }}>
               {d}
             </div>
           ))}
@@ -373,7 +373,7 @@ export default function KalendarTab() {
                 scrollbarWidth: "thin" as const,
               }}
             >
-              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#3a3a3a", marginBottom: 10 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: 10 }}>
                 {hoveredDay}. {MONTHS[month]} {year}
               </div>
               {dayEvts.map((evt, i) => {
@@ -392,15 +392,15 @@ export default function KalendarTab() {
                     </div>
                     <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 6 }}>{evt.title}</div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 12px" }}>
-                      <div style={{ fontSize: 11, color: "#525252" }}>Počet</div>
+                      <div style={{ fontSize: 11, color: "#ededed"  }}>Počet</div>
                       <div style={{ fontSize: 11, color: "#ffffff", fontWeight: 600 }}>{evt.quantity}×</div>
-                      <div style={{ fontSize: 11, color: "#525252" }}>{isPurchase ? "Nákup celkem" : "Prodej celkem"}</div>
+                      <div style={{ fontSize: 11, color: "#ededed"  }}>{isPurchase ? "Nákup celkem" : "Prodej celkem"}</div>
                       <div style={{ fontSize: 11, color: "#ffffff", fontWeight: 600 }}>
                         {isPurchase ? "-" : "+"}{format(evt.amount, evt.currency as "EUR" | "CZK")}
                       </div>
                       {!isPurchase && evt.profit !== undefined && (
                         <>
-                          <div style={{ fontSize: 11, color: "#525252" }}>Zisk</div>
+                          <div style={{ fontSize: 11, color: "#ededed"  }}>Zisk</div>
                           <div style={{ fontSize: 12, fontWeight: 700, color: (evt.profit ?? 0) >= 0 ? "#34d399" : "#f87171" }}>
                             {(evt.profit ?? 0) >= 0 ? "+" : ""}{format(evt.profit, evt.currency as "EUR" | "CZK")}
                           </div>
@@ -408,7 +408,7 @@ export default function KalendarTab() {
                       )}
                       {evt.platform && (
                         <>
-                          <div style={{ fontSize: 11, color: "#525252" }}>Platforma</div>
+                          <div style={{ fontSize: 11, color: "#ededed"  }}>Platforma</div>
                           <div style={{ fontSize: 11, color: "#ffffff" }}>{evt.platform}</div>
                         </>
                       )}
@@ -421,7 +421,7 @@ export default function KalendarTab() {
         })()}
       </div>
       
-      <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: "1rem", fontSize: 12, color: "#525252" }}> 
+      <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: "1rem", fontSize: 12, color: "#ededed"  }}> 
         <span style={{ color: "#f87171", fontWeight: 900, fontSize: 14 }}>!</span> 
         <span>Datum koncertu s neprodanými lístky</span> 
       </div>

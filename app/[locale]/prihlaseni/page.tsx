@@ -63,7 +63,7 @@ export default function LoginPage() {
           <img src="/logo.png" alt="TicketClub" style={{ height: 40, width: "auto", objectFit: "contain" }} />
         </div>
         <h1 style={{ fontSize: "2.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>Přihlášení</h1>
-        <p style={{ color: "#525252", marginBottom: "2.5rem" }}>Vítejte zpět. Zadejte své údaje.</p>
+        <p style={{ color: "#ededed" , marginBottom: "2.5rem" }}>Vítejte zpět. Zadejte své údaje.</p>
 
         {error && (
           <div style={{ marginBottom: "1rem", padding: "0.75rem 1rem", borderRadius: "0.75rem", fontSize: "0.875rem", background: "#2a0a0a", border: "1px solid #7f1d1d", color: "#fca5a5" }}>
@@ -88,7 +88,7 @@ export default function LoginPage() {
             style={{ width: "100%", padding: "0.75rem 1rem", borderRadius: "0.75rem", color: "#fff", fontSize: "1rem", outline: "none", transition: "border-color 0.2s", background: "#111111", border: "1px solid #1f1f1f" }}
           />
 
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.875rem", color: "#525252" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.875rem", color: "#ededed"  }}>
             <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
               <input 
                 type="checkbox" 
@@ -99,9 +99,9 @@ export default function LoginPage() {
             </label>
             <Link 
               href="/zapomenute-heslo" 
-              style={{ color: "#525252", textDecoration: "none", transition: "color 0.2s" }}
+              style={{ color: "#ededed" , textDecoration: "none", transition: "color 0.2s" }}
               onMouseEnter={(e) => (e.currentTarget as HTMLAnchorElement).style.color = "#fff"}
-              onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.color = "#525252"}
+              onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.color = "#ededed"}
             >
               Zapomněli jste heslo?
             </Link>
@@ -129,7 +129,7 @@ export default function LoginPage() {
           {/* Google login temporarily hidden */}
         </div>
 
-        <p style={{ marginTop: "2rem", fontSize: "0.875rem", color: "#525252" }}>
+        <p style={{ marginTop: "2rem", fontSize: "0.875rem", color: "#ededed"  }}>
           Nemáte účet?{" "}
           <Link 
             href="/registrace" 

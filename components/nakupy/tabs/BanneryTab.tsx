@@ -186,7 +186,7 @@ function BannerCard({ banner }: { banner: Banner }) {
 
       {/* Footer */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.75rem 1.25rem", gap: "0.5rem" }}>
-        <span style={{ fontSize: 12, color: "#3a3a3a" }}>
+        <span style={{ fontSize: 12, color: "#ededed"  }}>
           {new Date(banner.created_at).toLocaleDateString("cs-CZ")}
         </span>
         <div style={{ display: "flex", gap: "0.5rem" }}>
@@ -244,15 +244,15 @@ export default function BanneryTab() {
     <div>
       <div style={{ marginBottom: "1.75rem" }}>
         <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.25rem" }}>P&L bannery</h1>
-        <p style={{ fontSize: 13, color: "#3a3a3a" }}>{banners.length} {banners.length === 1 ? "banner" : banners.length < 5 ? "bannery" : "bannerů"}</p>
+        <p style={{ fontSize: 13, color: "#ededed"  }}>{banners.length} {banners.length === 1 ? "banner" : banners.length < 5 ? "bannery" : "bannerů"}</p>
       </div>
 
-      {loading && <div style={{ color: "#525252", fontSize: 14 }}>Načítání...</div>}
+      {loading && <div style={{ color: "#ededed" , fontSize: 14 }}>Načítání...</div>}
 
       {!loading && banners.length === 0 && (
         <div style={{ background: "#111111", border: "1px dashed #2a2a2a", borderRadius: 16, padding: "4rem", textAlign: "center" }}>
           <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>🖼️</div>
-          <p style={{ color: "#525252", fontSize: 14 }}>Zatím žádné bannery. Zaznamenejte prodej a banner se automaticky uloží.</p>
+          <p style={{ color: "#ededed" , fontSize: 14 }}>Zatím žádné bannery. Zaznamenejte prodej a banner se automaticky uloží.</p>
         </div>
       )}
 

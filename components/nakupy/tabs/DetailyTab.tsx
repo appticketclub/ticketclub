@@ -34,7 +34,7 @@ export default function DetailyTab() {
               background: active === tab.id
                 ? "linear-gradient(135deg, #ffffff, #a0a0a0)"
                 : "transparent",
-              color: active === tab.id ? "#000" : "#525252",
+              color: active === tab.id ? "#000" : "#ededed",
               cursor: "pointer",
               transition: "all 0.15s",
               letterSpacing: active === tab.id ? "0.03em" : "0",

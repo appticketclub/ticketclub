@@ -206,7 +206,7 @@ export function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Acco
   };
   const labelStyle = {
     fontSize: 11, fontWeight: 600 as const,
-    letterSpacing: "0.08em", color: "#525252",
+    letterSpacing: "0.08em", color: "#ededed" ,
     display: "block" as const, marginBottom: "0.4rem",
   };
 
@@ -236,7 +236,7 @@ export function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Acco
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Přidat nákup</h2>
-            <button onClick={onClose} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button>
+            <button onClick={onClose} style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 22 }}>×</button>
           </div>
         </div>
 
@@ -267,7 +267,7 @@ export function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Acco
                 <div style={{ fontSize: 13, fontWeight: 600, color: "#a78bfa", marginBottom: 2 }}>
                   📸 AI import ze screenshotu
                 </div>
-                <div style={{ fontSize: 12, color: "#525252" }}>
+                <div style={{ fontSize: 12, color: "#ededed"  }}>
                   Nahrajte potvrzení z Viagogo, StubHub nebo Ticketmaster
                 </div>
               </div>
@@ -365,7 +365,7 @@ export function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Acco
             <div>
               <label style={labelStyle}>NÁKUPNÍ ÚČET</label>
               {accounts.length === 0 ? (
-                <div style={{ padding: "0.75rem 1rem", background: "#0a0a0a", border: "1px solid #2a2a2a", borderRadius: 10, fontSize: 13, color: "#525252", fontStyle: "italic" }}>
+                <div style={{ padding: "0.75rem 1rem", background: "#0a0a0a", border: "1px solid #2a2a2a", borderRadius: 10, fontSize: 13, color: "#ededed" , fontStyle: "italic" }}>
                   Nejprve přidejte účet v záložce "Nákupní účty"
                 </div>
               ) : (
@@ -388,7 +388,7 @@ export function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Acco
                     onChange={e => setTotalPrice(e.target.value)}
                     style={{ ...inputStyle, paddingRight: "3rem" }}
                   />
-                  <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#525252", fontWeight: 600 }}>
+                  <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#ededed" , fontWeight: 600 }}>
                     {currency}
                   </span>
                 </div>
@@ -409,7 +409,7 @@ export function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Acco
             {/* Total cost preview */}
             {totalCost > 0 ? (
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.875rem 1rem", borderRadius: 10, background: "#0a0a0a", border: "1px solid #2a2a2a" }}>
-                <span style={{ fontSize: 13, color: "#525252" }}>
+                <span style={{ fontSize: 13, color: "#ededed"  }}>
                   Cena za lístek: {priceNum.toLocaleString("cs-CZ")} {currency}
                 </span>
                 <span style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff" }}>
@@ -429,7 +429,7 @@ export function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Acco
               <div style={{ background: "#0a0a0a", border: "1px solid #2a2a2a", borderRadius: 10, padding: "0.75rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer" }}
                 onClick={() => setDelivered(!delivered)}>
                 <div>
-                  <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 2 }}>DORUČENÉ</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: 2 }}>DORUČENÉ</div>
                   <div style={{ fontSize: 13, fontWeight: 600, color: delivered ? "#34d399" : "#f87171" }}>{delivered ? "ANO" : "NIE"}</div>
                 </div>
                 <div style={{ width: 36, height: 20, borderRadius: 10, background: delivered ? "#34d399" : "#2a2a2a", position: "relative", transition: "background 0.2s" }}>
@@ -439,7 +439,7 @@ export function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Acco
               <div style={{ background: "#0a0a0a", border: "1px solid #2a2a2a", borderRadius: 10, padding: "0.75rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer" }}
                 onClick={() => setPaid(!paid)}>
                 <div>
-                  <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 2 }}>VYPLACENÉ</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: 2 }}>VYPLACENÉ</div>
                   <div style={{ fontSize: 13, fontWeight: 600, color: paid ? "#34d399" : "#f87171" }}>{paid ? "ANO" : "NIE"}</div>
                 </div>
                 <div style={{ width: 36, height: 20, borderRadius: 10, background: paid ? "#34d399" : "#2a2a2a", position: "relative", transition: "background 0.2s" }}>
@@ -458,7 +458,7 @@ export function AddPurchaseModal({ accounts, onClose, onSave }: { accounts: Acco
           background: "#111111",
           display: "flex", gap: "0.75rem",
         }}>
-          <button onClick={onClose} style={{ flex: 1, padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#525252", cursor: "pointer", fontSize: 14 }}>
+          <button onClick={onClose} style={{ flex: 1, padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ededed" , cursor: "pointer", fontSize: 14 }}>
             Zrušit
           </button>
           <button
@@ -579,7 +579,7 @@ function EditPurchaseModal({ purchase, accounts, onClose, onSave }: {
   }; 
   const labelStyle = { 
     fontSize: 11, fontWeight: 600 as const, 
-    letterSpacing: "0.08em", color: "#525252", 
+    letterSpacing: "0.08em", color: "#ededed" , 
     display: "block" as const, marginBottom: "0.4rem", 
   }; 
 
@@ -602,9 +602,9 @@ function EditPurchaseModal({ purchase, accounts, onClose, onSave }: {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}> 
             <div> 
               <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Upravit nákup</h2> 
-              <p style={{ fontSize: 12, color: "#525252", marginTop: 4 }}>{purchase.event_name}</p> 
+              <p style={{ fontSize: 12, color: "#ededed" , marginTop: 4 }}>{purchase.event_name}</p> 
             </div> 
-            <button onClick={onClose} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button> 
+            <button onClick={onClose} style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 22 }}>×</button> 
           </div> 
         </div> 
 
@@ -676,7 +676,7 @@ function EditPurchaseModal({ purchase, accounts, onClose, onSave }: {
             <div> 
               <label style={labelStyle}>NÁKUPNÍ ÚČET</label> 
               {accounts.length === 0 ? ( 
-                <div style={{ padding: "0.75rem 1rem", background: "#0a0a0a", border: "1px solid #2a2a2a", borderRadius: 10, fontSize: 13, color: "#525252", fontStyle: "italic" }}> 
+                <div style={{ padding: "0.75rem 1rem", background: "#0a0a0a", border: "1px solid #2a2a2a", borderRadius: 10, fontSize: 13, color: "#ededed" , fontStyle: "italic" }}> 
                   Nejprve přidejte účet 
                 </div> 
               ) : ( 
@@ -699,7 +699,7 @@ function EditPurchaseModal({ purchase, accounts, onClose, onSave }: {
                     onChange={e => setTotalPrice(e.target.value)}
                     style={{ ...inputStyle, paddingRight: "3rem" }}
                   />
-                  <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#525252", fontWeight: 600 }}>
+                  <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#ededed" , fontWeight: 600 }}>
                     {currency}
                   </span>
                 </div>
@@ -720,7 +720,7 @@ function EditPurchaseModal({ purchase, accounts, onClose, onSave }: {
             {/* Total cost preview */}
             {totalCost > 0 ? (
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.875rem 1rem", borderRadius: 10, background: "#0a0a0a", border: "1px solid #2a2a2a" }}>
-                <span style={{ fontSize: 13, color: "#525252" }}>
+                <span style={{ fontSize: 13, color: "#ededed"  }}>
                   Cena za lístek: {priceNum.toLocaleString("cs-CZ")} {currency}
                 </span>
                 <span style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff" }}>
@@ -737,7 +737,7 @@ function EditPurchaseModal({ purchase, accounts, onClose, onSave }: {
               <div style={{ background: "#0a0a0a", border: "1px solid #2a2a2a", borderRadius: 10, padding: "0.75rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer" }} 
                 onClick={() => setDelivered(!delivered)}> 
                 <div> 
-                  <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 2 }}>DORUČENÉ</div> 
+                  <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: 2 }}>DORUČENÉ</div> 
                   <div style={{ fontSize: 13, fontWeight: 600, color: delivered ? "#34d399" : "#f87171" }}>{delivered ? "ANO" : "NIE"}</div> 
                 </div> 
                 <div style={{ width: 36, height: 20, borderRadius: 10, background: delivered ? "#34d399" : "#2a2a2a", position: "relative", transition: "background 0.2s" }}> 
@@ -747,7 +747,7 @@ function EditPurchaseModal({ purchase, accounts, onClose, onSave }: {
               <div style={{ background: "#0a0a0a", border: "1px solid #2a2a2a", borderRadius: 10, padding: "0.75rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer" }} 
                 onClick={() => setPaid(!paid)}> 
                 <div> 
-                  <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 2 }}>VYPLACENÉ</div> 
+                  <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: 2 }}>VYPLACENÉ</div> 
                   <div style={{ fontSize: 13, fontWeight: 600, color: paid ? "#34d399" : "#f87171" }}>{paid ? "ANO" : "NIE"}</div> 
                 </div> 
                 <div style={{ width: 36, height: 20, borderRadius: 10, background: paid ? "#34d399" : "#2a2a2a", position: "relative", transition: "background 0.2s" }}> 
@@ -760,7 +760,7 @@ function EditPurchaseModal({ purchase, accounts, onClose, onSave }: {
 
         {/* Fixed footer */} 
         <div style={{ padding: "1rem 2rem", borderTop: "1px solid #1a1a1a", flexShrink: 0, background: "#111111", display: "flex", gap: "0.75rem" }}> 
-          <button onClick={onClose} style={{ flex: 1, padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#525252", cursor: "pointer", fontSize: 14 }}> 
+          <button onClick={onClose} style={{ flex: 1, padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ededed" , cursor: "pointer", fontSize: 14 }}> 
             Zrušit 
           </button> 
           <button 
@@ -800,7 +800,7 @@ function PurchaseDetailModal({ purchase, onClose, onEdit, onDelete }: {
     if (!value) return null; 
     return ( 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "0.6rem 0", borderBottom: "1px solid #141414" }}> 
-        <span style={{ fontSize: 12, color: "#525252", flexShrink: 0, marginRight: 16 }}>{label}</span> 
+        <span style={{ fontSize: 12, color: "#ededed" , flexShrink: 0, marginRight: 16 }}>{label}</span> 
         <span style={{ fontSize: 13, color: "#ffffff", textAlign: "right" as const, fontWeight: 500 }}>{value}</span> 
       </div> 
     ); 
@@ -843,7 +843,7 @@ function PurchaseDetailModal({ purchase, onClose, onEdit, onDelete }: {
                 )} 
               </div> 
             </div> 
-            <button onClick={onClose} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22, flexShrink: 0 }}>×</button> 
+            <button onClick={onClose} style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 22, flexShrink: 0 }}>×</button> 
           </div> 
         </div> 
 
@@ -858,7 +858,7 @@ function PurchaseDetailModal({ purchase, onClose, onEdit, onDelete }: {
               { label: "Celkem", value: `${purchase.buy_price * purchase.quantity} ${purchase.currency}` }, 
             ].map(card => ( 
               <div key={card.label} style={{ background: "#0a0a0a", border: "1px solid #1f1f1f", borderRadius: 10, padding: "0.875rem", textAlign: "center" as const }}> 
-                <div style={{ fontSize: 11, color: "#525252", marginBottom: 4 }}>{card.label}</div> 
+                <div style={{ fontSize: 11, color: "#ededed" , marginBottom: 4 }}>{card.label}</div> 
                 <div style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{card.value}</div> 
               </div> 
             ))} 
@@ -879,7 +879,7 @@ function PurchaseDetailModal({ purchase, onClose, onEdit, onDelete }: {
           {/* Notes */} 
           {purchase.notes && ( 
             <div style={{ marginTop: "1rem", background: "#0a0a0a", border: "1px solid #1f1f1f", borderRadius: 10, padding: "0.875rem" }}> 
-              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 6 }}>POZNÁMKY</div> 
+              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: 6 }}>POZNÁMKY</div> 
               <p style={{ fontSize: 13, color: "#ffffff", lineHeight: 1.6, margin: 0 }}>{purchase.notes}</p> 
             </div> 
           )} 
@@ -1092,10 +1092,10 @@ export default function NakupyTab() {
           }}>
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #f87171, transparent)" }} />
             <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", marginBottom: "0.75rem" }}>Smazat nákup?</h2>
-            <p style={{ fontSize: 13, color: "#525252", marginBottom: "0.5rem" }}>
+            <p style={{ fontSize: 13, color: "#ededed" , marginBottom: "0.5rem" }}>
               <strong style={{ color: "#ffffff" }}>{deleteConfirm.event_name}</strong>
             </p>
-            <p style={{ fontSize: 13, color: "#525252", marginBottom: "1.5rem" }}>
+            <p style={{ fontSize: 13, color: "#ededed" , marginBottom: "1.5rem" }}>
               Kapitál bude navýšen o{" "}
               <strong style={{ color: "#34d399" }}>
                 {(deleteConfirm.buy_price * (deleteConfirm.quantity_remaining ?? deleteConfirm.quantity)).toLocaleString("cs-CZ")} {deleteConfirm.currency}
@@ -1104,7 +1104,7 @@ export default function NakupyTab() {
             <div style={{ display: "flex", gap: "0.75rem" }}>
               <button
                 onClick={() => setDeleteConfirm(null)}
-                style={{ flex: 1, padding: "0.75rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#525252", cursor: "pointer", fontSize: 13 }}
+                style={{ flex: 1, padding: "0.75rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ededed" , cursor: "pointer", fontSize: 13 }}
               >
                 Zrušit
               </button>
@@ -1135,13 +1135,13 @@ export default function NakupyTab() {
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
               <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Import z Excelu</h2>
-              <button onClick={() => { setShowImport(false); setImportResult(null); }} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button>
+              <button onClick={() => { setShowImport(false); setImportResult(null); }} style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 22 }}>×</button>
             </div>
 
             {/* Step 1 — Download template */}
             <div style={{ background: "#0a0a0a", border: "1px solid #1f1f1f", borderRadius: 12, padding: "1rem 1.25rem", marginBottom: "1rem" }}>
-              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 8 }}>KROK 1 — STÁHNĚTE ŠABLONU</div>
-              <p style={{ fontSize: 13, color: "#525252", marginBottom: 12, lineHeight: 1.5 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: 8 }}>KROK 1 — STÁHNĚTE ŠABLONU</div>
+              <p style={{ fontSize: 13, color: "#ededed" , marginBottom: 12, lineHeight: 1.5 }}>
                 Stáhněte Excel šablonu, vyplňte vaše nákupy a nahrajte zpět.
               </p>
               <a
@@ -1161,7 +1161,7 @@ export default function NakupyTab() {
 
             {/* Step 2 — Upload */}
             <div style={{ background: "#0a0a0a", border: "1px solid #1f1f1f", borderRadius: 12, padding: "1rem 1.25rem", marginBottom: "1.5rem" }}>
-              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 8 }}>KROK 2 — NAHRAJTE VYPLNĚNOU ŠABLONU</div>
+              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: 8 }}>KROK 2 — NAHRAJTE VYPLNĚNOU ŠABLONU</div>
 
               {importResult?.success ? (
                 <div style={{ padding: "12px", background: "#0a2a1a", border: "1px solid rgba(52,211,153,0.3)", borderRadius: 10, textAlign: "center" }}>
@@ -1178,7 +1178,7 @@ export default function NakupyTab() {
                 <label style={{
                   display: "flex", flexDirection: "column" as const, alignItems: "center", justifyContent: "center",
                   padding: "2rem", border: "1px dashed #2a2a2a", borderRadius: 10,
-                  cursor: importing ? "default" : "pointer", color: "#525252",
+                  cursor: importing ? "default" : "pointer", color: "#ededed" ,
                   fontSize: 13, gap: 8,
                 }}>
                   <span style={{ fontSize: "2rem" }}>📂</span>
@@ -1228,7 +1228,7 @@ export default function NakupyTab() {
               <button onClick={() => { setShowImport(false); setImportResult(null); }} style={{
                 width: "100%", padding: "0.8rem",
                 background: "transparent", border: "1px solid #2a2a2a",
-                borderRadius: 10, color: "#525252", cursor: "pointer", fontSize: 14,
+                borderRadius: 10, color: "#ededed" , cursor: "pointer", fontSize: 14,
               }}>
                 Zrušit
               </button>
@@ -1241,7 +1241,7 @@ export default function NakupyTab() {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.75rem" }}>
         <div>
           <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.25rem" }}>Nákupy</h1>
-          <p style={{ fontSize: 13, color: "#3a3a3a" }}>{filtered.length} z {purchases.length} nákupů</p>
+          <p style={{ fontSize: 13, color: "#ededed"  }}>{filtered.length} z {purchases.length} nákupů</p>
         </div>
         <div style={{ display: "flex", gap: "0.75rem" }}>
           <button
@@ -1293,7 +1293,7 @@ export default function NakupyTab() {
           style={{
             padding: "0.6rem 1rem", background: "#111111",
             border: "1px solid #1f1f1f", borderRadius: 10,
-            color: statusFilter === "all" ? "#525252" : "#fff",
+            color: statusFilter === "all" ? "#ededed" : "#fff",
             fontSize: 14, outline: "none", cursor: "pointer",
           }}
         >
@@ -1339,7 +1339,7 @@ export default function NakupyTab() {
             padding: "0.6rem 1rem", fontSize: 13,
             background: showFilters ? "#1f1f1f" : "transparent",
             border: "1px solid #1f1f1f", borderRadius: 10,
-            color: showFilters ? "#fff" : "#525252", cursor: "pointer",
+            color: showFilters ? "#fff" : "#ededed", cursor: "pointer",
             whiteSpace: "nowrap" as const,
           }}
         >
@@ -1371,7 +1371,7 @@ export default function NakupyTab() {
         }}>
           {/* Doručeno filter */} 
           <div> 
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 6 }}>DORUČENO</div> 
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: 6 }}>DORUČENO</div> 
             <select value={deliveredFilter} onChange={e => setDeliveredFilter(e.target.value)} style={{ 
               width: "100%", padding: "0.6rem 0.75rem", 
               background: "#111111", border: "1px solid #1f1f1f", 
@@ -1386,7 +1386,7 @@ export default function NakupyTab() {
  
           {/* Burza filter */}
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 6 }}>INZEROVÁNO NA BURZE</div>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: 6 }}>INZEROVÁNO NA BURZE</div>
             <select value={exchangeFilter} onChange={e => setExchangeFilter(e.target.value)} style={{
               width: "100%", padding: "0.6rem 0.75rem",
               background: "#111111", border: "1px solid #1f1f1f",
@@ -1400,7 +1400,7 @@ export default function NakupyTab() {
  
           {/* Město / Země filter */} 
           <div> 
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 6 }}>MĚSTO / ZEMĚ</div> 
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: 6 }}>MĚSTO / ZEMĚ</div> 
             <input 
               type="text" 
               placeholder="Praha, Londýn..." 
@@ -1415,12 +1415,12 @@ export default function NakupyTab() {
             /> 
           </div> 
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 6 }}>DATUM OD</div>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: 6 }}>DATUM OD</div>
             <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)}
               style={{ width: "100%", padding: "0.6rem 0.75rem", background: "#111111", border: "1px solid #1f1f1f", borderRadius: 8, color: "#fff", fontSize: 13, outline: "none", colorScheme: "dark", boxSizing: "border-box" as const }} />
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 6 }}>DATUM DO</div>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: 6 }}>DATUM DO</div>
             <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)}
               style={{ width: "100%", padding: "0.6rem 0.75rem", background: "#111111", border: "1px solid #1f1f1f", borderRadius: 8, color: "#fff", fontSize: 13, outline: "none", colorScheme: "dark", boxSizing: "border-box" as const }} />
           </div>
@@ -1428,13 +1428,13 @@ export default function NakupyTab() {
       )}
 
       {/* Loading */}
-      {loading && <div style={{ color: "#525252", fontSize: 14 }}>Načítání...</div>}
+      {loading && <div style={{ color: "#ededed" , fontSize: 14 }}>Načítání...</div>}
 
       {/* Empty state */}
       {!loading && purchases.length === 0 && (
         <div style={{ background: "#111111", border: "1px dashed #2a2a2a", borderRadius: 16, padding: "4rem", textAlign: "center" }}>
           <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>🎟️</div>
-          <p style={{ color: "#525252", fontSize: 14, marginBottom: "1.5rem" }}>Zatím žádné nákupy. Přidejte svůj první nákup lístků.</p>
+          <p style={{ color: "#ededed" , fontSize: 14, marginBottom: "1.5rem" }}>Zatím žádné nákupy. Přidejte svůj první nákup lístků.</p>
           <button onClick={() => setShowModal(true)} style={{ padding: "0.65rem 1.5rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ffffff", cursor: "pointer", fontSize: 14 }}>
             + Přidat nákup
           </button>
@@ -1445,7 +1445,7 @@ export default function NakupyTab() {
       {!loading && purchases.length > 0 && filtered.length === 0 && (
         <div style={{ background: "#111111", border: "1px dashed #2a2a2a", borderRadius: 16, padding: "4rem", textAlign: "center" }}>
           <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>🔍</div>
-          <p style={{ color: "#525252", fontSize: 14, marginBottom: "1.5rem" }}>Žádné nákupy neodpovídají vybraným filtrům.</p>
+          <p style={{ color: "#ededed" , fontSize: 14, marginBottom: "1.5rem" }}>Žádné nákupy neodpovídají vybraným filtrům.</p>
           <button 
             onClick={resetFilters} 
             style={{ padding: "0.65rem 1.5rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ffffff", cursor: "pointer", fontSize: 14 }}
@@ -1530,46 +1530,46 @@ export default function NakupyTab() {
                       }}>
                         {status.label}
                       </span>
-                      {purchase.venue && <span style={{ fontSize: 11, color: "#3a3a3a" }}>{purchase.venue}</span>}
+                      {purchase.venue && <span style={{ fontSize: 11, color: "#ededed"  }}>{purchase.venue}</span>}
                     </div>
                     <div style={{ display: "flex", gap: 4 }}>
-                      <span style={{ fontSize: 10, padding: "1px 6px", borderRadius: 4, background: purchase.delivered ? "#0a2a1a" : "#1a1a1a", color: purchase.delivered ? "#34d399" : "#3a3a3a", border: `1px solid ${purchase.delivered ? "rgba(52,211,153,0.2)" : "#2a2a2a"}` }}>
+                      <span style={{ fontSize: 10, padding: "1px 6px", borderRadius: 4, background: purchase.delivered ? "#0a2a1a" : "#1a1a1a", color: purchase.delivered ? "#34d399" : "#ededed", border: `1px solid ${purchase.delivered ? "rgba(52,211,153,0.2)" : "#2a2a2a"}` }}>
                         {purchase.delivered ? "✓ Doručeno" : "Nedoručeno"}
                       </span>
-                      <span style={{ fontSize: 10, padding: "1px 6px", borderRadius: 4, background: purchase.paid_out ? "#0a2a1a" : "#1a1a1a", color: purchase.paid_out ? "#34d399" : "#3a3a3a", border: `1px solid ${purchase.paid_out ? "rgba(52,211,153,0.2)" : "#2a2a2a"}` }}>
+                      <span style={{ fontSize: 10, padding: "1px 6px", borderRadius: 4, background: purchase.paid_out ? "#0a2a1a" : "#1a1a1a", color: purchase.paid_out ? "#34d399" : "#ededed", border: `1px solid ${purchase.paid_out ? "rgba(52,211,153,0.2)" : "#2a2a2a"}` }}>
                         {purchase.paid_out ? "✓ Vyplaceno" : "Nevyplaceno"}
                       </span>
                     </div>
                   </div>
 
                   {/* Místo akce */}
-                  <div style={{ fontSize: 13, color: "#525252" }}>
+                  <div style={{ fontSize: 13, color: "#ededed"  }}>
                     {purchase.city ?? "—"}
                   </div>
 
                   {/* Purchase date */}
-                  <div style={{ fontSize: 13, color: "#525252" }}>
+                  <div style={{ fontSize: 13, color: "#ededed"  }}>
                     {purchase.event_date
                       ? new Date(purchase.event_date).toLocaleDateString("cs-CZ")
                       : "—"}
                   </div>
 
                   {/* Event actual date */}
-                  <div style={{ fontSize: 13, color: isThisMonth(purchase.event_actual_date) ? "#f87171" : "#525252" }}>
+                  <div style={{ fontSize: 13, color: isThisMonth(purchase.event_actual_date) ? "#f87171" : "#ededed" }}>
                     {purchase.event_actual_date
                       ? new Date(purchase.event_actual_date).toLocaleDateString("cs-CZ")
                       : "—"}
                   </div>
 
                   {/* Sale date */}
-                  <div style={{ fontSize: 13, color: purchase.status === "sold" || purchase.status === "partial" ? "#34d399" : "#3a3a3a" }}>
+                  <div style={{ fontSize: 13, color: purchase.status === "sold" || purchase.status === "partial" ? "#34d399" : "#ededed" }}>
                     {getSaleDate(purchase.id)
                       ? new Date(getSaleDate(purchase.id)!).toLocaleDateString("cs-CZ")
                       : "—"}
                   </div>
 
                   {/* Account */}
-                  <div style={{ fontSize: 13, color: "#525252" }}>{purchase.account_ref ?? "—"}</div>
+                  <div style={{ fontSize: 13, color: "#ededed"  }}>{purchase.account_ref ?? "—"}</div>
 
                   {/* Quantity */}
                   <div style={{ fontSize: 14, color: "#ffffff" }}>{purchase.quantity}×</div>
@@ -1584,36 +1584,36 @@ export default function NakupyTab() {
                     <button 
                       onClick={() => setDetailPurchase(purchase)} 
                       title="Detail" 
-                      style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 14, padding: 4 }} 
+                      style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 14, padding: 4 }} 
                       onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#a78bfa"} 
-                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"} 
+                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#ededed"} 
                     > 
                       ℹ 
                     </button> 
                     <button
                       onClick={() => setSellPurchase(purchase)}
                       title="Zaznamenat prodej"
-                      style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 16, padding: 4 }}
+                      style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 16, padding: 4 }}
                       onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#34d399"}
-                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"}
+                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#ededed"}
                     >
                       💰
                     </button>
                     <button 
                       onClick={() => setEditPurchase(purchase)} 
                       title="Upravit" 
-                      style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 14, padding: 4 }} 
+                      style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 14, padding: 4 }} 
                       onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#ffffff"} 
-                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"} 
+                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#ededed"} 
                     > 
                       ✎ 
                     </button> 
                     <button 
                       onClick={() => setDeleteConfirm(purchase)} 
                       title="Smazat" 
-                      style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 16, padding: 4 }} 
+                      style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 16, padding: 4 }} 
                       onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#f87171"} 
-                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"} 
+                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#ededed"} 
                     > 
                       × 
                     </button> 

@@ -21,7 +21,7 @@ const inputStyle = {
 
 const labelStyle = { 
   fontSize: 11, fontWeight: 600 as const, 
-  letterSpacing: "0.08em", color: "#525252", 
+  letterSpacing: "0.08em", color: "#ededed" , 
   display: "block" as const, marginBottom: "0.4rem", 
 }; 
 
@@ -72,7 +72,7 @@ function AddVaultModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.75rem" }}> 
           <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Přidat záznam</h2> 
-          <button onClick={onClose} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button> 
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 22 }}>×</button> 
         </div> 
 
         {error && ( 
@@ -106,7 +106,7 @@ function AddVaultModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
               /> 
               <button 
                 onClick={() => setShowPassword(!showPassword)} 
-                style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 12 }} 
+                style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 12 }} 
               > 
                 {showPassword ? "skrýt" : "zobrazit"} 
               </button> 
@@ -125,7 +125,7 @@ function AddVaultModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
         </div> 
 
         <div style={{ display: "flex", gap: "0.75rem", marginTop: "1.75rem" }}> 
-          <button onClick={onClose} style={{ flex: 1, padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#525252", cursor: "pointer", fontSize: 14 }}> 
+          <button onClick={onClose} style={{ flex: 1, padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ededed" , cursor: "pointer", fontSize: 14 }}> 
             Zrušit 
           </button> 
           <button 
@@ -186,7 +186,7 @@ function EditVaultModal({ account, onClose, onSave }: { account: VaultAccount; o
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.75rem" }}>
           <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Upravit záznam</h2>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 22 }}>×</button>
         </div>
 
         {error && (
@@ -212,7 +212,7 @@ function EditVaultModal({ account, onClose, onSave }: { account: VaultAccount; o
             <label style={labelStyle}>HESLO</label>
             <div style={{ position: "relative" }}>
               <input type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} style={{ ...inputStyle, paddingRight: "3rem" }} />
-              <button onClick={() => setShowPassword(!showPassword)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 12 }}>
+              <button onClick={() => setShowPassword(!showPassword)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 12 }}>
                 {showPassword ? "skrýt" : "zobrazit"}
               </button>
             </div>
@@ -224,7 +224,7 @@ function EditVaultModal({ account, onClose, onSave }: { account: VaultAccount; o
         </div>
 
         <div style={{ display: "flex", gap: "0.75rem", marginTop: "1.75rem" }}>
-          <button onClick={onClose} style={{ flex: 1, padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#525252", cursor: "pointer", fontSize: 14 }}>
+          <button onClick={onClose} style={{ flex: 1, padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ededed" , cursor: "pointer", fontSize: 14 }}>
             Zrušit
           </button>
           <button
@@ -295,7 +295,7 @@ export default function UctyHeslaTab() {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem" }}> 
         <div> 
           <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.25rem" }}>Účty a hesla</h1> 
-          <p style={{ fontSize: 13, color: "#3a3a3a" }}>{accounts.length} {accounts.length === 1 ? "záznam" : accounts.length < 5 ? "záznamy" : "záznamů"}</p> 
+          <p style={{ fontSize: 13, color: "#ededed"  }}>{accounts.length} {accounts.length === 1 ? "záznam" : accounts.length < 5 ? "záznamy" : "záznamů"}</p> 
         </div> 
         <button 
           onClick={() => setShowModal(true)} 
@@ -330,13 +330,13 @@ export default function UctyHeslaTab() {
         </div> 
       )} 
 
-      {loading && <div style={{ color: "#525252", fontSize: 14 }}>Načítání...</div>} 
+      {loading && <div style={{ color: "#ededed" , fontSize: 14 }}>Načítání...</div>} 
 
       {/* Empty state */} 
       {!loading && accounts.length === 0 && ( 
         <div style={{ background: "#111111", border: "1px dashed #2a2a2a", borderRadius: 16, padding: "3rem", textAlign: "center" }}> 
           <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>🔑</div> 
-          <p style={{ color: "#525252", fontSize: 14, marginBottom: "1.5rem" }}>Zatím žádné záznamy. Uložte si přihlašovací údaje bezpečně na jednom místě.</p> 
+          <p style={{ color: "#ededed" , fontSize: 14, marginBottom: "1.5rem" }}>Zatím žádné záznamy. Uložte si přihlašovací údaje bezpečně na jednom místě.</p> 
           <button onClick={() => setShowModal(true)} style={{ padding: "0.65rem 1.5rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ffffff", cursor: "pointer", fontSize: 14 }}> 
             + Přidat záznam 
           </button> 
@@ -358,14 +358,14 @@ export default function UctyHeslaTab() {
             {/* Header */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
               <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>{detailAccount.name}</h2>
-              <button onClick={() => setDetailAccount(null)} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button>
+              <button onClick={() => setDetailAccount(null)} style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 22 }}>×</button>
             </div>
 
             {/* Details */}
             <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
               {detailAccount.url && (
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.75rem 0", borderBottom: "1px solid #141414" }}>
-                  <span style={{ fontSize: 12, color: "#525252" }}>URL</span>
+                  <span style={{ fontSize: 12, color: "#ededed"  }}>URL</span>
                   <a href={detailAccount.url.startsWith("http") ? detailAccount.url : "https://" + detailAccount.url}
                     target="_blank" rel="noopener noreferrer"
                     style={{ fontSize: 13, color: "#a78bfa", textDecoration: "none" }}
@@ -377,43 +377,43 @@ export default function UctyHeslaTab() {
               )}
               {detailAccount.email && (
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.75rem 0", borderBottom: "1px solid #141414" }}>
-                  <span style={{ fontSize: 12, color: "#525252" }}>E-mail</span>
+                  <span style={{ fontSize: 12, color: "#ededed"  }}>E-mail</span>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <span style={{ fontSize: 13, color: "#ffffff" }}>{detailAccount.email}</span>
                     <button
                       onClick={e => { e.stopPropagation(); navigator.clipboard.writeText(detailAccount.email!); }}
-                      style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 11 }}
+                      style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 11 }}
                       onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#34d399"}
-                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"}
+                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#ededed"}
                     >kopírovat</button>
                   </div>
                 </div>
               )}
               {detailAccount.password_encrypted && (
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.75rem 0", borderBottom: "1px solid #141414" }}>
-                  <span style={{ fontSize: 12, color: "#525252" }}>Heslo</span>
+                  <span style={{ fontSize: 12, color: "#ededed"  }}>Heslo</span>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <span style={{ fontSize: 13, color: "#ffffff", letterSpacing: revealedPasswords.has(detailAccount.id) ? "normal" : "0.1em" }}>
                       {revealedPasswords.has(detailAccount.id) ? detailAccount.password_encrypted : "••••••••"}
                     </span>
                     <button
                       onClick={e => { e.stopPropagation(); togglePassword(detailAccount.id); }}
-                      style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 11 }}
+                      style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 11 }}
                       onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#ffffff"}
-                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"}
+                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#ededed"}
                     >{revealedPasswords.has(detailAccount.id) ? "skrýt" : "zobrazit"}</button>
                     <button
                       onClick={e => { e.stopPropagation(); navigator.clipboard.writeText(detailAccount.password_encrypted!); }}
-                      style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 11 }}
+                      style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 11 }}
                       onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#34d399"}
-                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"}
+                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#ededed"}
                     >kopírovat</button>
                   </div>
                 </div>
               )}
               {detailAccount.notes && (
                 <div style={{ padding: "0.75rem 0" }}>
-                  <span style={{ fontSize: 12, color: "#525252", display: "block", marginBottom: 4 }}>Poznámka</span>
+                  <span style={{ fontSize: 12, color: "#ededed" , display: "block", marginBottom: 4 }}>Poznámka</span>
                   <p style={{ fontSize: 13, color: "#ffffff", margin: 0, lineHeight: 1.5 }}>{detailAccount.notes}</p>
                 </div>
               )}
@@ -459,7 +459,7 @@ export default function UctyHeslaTab() {
                   <div>
                     <div style={{ fontWeight: 700, color: "#fff", fontSize: 15 }}>{account.name}</div>
                     {account.url && (
-                      <span style={{ fontSize: 11, color: "#3a3a3a" }}>
+                      <span style={{ fontSize: 11, color: "#ededed"  }}>
                         {account.url.replace("https://", "").replace("http://", "").split("/")[0]}
                       </span>
                     )}
@@ -468,15 +468,15 @@ export default function UctyHeslaTab() {
                 <div style={{ display: "flex", gap: 4 }} onClick={e => e.stopPropagation()}>
                   <button
                     onClick={() => setEditAccount(account)}
-                    style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 14, padding: 4 }}
+                    style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 14, padding: 4 }}
                     onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#ffffff"}
-                    onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"}
+                    onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#ededed"}
                   >✎</button>
                   <button
                     onClick={() => deleteAccount(account.id)}
-                    style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 18, padding: 4 }}
+                    style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 18, padding: 4 }}
                     onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#f87171"}
-                    onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"}
+                    onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#ededed"}
                   >×</button>
                 </div>
               </div>
@@ -487,7 +487,7 @@ export default function UctyHeslaTab() {
 
       {/* No search results */} 
       {!loading && accounts.length > 0 && filtered.length === 0 && ( 
-        <div style={{ textAlign: "center", padding: "2rem", color: "#525252", fontSize: 14 }}> 
+        <div style={{ textAlign: "center", padding: "2rem", color: "#ededed" , fontSize: 14 }}> 
           Žádné výsledky pro "{search}" 
         </div> 
       )} 

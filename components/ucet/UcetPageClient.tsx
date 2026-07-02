@@ -244,7 +244,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
           <div style={{
             padding: "6px 16px", borderRadius: 8, fontSize: 13, fontWeight: 700,
             background: subscription?.plan === "pro" ? "linear-gradient(135deg, #7c3aed, #5b21b6)" : "#1a1a1a",
-            color: subscription?.plan === "pro" ? "#fff" : "#525252",
+            color: subscription?.plan === "pro" ? "#fff" : "#ededed",
             border: subscription?.plan === "pro" ? "none" : "1px solid #2a2a2a",
           }}>
             {subscription?.plan === "pro"
@@ -393,7 +393,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
                 padding: "0.75rem 1.25rem", fontSize: 13, fontWeight: 700,
                 background: resetConfirm === "reset" ? "#fbbf24" : "#1a1a1a",
                 border: "none", borderRadius: 10,
-                color: resetConfirm === "reset" ? "#000" : "#525252",
+                color: resetConfirm === "reset" ? "#000" : "#ededed",
                 cursor: resetConfirm === "reset" ? "pointer" : "default",
                 whiteSpace: "nowrap" as const,
               }}
@@ -425,7 +425,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
                 padding: "0.75rem 1.25rem", fontSize: 13, fontWeight: 700,
                 background: deleteConfirm === "smazat" ? "#f87171" : "#1a1a1a",
                 border: "none", borderRadius: 10,
-                color: deleteConfirm === "smazat" ? "#000" : "#525252",
+                color: deleteConfirm === "smazat" ? "#000" : "#ededed",
                 cursor: deleteConfirm === "smazat" ? "pointer" : "default",
                 whiteSpace: "nowrap" as const,
               }}

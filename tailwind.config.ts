@@ -20,7 +20,7 @@ const config: Config = {
       colors: {
         border: {
           DEFAULT: "#1f1f1f",
-          highlight: "#3a3a3a",
+          highlight: "#ededed",
         },
         background: {
           DEFAULT: "#080808",
@@ -52,7 +52,7 @@ const config: Config = {
           foreground: "var(--destructive-foreground)",
         },
         muted: {
-          DEFAULT: "#525252",
+          DEFAULT: "#ededed",
           foreground: "var(--muted-foreground)",
         },
         accent: {

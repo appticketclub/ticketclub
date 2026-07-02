@@ -86,7 +86,7 @@ body {
   transition: border-color 0.2s ease;
 }
 .card-premium:hover {
-  border-color: #3a3a3a;
+  border-color: #ededed;
 }
 
 /* Custom scrollbar */

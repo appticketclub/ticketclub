@@ -93,7 +93,7 @@ export default function RegisterPage() {
           <img src="/logo.png" alt="TicketClub" style={{ height: 40, width: "auto", objectFit: "contain" }} />
         </div>
         <h1 style={{ fontSize: "2.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>Registrace</h1>
-        <p style={{ color: "#525252", marginBottom: "2.5rem" }}>Vytvořte si nový účet.</p>
+        <p style={{ color: "#ededed" , marginBottom: "2.5rem" }}>Vytvořte si nový účet.</p>
 
         {error && (
           <div style={{ marginBottom: "1rem", padding: "0.75rem 1rem", borderRadius: "0.75rem", fontSize: "0.875rem", background: "#2a0a0a", border: "1px solid #7f1d1d", color: "#fca5a5" }}>
@@ -159,7 +159,7 @@ export default function RegisterPage() {
           {/* Google login temporarily hidden */}
         </div>
 
-        <p style={{ marginTop: "2rem", fontSize: "0.875rem", color: "#525252" }}>
+        <p style={{ marginTop: "2rem", fontSize: "0.875rem", color: "#ededed"  }}>
           Již máte účet?{" "}
           <Link 
             href="/prihlaseni" 

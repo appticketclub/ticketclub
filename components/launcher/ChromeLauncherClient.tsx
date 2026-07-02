@@ -55,7 +55,7 @@ export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) 
 
   const labelStyle = {
     fontSize: 11, fontWeight: 600 as const,
-    letterSpacing: "0.08em", color: "#525252",
+    letterSpacing: "0.08em", color: "#ededed" ,
     display: "block" as const, marginBottom: "0.4rem",
   };
 
@@ -63,11 +63,11 @@ export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) 
     <div>
       {/* Header */}
       <div style={{ marginBottom: "2rem" }}>
-        <a href="/dostupne-sluzby" style={{ fontSize: 13, color: "#525252", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: "1rem" }}>
+        <a href="/dostupne-sluzby" style={{ fontSize: 13, color: "#ededed" , textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: "1rem" }}>
           ← Zpět na přehled
         </a>
         <h1 style={{ fontSize: "1.75rem", fontWeight: 700, color: "#fff", marginBottom: "0.25rem" }}>🚀 Chrome Launcher</h1>
-        <p style={{ fontSize: 13, color: "#3a3a3a" }}>Spusťte všechny vaše Chrome profily najednou</p>
+        <p style={{ fontSize: 13, color: "#ededed"  }}>Spusťte všechny vaše Chrome profily najednou</p>
       </div>
 
       {/* How it works */}
@@ -94,7 +94,7 @@ export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) 
         </div>
         {os === "mac" && (
           <div style={{ marginTop: "0.75rem", padding: "0.75rem 1rem", background: "#0a0a0a", border: "1px solid #1f1f1f", borderRadius: 10 }}>
-            <p style={{ fontSize: 12, color: "#525252", margin: 0, lineHeight: 1.6 }}>
+            <p style={{ fontSize: 12, color: "#ededed" , margin: 0, lineHeight: 1.6 }}>
               <strong style={{ color: "#ffffff" }}>Mac instrukce:</strong> Po stažení otevřete Terminal, napište{" "}
               <code style={{ background: "#1a1a1a", padding: "1px 6px", borderRadius: 4, color: "#a78bfa" }}>chmod +x ~/Downloads/ticketclub-launcher.sh</code>{" "}
               a pak{" "}
@@ -118,7 +118,7 @@ export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) 
               background: os === o.id ? "linear-gradient(135deg, #ffffff, #a0a0a0)" : "transparent",
               border: os === o.id ? "none" : "1px solid #2a2a2a",
               borderRadius: 8,
-              color: os === o.id ? "#000" : "#525252",
+              color: os === o.id ? "#000" : "#ededed",
               cursor: "pointer",
             }}
           >
@@ -143,7 +143,7 @@ export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) 
                 {profilesCount}
               </span>
             </div>
-            <p style={{ fontSize: 12, color: "#3a3a3a", marginTop: 6 }}>
+            <p style={{ fontSize: 12, color: "#ededed" , marginTop: 6 }}>
               Launcher spustí Default profil + Profile 1 až Profile {profilesCount}
             </p>
           </div>
@@ -157,7 +157,7 @@ export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) 
               onChange={e => setStartUrl(e.target.value)}
               style={inputStyle}
             />
-            <p style={{ fontSize: 12, color: "#3a3a3a", marginTop: 6 }}>
+            <p style={{ fontSize: 12, color: "#ededed" , marginTop: 6 }}>
               Tato URL se otevře v každém profilu při spuštění
             </p>
           </div>
@@ -177,8 +177,8 @@ export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) 
             </div>
             {tokenData.last_used_at && (
               <div style={{ textAlign: "right" as const }}>
-                <div style={{ fontSize: 11, color: "#3a3a3a" }}>Poslední použití</div>
-                <div style={{ fontSize: 12, color: "#525252" }}>
+                <div style={{ fontSize: 11, color: "#ededed"  }}>Poslední použití</div>
+                <div style={{ fontSize: 12, color: "#ededed"  }}>
                   {new Date(tokenData.last_used_at).toLocaleDateString("cs-CZ")}
                 </div>
               </div>
@@ -213,7 +213,7 @@ export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) 
 
       {/* Warning */}
       <div style={{ marginTop: "1rem", padding: "1rem", background: "#0a0a0a", border: "1px solid #1f1f1f", borderRadius: 12 }}>
-        <p style={{ fontSize: 12, color: "#3a3a3a", margin: 0, lineHeight: 1.6 }}>
+        <p style={{ fontSize: 12, color: "#ededed" , margin: 0, lineHeight: 1.6 }}>
           ⚠️ Launcher funguje pouze na Windows/Mac s nainstalovaným Google Chrome.
           Každý stažený soubor je vázán na váš účet a nelze sdílet.
           Při vypršení předplatného přestane fungovat.

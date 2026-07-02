@@ -12,7 +12,7 @@ export default function RefreshBotClient() {
         <h1 style={{ fontSize: "1.75rem", fontWeight: 800, color: "#fff", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
           🔄 Refresh Bot
         </h1>
-        <p style={{ fontSize: 14, color: "#525252", lineHeight: 1.7 }}>
+        <p style={{ fontSize: 14, color: "#ededed", lineHeight: 1.7 }}>
           Automatické monitorování vstupenek na Ticketmaster. Bot obnovuje stránku a klikne za vás.
         </p>
       </div>
@@ -21,7 +21,7 @@ export default function RefreshBotClient() {
       <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 20, padding: "1.75rem", marginBottom: "1.5rem", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #34d399, transparent)" }} />
         <h2 style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>Stáhnout Refresh Bot</h2>
-        <p style={{ fontSize: 13, color: "#525252", marginBottom: "1.25rem" }}>
+        <p style={{ fontSize: 13, color: "#ededed", marginBottom: "1.25rem" }}>
           Stáhněte si rozšíření a nainstalujte ho do Chrome.
         </p>
 
@@ -40,7 +40,7 @@ export default function RefreshBotClient() {
         >
           ⬇ Stáhnout Refresh Bot
         </a>
-        <p style={{ fontSize: 11, color: "#3a3a3a", marginTop: "0.75rem" }}>
+        <p style={{ fontSize: 11, color: "#ededed", marginTop: "0.75rem" }}>
           Verze 1.0.0 · Chrome Extension · Windows & Mac
         </p>
       </div>
@@ -62,7 +62,7 @@ export default function RefreshBotClient() {
               </div>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 3 }}>{item.title}</div>
-                <div style={{ fontSize: 12, color: "#525252", lineHeight: 1.6 }}>{item.desc}</div>
+                <div style={{ fontSize: 12, color: "#ededed", lineHeight: 1.6 }}>{item.desc}</div>
               </div>
             </div>
           ))}
@@ -73,7 +73,7 @@ export default function RefreshBotClient() {
       <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.25rem 1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap" as const, gap: "1rem" }}>
         <div>
           <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 3 }}>Máte problémy?</div>
-          <div style={{ fontSize: 12, color: "#525252" }}>Napište nám a rádi pomůžeme.</div>
+          <div style={{ fontSize: 12, color: "#ededed" }}>Napište nám a rádi pomůžeme.</div>
         </div>
 
         <a

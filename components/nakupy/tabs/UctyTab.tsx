@@ -26,7 +26,7 @@ export default function UctyTab() {
               fontSize: 13,
               fontWeight: active === tab.id ? 600 : 400,
               background: active === tab.id ? "linear-gradient(135deg, #ffffff, #a0a0a0)" : "transparent",
-              color: active === tab.id ? "#000" : "#525252",
+              color: active === tab.id ? "#000" : "#ededed",
               cursor: "pointer",
               transition: "all 0.15s",
             }}

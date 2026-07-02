@@ -13,7 +13,7 @@ export default function PresaleBotClient() {
         <h1 style={{ fontSize: "1.75rem", fontWeight: 800, color: "#fff", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
           ⚡ Pre-sale Bot
         </h1>
-        <p style={{ fontSize: 14, color: "#525252", lineHeight: 1.7 }}>
+        <p style={{ fontSize: 14, color: "#ededed" , lineHeight: 1.7 }}>
           Automatická registrace na pre-sale akce.
         </p>
       </div>
@@ -46,7 +46,7 @@ export default function PresaleBotClient() {
       <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.25rem 1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap" as const, gap: "1rem" }}>
         <div>
           <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 3 }}>Máte problémy nebo dotazy?</div>
-          <div style={{ fontSize: 12, color: "#525252" }}>Napište nám a rádi pomůžeme.</div>
+          <div style={{ fontSize: 12, color: "#ededed"  }}>Napište nám a rádi pomůžeme.</div>
         </div>
         <a
           href="mailto:pato.strnadel@gmail.com"

@@ -226,7 +226,7 @@ export default function UvodTab() {
 
   if (loading) {
     return (
-      <div style={{ display: "flex", alignItems: "center", gap: 12, color: "#525252" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, color: "#ededed" }}>
         <div style={{ width: 16, height: 16, border: "2px solid #2a2a2a", borderTopColor: "#ffffff", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
         Načítání...
         <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
@@ -244,7 +244,7 @@ export default function UvodTab() {
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "1.75rem" }}>
         <div>
           <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.25rem" }}>Přehled portfolia</h1>
-          <p style={{ fontSize: 13, color: "#3a3a3a" }}>Aktualizováno právě teď</p>
+          <p style={{ fontSize: 13, color: "#ededed" }}>Aktualizováno právě teď</p>
         </div>
       </div>
 
@@ -258,7 +258,7 @@ export default function UvodTab() {
               background: timeRange === r.id ? "linear-gradient(135deg, #ffffff, #a0a0a0)" : "transparent",
               border: timeRange === r.id ? "none" : "1px solid #2a2a2a",
               borderRadius: 8,
-              color: timeRange === r.id ? "#000" : "#525252",
+              color: timeRange === r.id ? "#000" : "#ededed",
               cursor: "pointer",
             }}
           >
@@ -275,7 +275,7 @@ export default function UvodTab() {
             onChange={e => setCustomFrom(e.target.value)}
             style={{ padding: "6px 10px", background: "#111", border: "1px solid #2a2a2a", borderRadius: 8, color: "#fff", fontSize: 12, outline: "none", colorScheme: "dark" }}
           />
-          <span style={{ color: "#525252", fontSize: 12 }}>—</span>
+          <span style={{ color: "#ededed", fontSize: 12 }}>—</span>
           <input
             type="date"
             value={customTo}
@@ -340,7 +340,7 @@ export default function UvodTab() {
                 cursor: "pointer",
                 background: activeChart === tab.key ? "#ffffff" : "transparent",
                 borderColor: activeChart === tab.key ? "#ffffff" : "#2a2a2a",
-                color: activeChart === tab.key ? "#000000" : "#525252",
+                color: activeChart === tab.key ? "#000000" : "#ededed",
                 transition: "all 0.15s",
               }}
             >
@@ -370,8 +370,8 @@ export default function UvodTab() {
                   <stop offset="95%" stopColor="#34d399" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <XAxis dataKey="date" tick={{ fill: "#525252", fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "#525252", fontSize: 11 }} axisLine={false} tickLine={false} width={60}
+              <XAxis dataKey="date" tick={{ fill: "#ededed", fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: "#ededed", fontSize: 11 }} axisLine={false} tickLine={false} width={60}
                 tickFormatter={v => activeChart === "roi" ? `${v}%` : `${v}`} />
               <Tooltip
                 contentStyle={{ background: "#111", border: "1px solid #2a2a2a", borderRadius: 8, fontSize: 12 }}
@@ -390,7 +390,7 @@ export default function UvodTab() {
             </AreaChart>
           </ResponsiveContainer>
         ) : (
-          <div style={{ height: 220, display: "flex", alignItems: "center", justifyContent: "center", color: "#525252", fontSize: 13 }}>
+          <div style={{ height: 220, display: "flex", alignItems: "center", justifyContent: "center", color: "#ededed", fontSize: 13 }}>
             Zatím žádná uzavřená data
           </div>
         )}

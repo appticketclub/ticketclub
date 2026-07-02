@@ -44,7 +44,7 @@ export default function TymStatistikyTab() {
 
   const labelStyle = {
     fontSize: 11, fontWeight: 700 as const,
-    letterSpacing: "0.1em", color: "#525252",
+    letterSpacing: "0.1em", color: "#ededed" ,
     display: "block" as const, marginBottom: "0.5rem",
   };
 
@@ -101,7 +101,7 @@ export default function TymStatistikyTab() {
           <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", color: "#a78bfa" }}>ADMIN ONLY</span>
         </div>
         <h1 style={{ fontSize: "1.5rem", fontWeight: 800, color: "#fff", marginBottom: "0.25rem", letterSpacing: "-0.02em" }}>Štatistiky týmu</h1>
-        <p style={{ fontSize: 13, color: "#3a3a3a" }}>Manuálny generátor P&L banneru pre tým</p>
+        <p style={{ fontSize: 13, color: "#ededed"  }}>Manuálny generátor P&L banneru pre tým</p>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "1.5rem" }}>
@@ -120,7 +120,7 @@ export default function TymStatistikyTab() {
                   background: period === p.id ? "linear-gradient(135deg, #7c3aed, #5b21b6)" : "transparent",
                   border: period === p.id ? "none" : "1px solid #2a2a2a",
                   borderRadius: 8,
-                  color: period === p.id ? "#fff" : "#525252",
+                  color: period === p.id ? "#fff" : "#ededed",
                   cursor: "pointer",
                 }}>{p.label}</button>
               ))}
@@ -129,7 +129,7 @@ export default function TymStatistikyTab() {
               <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.75rem", alignItems: "center" }}>
                 <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)}
                   style={{ ...inputStyle, fontSize: 13, padding: "0.5rem 0.75rem", colorScheme: "dark" }} />
-                <span style={{ color: "#525252" }}>—</span>
+                <span style={{ color: "#ededed"  }}>—</span>
                 <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)}
                   style={{ ...inputStyle, fontSize: 13, padding: "0.5rem 0.75rem", colorScheme: "dark" }} />
               </div>
@@ -149,7 +149,7 @@ export default function TymStatistikyTab() {
                     background: currency === c ? "linear-gradient(135deg, #ffffff, #a0a0a0)" : "transparent",
                     border: currency === c ? "none" : "1px solid #2a2a2a",
                     borderRadius: 8,
-                    color: currency === c ? "#000" : "#525252",
+                    color: currency === c ? "#000" : "#ededed",
                     cursor: "pointer",
                   }}>{c}</button>
                 ))}
@@ -163,7 +163,7 @@ export default function TymStatistikyTab() {
                   placeholder="0" style={inputStyle}
                   onFocus={e => (e.target as HTMLInputElement).style.borderColor = "#7c3aed"}
                   onBlur={e => (e.target as HTMLInputElement).style.borderColor = "#1f1f1f"} />
-                <span style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", fontSize: 13, color: "#525252", fontWeight: 700 }}>{currency}</span>
+                <span style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", fontSize: 13, color: "#ededed" , fontWeight: 700 }}>{currency}</span>
               </div>
             </div>
 
@@ -174,7 +174,7 @@ export default function TymStatistikyTab() {
                   placeholder="0" style={inputStyle}
                   onFocus={e => (e.target as HTMLInputElement).style.borderColor = "#7c3aed"}
                   onBlur={e => (e.target as HTMLInputElement).style.borderColor = "#1f1f1f"} />
-                <span style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", fontSize: 13, color: "#525252", fontWeight: 700 }}>{currency}</span>
+                <span style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", fontSize: 13, color: "#ededed" , fontWeight: 700 }}>{currency}</span>
               </div>
             </div>
 
@@ -189,7 +189,7 @@ export default function TymStatistikyTab() {
             {/* Live ROI preview */}
             {investedNum > 0 && (
               <div style={{ padding: "0.875rem 1rem", background: isProfit ? "rgba(52,211,153,0.06)" : "rgba(248,113,113,0.06)", border: `1px solid ${isProfit ? "rgba(52,211,153,0.2)" : "rgba(248,113,113,0.2)"}`, borderRadius: 10, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 12, color: "#525252" }}>ROI</span>
+                <span style={{ fontSize: 12, color: "#ededed"  }}>ROI</span>
                 <span style={{ fontSize: 20, fontWeight: 800, color: isProfit ? "#34d399" : "#f87171" }}>
                   {isProfit ? "+" : ""}{roi.toFixed(1)}%
                 </span>
@@ -213,7 +213,7 @@ export default function TymStatistikyTab() {
 
         {/* RIGHT — Live banner preview */}
         <div>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", color: "#3a3a3a", marginBottom: "0.75rem" }}>LIVE NÁHLED BANNERU</div>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", color: "#ededed" , marginBottom: "0.75rem" }}>LIVE NÁHLED BANNERU</div>
 
           {/* Banner */}
           <div ref={bannerRef} style={{ 
@@ -306,7 +306,7 @@ export default function TymStatistikyTab() {
             </div>
           </div>
 
-          <p style={{ fontSize: 11, color: "#3a3a3a", marginTop: 8, textAlign: "center" as const }}>
+          <p style={{ fontSize: 11, color: "#ededed" , marginTop: 8, textAlign: "center" as const }}>
             Banner sa aktualizuje naživo pri zmene hodnôt
           </p>
         </div>
@@ -328,7 +328,7 @@ export default function TymStatistikyTab() {
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
               <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Tímový banner</h2>
-              <button onClick={() => setShowBanner(false)} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button>
+              <button onClick={() => setShowBanner(false)} style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 22 }}>×</button>
             </div>
 
             {/* Banner preview in modal */}

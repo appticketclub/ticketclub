@@ -76,7 +76,7 @@ export default function ProdejeTab() {
     return sum + convertedRevenue;
   }, 0);
 
-  if (loading) return <div style={{ color: "#525252", fontSize: 14 }}>Načítání...</div>;
+  if (loading) return <div style={{ color: "#ededed" , fontSize: 14 }}>Načítání...</div>;
 
   return (
     <div>
@@ -84,7 +84,7 @@ export default function ProdejeTab() {
       <div style={{ marginBottom: "1.75rem" }}>
         <div style={{ marginBottom: "1rem" }}>
           <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.25rem" }}>Prodeje</h1>
-          <p style={{ fontSize: 13, color: "#3a3a3a" }}>Historie všech uzavřených prodejů</p>
+          <p style={{ fontSize: 13, color: "#ededed"  }}>Historie všech uzavřených prodejů</p>
         </div>
         <div style={{
           display: "grid",
@@ -100,7 +100,7 @@ export default function ProdejeTab() {
               background: "#111111", border: "1px solid #1a1a1a",
               borderRadius: 12, padding: "0.75rem 1rem",
             }}>
-              <div style={{ fontSize: 11, color: "#3a3a3a", marginBottom: 4 }}>{s.label}</div>
+              <div style={{ fontSize: 11, color: "#ededed" , marginBottom: 4 }}>{s.label}</div>
               <div style={{ fontSize: 16, fontWeight: 700, color: s.color }}>{s.value}</div>
             </div>
           ))}
@@ -126,7 +126,7 @@ export default function ProdejeTab() {
       {/* Table */}
       {filtered.length === 0 ? (
         <div style={{ background: "#111111", border: "1px dashed #2a2a2a", borderRadius: 16, padding: "3rem", textAlign: "center" as const }}>
-          <p style={{ color: "#525252", fontSize: 14 }}>Žádné prodeje zatím</p>
+          <p style={{ color: "#ededed" , fontSize: 14 }}>Žádné prodeje zatím</p>
         </div>
       ) : (
         <div style={{
@@ -200,29 +200,29 @@ export default function ProdejeTab() {
                   </div>
 
                   {/* 2. Místo akce */}
-                  <div style={{ fontSize: 13, color: "#525252" }}>{purchase?.city ?? "—"}</div>
+                  <div style={{ fontSize: 13, color: "#ededed"  }}>{purchase?.city ?? "—"}</div>
 
                   {/* 3. Datum nákupu */}
-                  <div style={{ fontSize: 12, color: "#525252" }}>
+                  <div style={{ fontSize: 12, color: "#ededed"  }}>
                     {purchase?.created_at
                       ? new Date(purchase.created_at).toLocaleDateString("cs-CZ")
                       : "—"}
                   </div>
 
                   {/* 4. Datum akce */}
-                  <div style={{ fontSize: 12, color: "#525252" }}>
+                  <div style={{ fontSize: 12, color: "#ededed"  }}>
                     {purchase?.event_actual_date
                       ? new Date(purchase.event_actual_date).toLocaleDateString("cs-CZ")
                       : "—"}
                   </div>
 
                   {/* 5. Datum prodeje */}
-                  <div style={{ fontSize: 12, color: "#525252" }}>
+                  <div style={{ fontSize: 12, color: "#ededed"  }}>
                     {sale.sold_at ? new Date(sale.sold_at).toLocaleDateString("cs-CZ") : "—"}
                   </div>
 
                   {/* 6. Účet */}
-                  <div style={{ fontSize: 12, color: "#525252" }}>
+                  <div style={{ fontSize: 12, color: "#ededed"  }}>
                     {purchase?.account_ref ?? "—"}
                   </div>
 
@@ -243,9 +243,9 @@ export default function ProdejeTab() {
                   <div style={{ display: "flex", justifyContent: "flex-end", gap: 4 }}>
                     <button
                       onClick={e => { e.stopPropagation(); setEditSale(sale); }}
-                      style={{ background: "none", border: "none", color: "#3a3a3a", cursor: "pointer", fontSize: 14, padding: 4 }}
+                      style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 14, padding: 4 }}
                       onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = "#ffffff"}
-                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#3a3a3a"}
+                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#ededed"}
                     >✎</button>
                   </div>
                 </div>
@@ -290,7 +290,7 @@ export default function ProdejeTab() {
                     ✓ Prodáno
                   </div>
                 </div>
-                <button onClick={() => setDetailSale(null)} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button>
+                <button onClick={() => setDetailSale(null)} style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 22 }}>×</button>
               </div>
             </div>
 
@@ -314,7 +314,7 @@ export default function ProdejeTab() {
                         { label: "Celkem", value: format(revenue, detailSale.currency as "EUR" | "CZK"), color: "#34d399" },
                       ].map(card => (
                         <div key={card.label} style={{ background: "#0a0a0a", border: "1px solid #1f1f1f", borderRadius: 10, padding: "0.875rem", textAlign: "center" as const }}>
-                          <div style={{ fontSize: 10, color: "#525252", marginBottom: 4 }}>{card.label}</div>
+                          <div style={{ fontSize: 10, color: "#ededed" , marginBottom: 4 }}>{card.label}</div>
                           <div style={{ fontSize: 14, fontWeight: 700, color: card.color }}>{card.value}</div>
                         </div>
                       ))}
@@ -323,13 +323,13 @@ export default function ProdejeTab() {
                     {/* P&L */}
                     <div style={{ padding: "1rem", background: isProfit ? "rgba(52,211,153,0.06)" : "rgba(248,113,113,0.06)", border: `1px solid ${isProfit ? "rgba(52,211,153,0.2)" : "rgba(248,113,113,0.2)"}`, borderRadius: 12, marginBottom: "1.25rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <div>
-                        <div style={{ fontSize: 11, color: "#525252", marginBottom: 4 }}>ČISTÝ ZISK</div>
+                        <div style={{ fontSize: 11, color: "#ededed" , marginBottom: 4 }}>ČISTÝ ZISK</div>
                         <div style={{ fontSize: 22, fontWeight: 800, color: isProfit ? "#34d399" : "#f87171" }}>
                           {isProfit ? "+" : ""}{format(profit, detailSale.currency as "EUR" | "CZK")}
                         </div>
                       </div>
                       <div style={{ textAlign: "right" as const }}>
-                        <div style={{ fontSize: 11, color: "#525252", marginBottom: 4 }}>ROI</div>
+                        <div style={{ fontSize: 11, color: "#ededed" , marginBottom: 4 }}>ROI</div>
                         <div style={{ fontSize: 22, fontWeight: 800, color: isProfit ? "#34d399" : "#f87171" }}>
                           {isProfit ? "+" : ""}{roi.toFixed(1)}%
                         </div>
@@ -349,7 +349,7 @@ export default function ProdejeTab() {
                         { label: "Poznámky", value: detailSale.notes },
                       ].filter(r => r.value).map((row, i, arr) => (
                         <div key={row.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "0.65rem 0", borderBottom: i < arr.length - 1 ? "1px solid #141414" : "none" }}>
-                          <span style={{ fontSize: 12, color: "#525252" }}>{row.label}</span>
+                          <span style={{ fontSize: 12, color: "#ededed"  }}>{row.label}</span>
                           <span style={{ fontSize: 13, fontWeight: 500, color: "#ffffff", textAlign: "right" as const, maxWidth: "60%" }}>{row.value}</span>
                         </div>
                       ))}
@@ -417,14 +417,14 @@ function EditSaleModal({ sale, onClose, onSave }: { sale: Sale; onClose: () => v
   };
   const labelStyle = {
     fontSize: 11, fontWeight: 600 as const,
-    letterSpacing: "0.08em", color: "#525252",
+    letterSpacing: "0.08em", color: "#ededed" ,
     display: "block" as const, marginBottom: "0.4rem",
   };
   const toggleStyle = (active: boolean) => ({
     flex: 1, padding: "7px", fontSize: 12, fontWeight: 600 as const,
     background: active ? "linear-gradient(135deg, #ffffff, #a0a0a0)" : "transparent",
     border: active ? "none" : "1px solid #2a2a2a",
-    borderRadius: 8, color: active ? "#000" : "#525252",
+    borderRadius: 8, color: active ? "#000" : "#ededed",
     cursor: "pointer" as const,
   });
 
@@ -525,9 +525,9 @@ function EditSaleModal({ sale, onClose, onSave }: { sale: Sale; onClose: () => v
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
               <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Upravit záznam</h2>
-              <p style={{ fontSize: 12, color: "#525252", marginTop: 4 }}>{purchase?.event_name}</p>
+              <p style={{ fontSize: 12, color: "#ededed" , marginTop: 4 }}>{purchase?.event_name}</p>
             </div>
-            <button onClick={onClose} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button>
+            <button onClick={onClose} style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 22 }}>×</button>
           </div>
           {/* Section toggle */}
           <div style={{ display: "flex", gap: "0.5rem", marginTop: "1rem", background: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: 10, padding: "0.3rem" }}>
@@ -640,7 +640,7 @@ function EditSaleModal({ sale, onClose, onSave }: { sale: Sale; onClose: () => v
                 <div style={{ background: "#0a0a0a", border: "1px solid #2a2a2a", borderRadius: 10, padding: "0.75rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer" }}
                   onClick={() => setDelivered(!delivered)}>
                   <div>
-                    <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 2 }}>DORUČENÉ</div>
+                    <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: 2 }}>DORUČENÉ</div>
                     <div style={{ fontSize: 13, fontWeight: 600, color: delivered ? "#34d399" : "#f87171" }}>{delivered ? "ANO" : "NIE"}</div>
                   </div>
                   <div style={{ width: 36, height: 20, borderRadius: 10, background: delivered ? "#34d399" : "#2a2a2a", position: "relative", transition: "background 0.2s" }}>
@@ -650,7 +650,7 @@ function EditSaleModal({ sale, onClose, onSave }: { sale: Sale; onClose: () => v
                 <div style={{ background: "#0a0a0a", border: "1px solid #2a2a2a", borderRadius: 10, padding: "0.75rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer" }}
                   onClick={() => setPaidOut(!paidOut)}>
                   <div>
-                    <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 2 }}>VYPLACENÉ</div>
+                    <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: 2 }}>VYPLACENÉ</div>
                     <div style={{ fontSize: 13, fontWeight: 600, color: paidOut ? "#34d399" : "#f87171" }}>{paidOut ? "ANO" : "NIE"}</div>
                   </div>
                   <div style={{ width: 36, height: 20, borderRadius: 10, background: paidOut ? "#34d399" : "#2a2a2a", position: "relative", transition: "background 0.2s" }}>
@@ -664,7 +664,7 @@ function EditSaleModal({ sale, onClose, onSave }: { sale: Sale; onClose: () => v
 
         {/* Footer */}
         <div style={{ padding: "1rem 2rem", borderTop: "1px solid #1a1a1a", flexShrink: 0, display: "flex", gap: "0.75rem" }}>
-          <button onClick={onClose} style={{ flex: 1, padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#525252", cursor: "pointer", fontSize: 14 }}>
+          <button onClick={onClose} style={{ flex: 1, padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ededed" , cursor: "pointer", fontSize: 14 }}>
             Zrušit
           </button>
           <button onClick={handleSave} disabled={saving} style={{

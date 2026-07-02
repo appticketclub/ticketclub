@@ -57,7 +57,7 @@ export default function AiStatistikyTab() {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.75rem" }}>
         <div>
           <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.25rem" }}>AI statistiky</h1>
-          <p style={{ fontSize: 13, color: "#3a3a3a" }}>Analýza vašich nákupů a prodejů pomocí AI</p>
+          <p style={{ fontSize: 13, color: "#ededed"  }}>Analýza vašich nákupů a prodejů pomocí AI</p>
         </div>
         <button
           onClick={runAnalysis}
@@ -84,10 +84,10 @@ export default function AiStatistikyTab() {
       {!analysis && !loading && (
         <div style={{ background: "#111111", border: "1px dashed #2a2a2a", borderRadius: 16, padding: "4rem", textAlign: "center" }}>
           <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🤖</div>
-          <p style={{ color: "#525252", fontSize: 14, marginBottom: "1.5rem" }}>
+          <p style={{ color: "#ededed" , fontSize: 14, marginBottom: "1.5rem" }}>
             Klikněte na "Spustit analýzu" a AI prozkoumá všechny vaše nákupy a prodeje.
           </p>
-          <p style={{ color: "#3a3a3a", fontSize: 12 }}>Analýza trvá ~10-15 sekund</p>
+          <p style={{ color: "#ededed" , fontSize: 12 }}>Analýza trvá ~10-15 sekund</p>
         </div>
       )}
 
@@ -95,7 +95,7 @@ export default function AiStatistikyTab() {
         <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "4rem", textAlign: "center" }}>
           <div style={{ fontSize: "2rem", marginBottom: "1rem", animation: "pulse 1.5s infinite" }}>🤖</div>
           <p style={{ color: "#a78bfa", fontSize: 14, marginBottom: "0.5rem" }}>AI analyzuje vaše data...</p>
-          <p style={{ color: "#3a3a3a", fontSize: 12 }}>Kontroluji nákupy, prodeje, timing a platformy</p>
+          <p style={{ color: "#ededed" , fontSize: 12 }}>Kontroluji nákupy, prodeje, timing a platformy</p>
           <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }`}</style>
         </div>
       )}
@@ -108,14 +108,14 @@ export default function AiStatistikyTab() {
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #a78bfa, transparent)" }} />
             <div style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
               <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 8 }}>AI SKÓRE</div>
+                <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: 8 }}>AI SKÓRE</div>
                 <div style={{ fontSize: 48, fontWeight: 800, color: analysis.overall_score >= 7 ? "#34d399" : analysis.overall_score >= 5 ? "#fbbf24" : "#f87171", lineHeight: 1 }}>
                   {analysis.overall_score}
                 </div>
-                <div style={{ fontSize: 12, color: "#3a3a3a" }}>/ 10</div>
+                <div style={{ fontSize: 12, color: "#ededed"  }}>/ 10</div>
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: 8 }}>CELKOVÉ HODNOCENÍ</div>
+                <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: 8 }}>CELKOVÉ HODNOCENÍ</div>
                 <p style={{ fontSize: 15, color: "#e8e8e8", lineHeight: 1.6 }}>{analysis.overall_verdict}</p>
               </div>
             </div>
@@ -141,7 +141,7 @@ export default function AiStatistikyTab() {
 
           {/* Insights */}
           <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem" }}>
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#3a3a3a", marginBottom: "1rem" }}>POZNATKY & DOPORUČENÍ</div>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: "1rem" }}>POZNATKY & DOPORUČENÍ</div>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
               {analysis.insights.map((insight, i) => {
                 const c = insightColors[insight.type];
@@ -161,11 +161,11 @@ export default function AiStatistikyTab() {
           {/* Timing & Platform */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
             <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.25rem 1.5rem" }}>
-              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#3a3a3a", marginBottom: 8 }}>⏱️ TIMING ANALÝZA</div>
+              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: 8 }}>⏱️ TIMING ANALÝZA</div>
               <p style={{ fontSize: 13, color: "#ffffff", lineHeight: 1.6 }}>{analysis.timing_analysis}</p>
             </div>
             <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.25rem 1.5rem" }}>
-              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#3a3a3a", marginBottom: 8 }}>🏪 PLATFORMA ANALÝZA</div>
+              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ededed" , marginBottom: 8 }}>🏪 PLATFORMA ANALÝZA</div>
               <p style={{ fontSize: 13, color: "#ffffff", lineHeight: 1.6 }}>{analysis.platform_analysis}</p>
             </div>
           </div>
@@ -178,11 +178,11 @@ export default function AiStatistikyTab() {
           </div>
 
           {/* Refresh */}
-          <button onClick={runAnalysis} style={{ padding: "0.6rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#525252", cursor: "pointer", fontSize: 13 }}>
+          <button onClick={runAnalysis} style={{ padding: "0.6rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ededed" , cursor: "pointer", fontSize: 13 }}>
             🔄 Obnovit analýzu
           </button>
           {cachedAt && (
-            <p style={{ fontSize: 11, color: "#3a3a3a", textAlign: "center", marginTop: 4 }}>
+            <p style={{ fontSize: 11, color: "#ededed" , textAlign: "center", marginTop: 4 }}>
               Poslední analýza: {new Date(cachedAt).toLocaleString("cs-CZ")}
             </p>
           )}

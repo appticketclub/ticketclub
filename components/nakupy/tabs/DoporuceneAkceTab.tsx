@@ -89,7 +89,7 @@ export default function DoporuceneAkceTab() {
   };
   const labelStyle = {
     fontSize: 11, fontWeight: 600 as const,
-    letterSpacing: "0.08em", color: "#525252",
+    letterSpacing: "0.08em", color: "#ededed" ,
     display: "block" as const, marginBottom: "0.4rem",
   };
 
@@ -98,7 +98,7 @@ export default function DoporuceneAkceTab() {
       {/* Header */}
       <div style={{ marginBottom: "1.5rem" }}>
         <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.25rem" }}>Nadcházející akce</h1>
-        <p style={{ fontSize: 13, color: "#3a3a3a" }}>Procházejte nadcházející akce z Ticketmaster</p>
+        <p style={{ fontSize: 13, color: "#ededed"  }}>Procházejte nadcházející akce z Ticketmaster</p>
       </div>
 
       {/* Filters */}
@@ -149,12 +149,12 @@ export default function DoporuceneAkceTab() {
             {loading ? "⏳ Hledám..." : "🔍 Hledat akce"}
           </button>
           {searched && (
-            <button onClick={reset} style={{ padding: "0.65rem 1rem", fontSize: 13, background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#525252", cursor: "pointer" }}>
+            <button onClick={reset} style={{ padding: "0.65rem 1rem", fontSize: 13, background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#ededed" , cursor: "pointer" }}>
               × Resetovat
             </button>
           )}
           {searched && total > 0 && (
-            <span style={{ fontSize: 13, color: "#3a3a3a" }}>{total} výsledků celkem</span>
+            <span style={{ fontSize: 13, color: "#ededed"  }}>{total} výsledků celkem</span>
           )}
         </div>
       </div>
@@ -169,8 +169,8 @@ export default function DoporuceneAkceTab() {
       {!searched && !loading && (
         <div style={{ background: "#111111", border: "1px dashed #2a2a2a", borderRadius: 16, padding: "4rem", textAlign: "center" }}>
           <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🎫</div>
-          <p style={{ color: "#525252", fontSize: 14 }}>Zadejte filtr a klikněte na "Hledat akce"</p>
-          <p style={{ color: "#3a3a3a", fontSize: 12, marginTop: 8 }}>Data z Ticketmaster · AI tipy pro každou akci</p>
+          <p style={{ color: "#ededed" , fontSize: 14 }}>Zadejte filtr a klikněte na "Hledat akce"</p>
+          <p style={{ color: "#ededed" , fontSize: 12, marginTop: 8 }}>Data z Ticketmaster · AI tipy pro každou akci</p>
         </div>
       )}
 
@@ -178,14 +178,14 @@ export default function DoporuceneAkceTab() {
       {loading && (
         <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "4rem", textAlign: "center" }}>
           <p style={{ color: "#a78bfa", fontSize: 14, marginBottom: "0.5rem" }}>Načítám akce z Ticketmaster...</p>
-          <p style={{ color: "#3a3a3a", fontSize: 12 }}>AI připravuje tipy pro každou akci</p>
+          <p style={{ color: "#ededed" , fontSize: 12 }}>AI připravuje tipy pro každou akci</p>
         </div>
       )}
 
       {/* No results */}
       {searched && !loading && events.length === 0 && (
         <div style={{ background: "#111111", border: "1px dashed #2a2a2a", borderRadius: 16, padding: "3rem", textAlign: "center" }}>
-          <p style={{ color: "#525252", fontSize: 14 }}>Žádné akce nenalezeny. Zkuste změnit filtry.</p>
+          <p style={{ color: "#ededed" , fontSize: 14 }}>Žádné akce nenalezeny. Zkuste změnit filtry.</p>
         </div>
       )}
 
@@ -220,31 +220,31 @@ export default function DoporuceneAkceTab() {
               <div style={{ padding: "1rem 1.25rem" }}>
                 <h3 style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 4, lineHeight: 1.3 }}>{event.name}</h3>
                 {event.artist && event.artist !== event.name && (
-                  <p style={{ fontSize: 12, color: "#525252", marginBottom: 8 }}>{event.artist}</p>
+                  <p style={{ fontSize: 12, color: "#ededed" , marginBottom: 8 }}>{event.artist}</p>
                 )}
 
                 <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 10 }}>
                   {event.date && (
-                    <div style={{ fontSize: 12, color: "#525252", display: "flex", alignItems: "center", gap: 6 }}>
+                    <div style={{ fontSize: 12, color: "#ededed" , display: "flex", alignItems: "center", gap: 6 }}>
                       <span>📅</span>
                       <span>{new Date(event.date).toLocaleDateString("cs-CZ", { weekday: "short", day: "numeric", month: "long", year: "numeric" })}</span>
-                      {event.time && <span style={{ color: "#3a3a3a" }}>· {event.time.substring(0, 5)}</span>}
+                      {event.time && <span style={{ color: "#ededed"  }}>· {event.time.substring(0, 5)}</span>}
                     </div>
                   )}
                   {event.venue && (
-                    <div style={{ fontSize: 12, color: "#525252", display: "flex", alignItems: "center", gap: 6 }}>
+                    <div style={{ fontSize: 12, color: "#ededed" , display: "flex", alignItems: "center", gap: 6 }}>
                       <span>🏟️</span>
                       <span>{event.venue}</span>
                     </div>
                   )}
                   {event.city && (
-                    <div style={{ fontSize: 12, color: "#525252", display: "flex", alignItems: "center", gap: 6 }}>
+                    <div style={{ fontSize: 12, color: "#ededed" , display: "flex", alignItems: "center", gap: 6 }}>
                       <span>📍</span>
                       <span>{event.city}{event.country ? `, ${event.country}` : ""}</span>
                     </div>
                   )}
                   {event.priceMin && (
-                    <div style={{ fontSize: 12, color: "#525252", display: "flex", alignItems: "center", gap: 6 }}>
+                    <div style={{ fontSize: 12, color: "#ededed" , display: "flex", alignItems: "center", gap: 6 }}>
                       <span>💰</span>
                       <span>{event.priceMin}–{event.priceMax} {event.currency}</span>
                     </div>
