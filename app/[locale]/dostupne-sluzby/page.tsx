@@ -31,7 +31,7 @@ export default async function DostupneSluzbyPage() {
           <h1 style={{ fontSize: "1.75rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>
             Vítejte zpět{profile?.full_name ? `, ${profile.full_name.split(" ")[0]}` : ""}
           </h1>
-          <p style={{ color: "#525252" }}>Vyberte si nástroj, se kterým chcete pracovat.</p>
+          <p style={{ color: "#f5f5f5" }}>Vyberte si nástroj, se kterým chcete pracovat.</p>
         </div>
         <ServicesGrid isPro={isPro} />
       </main>

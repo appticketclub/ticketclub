@@ -93,7 +93,7 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
             <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 4 }}>
               ⭐ Upgrade na Pro
             </div>
-            <div style={{ fontSize: 12, color: "#525252" }}>
+            <div style={{ fontSize: 12, color: "#f5f5f5" }}>
               AI štatistiky, Chrome Launcher, Extension a oveľa viac
             </div>
           </div>
@@ -155,12 +155,12 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
               <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: locked ? "#525252" : "#fff", marginBottom: "0.5rem" }}>
                 {service.title}
               </h3>
-              <p style={{ fontSize: "0.875rem", color: "#525252", lineHeight: 1.6, marginBottom: "1.5rem" }}>
+              <p style={{ fontSize: "0.875rem", color: "#f5f5f5", lineHeight: 1.6, marginBottom: "1.5rem" }}>
                 {service.description}
               </p>
 
               {locked ? (
-                <div style={{ fontSize: 13, color: "#525252", display: "flex", alignItems: "center", gap: 6 }}>
+                <div style={{ fontSize: 13, color: "#f5f5f5", display: "flex", alignItems: "center", gap: 6 }}>
                   🔒 Dostupné v Pro plánu
                   <div style={{ marginLeft: "auto" }}>
                     <UpgradeLink />
