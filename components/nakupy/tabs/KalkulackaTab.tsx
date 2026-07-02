@@ -62,14 +62,14 @@ export default function KalkulackaTab() {
           {/* Buy price */}
           <div style={{ marginBottom: "1.5rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-              <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252" }}>NÁKUPNÍ CENA</span>
+              <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ffffff" }}>NÁKUPNÍ CENA</span>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <input type="number" value={buyPrice} onChange={e => setBuyPrice(e.target.value)} style={inputStyle} min={1} />
                 <span style={{ fontSize: 13, color: "#ffffff", fontWeight: 600 }}>{currency}</span>
               </div>
             </div>
             <input type="range" min={1} max={2000} step={1} value={buyPriceNum} onChange={e => setBuyPrice(String(e.target.value))} style={sliderStyle} />
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#3a3a3a", marginTop: 4 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#ffffff", marginTop: 4 }}>
               <span>1</span><span>2 000 {currency}</span>
             </div>
           </div>
@@ -77,21 +77,21 @@ export default function KalkulackaTab() {
           {/* Sell price */}
           <div style={{ marginBottom: "1.5rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-              <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252" }}>PRODEJNÍ CENA</span>
+              <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ffffff" }}>PRODEJNÍ CENA</span>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <input type="number" value={sellPrice} onChange={e => setSellPrice(e.target.value)} style={inputStyle} min={1} />
                 <span style={{ fontSize: 13, color: "#ffffff", fontWeight: 600 }}>{currency}</span>
               </div>
             </div>
             <input type="range" min={1} max={5000} step={1} value={sellPriceNum} onChange={e => setSellPrice(String(e.target.value))} style={sliderStyle} />
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#3a3a3a", marginTop: 4 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#ffffff", marginTop: 4 }}>
               <span>1</span><span>5 000 {currency}</span>
             </div>
           </div>
 
           {/* Quantity */}
           <div style={{ marginBottom: "1.5rem" }}>
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: "0.75rem" }}>POČET LÍSTKŮ</div>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ffffff", marginBottom: "0.75rem" }}>POČET LÍSTKŮ</div>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <button onClick={() => setQuantity(Math.max(1, quantity - 1))} style={{ width: 32, height: 32, borderRadius: 8, background: "#1a1a1a", border: "1px solid #2a2a2a", color: "#fff", cursor: "pointer", fontSize: 18 }}>−</button>
               <span style={{ fontSize: 24, fontWeight: 700, color: "#fff", minWidth: 40, textAlign: "center" as const }}>{quantity}</span>
@@ -102,7 +102,7 @@ export default function KalkulackaTab() {
 
           {/* Platform */}
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#525252", marginBottom: "0.75rem" }}>POPLATEK PLATFORMY</div>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#ffffff", marginBottom: "0.75rem" }}>POPLATEK PLATFORMY</div>
             <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 6 }}>
               {PLATFORMS.map((p, i) => (
                 <button key={p.name} onClick={() => setPlatformIdx(i)} style={{
@@ -119,7 +119,7 @@ export default function KalkulackaTab() {
             {platform.name === "Vlastní" && (
               <div style={{ marginTop: "0.75rem", display: "flex", alignItems: "center", gap: 10 }}>
                 <input type="number" min={0} max={50} value={customFee} onChange={e => setCustomFee(Number(e.target.value))} style={{ ...inputStyle, width: 60 }} />
-                <span style={{ fontSize: 13, color: "#525252" }}>% poplatek</span>
+                <span style={{ fontSize: 13, color: "#ffffff" }}>% poplatek</span>
               </div>
             )}
           </div>
@@ -147,11 +147,11 @@ export default function KalkulackaTab() {
                 <div style={{ fontSize: 18, fontWeight: 700, color: isProfit ? "#34d399" : "#f87171" }}>{roi.toFixed(1)}%</div>
               </div>
               <div>
-                <div style={{ fontSize: 11, color: "#525252" }}>Lístků</div>
+                <div style={{ fontSize: 11, color: "#ffffff" }}>Lístků</div>
                 <div style={{ fontSize: 18, fontWeight: 700, color: "#ffffff" }}>{quantity}×</div>
               </div>
               <div>
-                <div style={{ fontSize: 11, color: "#525252" }}>Poplatek</div>
+                <div style={{ fontSize: 11, color: "#ffffff" }}>Poplatek</div>
                 <div style={{ fontSize: 18, fontWeight: 700, color: "#fbbf24" }}>{feePercent}%</div>
               </div>
             </div>
@@ -171,7 +171,7 @@ export default function KalkulackaTab() {
                 padding: "0.6rem 0",
                 borderBottom: i < arr.length - 1 ? "1px solid #141414" : "none",
               }}>
-                <span style={{ fontSize: 13, color: "#525252" }}>{row.label}</span>
+                <span style={{ fontSize: 13, color: "#ffffff" }}>{row.label}</span>
                 <span style={{ fontSize: 14, fontWeight: 600, color: row.color }}>{row.value}</span>
               </div>
             ))}
@@ -182,16 +182,16 @@ export default function KalkulackaTab() {
             <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#3a3a3a", marginBottom: "0.75rem" }}>BREAK-EVEN ANALÝZA</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
               <div>
-                <div style={{ fontSize: 11, color: "#525252", marginBottom: 4 }}>Min. prodejní cena</div>
+                <div style={{ fontSize: 11, color: "#ffffff", marginBottom: 4 }}>Min. prodejní cena</div>
                 <div style={{ fontSize: 18, fontWeight: 700, color: "#fbbf24" }}>{Math.ceil(breakEven).toLocaleString("cs-CZ")} {currency}</div>
-                <div style={{ fontSize: 11, color: "#3a3a3a", marginTop: 2 }}>aby jsi byl v nule</div>
+                <div style={{ fontSize: 11, color: "#ffffff", marginTop: 2 }}>aby jsi byl v nule</div>
               </div>
               <div>
-                <div style={{ fontSize: 11, color: "#525252", marginBottom: 4 }}>Marže nad break-even</div>
+                <div style={{ fontSize: 11, color: "#ffffff", marginBottom: 4 }}>Marže nad break-even</div>
                 <div style={{ fontSize: 18, fontWeight: 700, color: sellPriceNum > breakEven ? "#34d399" : "#f87171" }}>
                   {sellPriceNum > breakEven ? "+" : ""}{Math.round(((sellPriceNum - breakEven) / breakEven) * 100)}%
                 </div>
-                <div style={{ fontSize: 11, color: "#3a3a3a", marginTop: 2 }}>nad minimem</div>
+                <div style={{ fontSize: 11, color: "#ffffff", marginTop: 2 }}>nad minimem</div>
               </div>
             </div>
           </div>
