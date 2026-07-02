@@ -145,19 +145,25 @@ export default function UvodTab() {
         calcAvgRoi = soldCost > 0 ? (calcSoldProfit / soldCost) * 100 : 0;
 
         // Build chart data from sales grouped by date — only sold purchases 
-        const chartDataByDate = soldSales.reduce((acc: any, sale: any) => { 
-          const date = new Date(sale.sold_at).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" }); 
-          if (!acc[date]) acc[date] = { date, revenue: 0, cost: 0, qty: 0 }; 
-          const purchase = soldPurchases.find(p => p.id === sale.purchase_id); 
-          acc[date].revenue += (sale.sell_price ?? 0) * (sale.quantity_sold ?? 0); 
-          acc[date].cost += (purchase?.buy_price ?? 0) * (sale.quantity_sold ?? 0); 
-          acc[date].qty += sale.quantity_sold ?? 0; 
-          return acc; 
-        }, {}); 
+        const chartDataByDate: Record<string, { date: string; revenue: number; cost: number }> = {}; 
+ 
+        for (const sale of soldSales as any[]) { 
+          const dateRaw = sale.sold_at ?? sale.created_at; 
+          if (!dateRaw) continue; 
+          const date = new Date(dateRaw).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" }); 
+          if (!chartDataByDate[date]) chartDataByDate[date] = { date, revenue: 0, cost: 0 }; 
+   
+          const purchase = soldPurchases.find((p: any) => p.id === sale.purchase_id); 
+          const buyCost = (purchase?.buy_price ?? (sale.purchases as any)?.buy_price ?? 0) * (sale.quantity_sold ?? 0); 
+          const revenue = (sale.sell_price ?? 0) * (sale.quantity_sold ?? 0); 
+   
+          chartDataByDate[date].revenue += revenue; 
+          chartDataByDate[date].cost += buyCost; 
+        } 
  
         let cumulativeProfit = 0; 
         let cumulativeCost = 0; 
-        const calcSoldChartData = Object.values(chartDataByDate).map((d: any) => { 
+        const calcSoldChartData = Object.values(chartDataByDate).map((d) => { 
           cumulativeProfit += d.revenue - d.cost; 
           cumulativeCost += d.cost; 
           return { 
@@ -166,7 +172,10 @@ export default function UvodTab() {
             investovano: Math.round(cumulativeCost * 100) / 100, 
             roi: cumulativeCost > 0 ? Math.round((cumulativeProfit / cumulativeCost) * 1000) / 10 : 0, 
           }; 
-        });
+        }); 
+ 
+        console.log("[uvod] chartDataByDate:", chartDataByDate); 
+        console.log("[uvod] soldChartData fixed:", calcSoldChartData);
 
         // Calculate total invested
         const totalInvested = purchases 
