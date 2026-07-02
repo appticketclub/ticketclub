@@ -1086,6 +1086,7 @@ export default function EvidenceTab() {
                 <div dangerouslySetInnerHTML={{ __html: generateTicketSVG({
                   eventName: bannerRow.event_name,
                   quantity: bannerRow.quantity,
+                  quantitySold: bannerRow.quantity_sold,
                   buyPrice: bannerRow.buy_price * bannerRow.quantity,
                   sellPrice: bannerRow.sell_price_total,
                   profit: bannerRow.profit,
