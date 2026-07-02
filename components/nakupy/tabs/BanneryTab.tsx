@@ -52,9 +52,6 @@ export function generateTicketSVG(data: {
   <!-- Názov eventu — menší --> 
   <text x="64" y="72" font-family="'Arial Black', Arial, sans-serif" font-size="52" font-weight="900" fill="#ffffff">${data.eventName.toUpperCase().substring(0, 20)}</text> 
 
-  <!-- Logo vpravo --> 
-  <image href="/logo.png" x="1060" y="88" width="200" height="70" preserveAspectRatio="xMidYMid meet" opacity="0.9"/> 
-
   <!-- Separator --> 
   <line x1="64" y1="110" x2="1216" y2="110" stroke="#222222" stroke-width="1.5"/> 
 
@@ -80,16 +77,13 @@ export function generateTicketSVG(data: {
   <text x="64" y="390" font-family="'Arial Black', Arial, sans-serif" font-size="110" font-weight="900" fill="${profitColor}">${profitStr}</text> 
 
   <!-- ROI --> 
-  <text x="64" y="434" font-family="Arial, sans-serif" font-size="22" fill="${isProfit ? '#4ade80' : '#f87171'}">ROI ${isProfit ? '+' : ''}${data.roi.toFixed(1)}%</text> 
+  <text x="64" y="434" font-family="Arial, sans-serif" font-size="36" font-weight="900" fill="${isProfit ? '#4ade80' : '#f87171'}">ROI ${isProfit ? '+' : ''}${data.roi.toFixed(1)}%</text> 
 
   <!-- Separator --> 
   <line x1="64" y1="460" x2="1216" y2="460" stroke="#222222" stroke-width="1.5"/> 
 
-  <!-- Spodok --> 
-  <text x="64" y="494" font-family="Arial, sans-serif" font-size="22" fill="#ffffff">${data.quantity_sold ?? data.quantity}× lístků prodáno z ${data.quantity}</text> 
-
   <!-- Logo TC vpravo dole --> 
-  <image href="/logo.png" x="1060" y="460" width="200" height="70" preserveAspectRatio="xMidYMid meet" opacity="0.15"/> 
+  <image href="/logo.png" x="1060" y="460" width="200" height="70" preserveAspectRatio="xMidYMid meet" opacity="0.9"/> 
 
 </svg>`; 
 }
