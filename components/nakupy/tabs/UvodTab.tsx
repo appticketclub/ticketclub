@@ -102,6 +102,7 @@ export default function UvodTab() {
       let calcSoldProfit = 0;
       let calcTotalBuy = 0;
       let calcAvgRoi = 0;
+      let computedChartData: any[] = [];
       
       try {
         const purchasesQuery = supabase
@@ -161,7 +162,7 @@ export default function UvodTab() {
  
         let cumulativeProfit = 0; 
         let cumulativeCost = 0; 
-        const computedChartData = Object.values(chartDataByDate).map((d) => { 
+        computedChartData = Object.values(chartDataByDate).map((d) => { 
           cumulativeProfit += d.revenue - d.cost; 
           cumulativeCost += d.cost; 
           return { 
