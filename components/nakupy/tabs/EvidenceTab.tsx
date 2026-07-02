@@ -1174,7 +1174,7 @@ export default function EvidenceTab() {
                 }}
                 style={{ padding: "0.8rem", background: "linear-gradient(135deg, #D4AF37, #b8960f)", border: "none", borderRadius: 10, color: "#000", cursor: "pointer", fontSize: 13, fontWeight: 700 }}
               >
-                ↗ Zdieľať
+                ↗ Sdílet
               </button>
             </div>
           </div>
