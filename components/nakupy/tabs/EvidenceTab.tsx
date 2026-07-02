@@ -761,15 +761,25 @@ export default function EvidenceTab() {
                             const newQty = parseInt(e.target.value);
                             setEditValue(String(newQty));
 
-                            // If already has sales and increasing quantity, show update modal
-                            if (row.quantity_sold > 0 && newQty > row.quantity_sold) {
+                            // If decreasing — show modal with minus preselected
+                            if (row.quantity_sold > 0 && newQty < row.quantity_sold) {
                               setEditingCell(null);
                               setSaleUpdatePrice("");
+                              setSaleUpdateMode("subtract");
                               setSaleUpdateModal({ row, newQty });
                               return;
                             }
 
-                            // Otherwise proceed normally
+                            // If increasing — show modal with plus preselected
+                            if (row.quantity_sold > 0 && newQty > row.quantity_sold) {
+                              setEditingCell(null);
+                              setSaleUpdatePrice("");
+                              setSaleUpdateMode("add");
+                              setSaleUpdateModal({ row, newQty });
+                              return;
+                            }
+
+                            // If no previous sales — proceed normally
                             const supabase = createClient();
                             const { data: { user } } = await supabase.auth.getUser();
                             if (!user) return;
