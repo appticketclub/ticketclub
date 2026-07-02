@@ -79,9 +79,6 @@ export function generateTicketSVG(data: {
   <!-- ROI --> 
   <text x="64" y="470" font-family="Arial, sans-serif" font-size="36" font-weight="900" fill="${isProfit ? '#4ade80' : '#f87171'}">ROI ${isProfit ? '+' : ''}${data.roi.toFixed(1)}%</text> 
 
-  <!-- Separator --> 
-  <line x1="64" y1="460" x2="1216" y2="460" stroke="#222222" stroke-width="1.5"/> 
-
   <!-- Logo TC vpravo dole --> 
   <image href="/logo.png" x="1060" y="460" width="200" height="70" preserveAspectRatio="xMidYMid meet" opacity="0.9"/> 
 
