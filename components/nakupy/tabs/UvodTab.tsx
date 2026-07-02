@@ -150,7 +150,7 @@ export default function UvodTab() {
           const dateRaw = sale.sold_at ?? sale.created_at; 
           if (!dateRaw) continue; 
           const date = new Date(dateRaw).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" }); 
-          if (!chartDataByDate[date]) chartDataByDate[date] = { date, revenue: 0, cost: 0 }; 
+          if (!chartDataByDate[date]) chartDataByDate[date] = { date, rawDate: dateRaw, revenue: 0, cost: 0 }; 
    
           const purchase = soldPurchases.find((p: any) => p.id === sale.purchase_id); 
           const buyCost = (purchase?.buy_price ?? (sale.purchases as any)?.buy_price ?? 0) * (sale.quantity_sold ?? 0); 
@@ -162,7 +162,9 @@ export default function UvodTab() {
  
         let cumulativeProfit = 0; 
         let cumulativeCost = 0; 
-        computedChartData = Object.values(chartDataByDate).map((d) => { 
+        computedChartData = Object.entries(chartDataByDate) 
+          .sort(([, a], [, b]) => new Date((a as any).rawDate).getTime() - new Date((b as any).rawDate).getTime()) 
+          .map(([, d]) => { 
           cumulativeProfit += d.revenue - d.cost; 
           cumulativeCost += d.cost; 
           return { 
