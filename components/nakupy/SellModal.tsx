@@ -27,6 +27,7 @@ type BannerData = {
   buy_price: number;
   sell_price: number;
   quantity: number;
+  quantity_sold?: number;
   fees: number;
   profit: number;
   roi: number;
@@ -38,6 +39,7 @@ function PnlBanner({ data, currency }: { data: any; currency: string }) {
   const svg = generateTicketSVG({
     eventName: data.event_name,
     quantity: data.quantity,
+    quantitySold: data.quantity_sold,
     buyPrice: data.buy_price * data.quantity,
     sellPrice: data.sell_price,
     profit: data.profit,
@@ -148,32 +150,34 @@ export default function SellModal({ purchase, onClose, onSave }: {
     }
 
     // Save banner to DB
-    const banner = {
-      user_id: user.id,
-      purchase_id: purchase.id,
-      event_name: purchase.event_name,
-      buy_price: purchase.buy_price,
-      sell_price: sellNum,
-      quantity: qtyNum,
-      fees: 0,
-      profit: Math.round(profit * 100) / 100,
-      roi: Math.round(roi * 100) / 100,
-      currency: purchase.currency,
-      platform: platform === "Jiné" ? (customPlatform || "Jiné") : (platform || null),
-    };
-    await supabase.from("banners").insert(banner);
+        const banner = {
+          user_id: user.id,
+          purchase_id: purchase.id,
+          event_name: purchase.event_name,
+          buy_price: purchase.buy_price,
+          sell_price: sellNum,
+          quantity: purchase.quantity,
+          quantity_sold: qtyNum,
+          fees: 0,
+          profit: Math.round(profit * 100) / 100,
+          roi: Math.round(roi * 100) / 100,
+          currency: purchase.currency,
+          platform: platform === "Jiné" ? (customPlatform || "Jiné") : (platform || null),
+        };
+        await supabase.from("banners").insert(banner);
 
-    setBannerData({
-      event_name: purchase.event_name,
-      buy_price: purchase.buy_price,
-      sell_price: sellNum,
-      quantity: qtyNum,
-      fees: 0,
-      profit: Math.round(profit * 100) / 100,
-      roi: Math.round(roi * 100) / 100,
-      platform: platform === "Jiné" ? (customPlatform || "Jiné") : (platform || null),
-      currency: purchase.currency,
-    });
+        setBannerData({
+          event_name: purchase.event_name,
+          buy_price: purchase.buy_price,
+          sell_price: sellNum,
+          quantity: purchase.quantity,
+          quantity_sold: qtyNum,
+          fees: 0,
+          profit: Math.round(profit * 100) / 100,
+          roi: Math.round(roi * 100) / 100,
+          platform: platform === "Jiné" ? (customPlatform || "Jiné") : (platform || null),
+          currency: purchase.currency,
+        });
 
     setSaving(false);
     setStep("success");

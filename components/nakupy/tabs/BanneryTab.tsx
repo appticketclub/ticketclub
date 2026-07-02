@@ -9,6 +9,7 @@ type Banner = {
   buy_price: number;
   sell_price: number;
   quantity: number;
+  quantity_sold?: number;
   fees: number;
   profit: number;
   roi: number;
@@ -20,6 +21,7 @@ type Banner = {
 export function generateTicketSVG(data: { 
   eventName: string; 
   quantity: number; 
+  quantitySold?: number;
   buyPrice: number; 
   sellPrice: number; 
   profit: number; 
@@ -32,7 +34,8 @@ export function generateTicketSVG(data: {
 
   const buyStr = `${fmt(data.buyPrice)} ${data.currency}`; 
   const sellStr = `${fmt(data.sellPrice)} ${data.currency}`; 
-  const profitStr = `${isProfit ? '+' : ''}${fmt(data.profit)} ${data.currency}`; 
+  const profitStr = `${isProfit ? '+' : ''}${fmt(data.profit)} ${data.currency}`;
+  const sold = data.quantitySold ?? data.quantity; 
 
   const maxLen = Math.max(buyStr.length, sellStr.length, profitStr.length); 
   const priceSize = maxLen > 12 ? 28 : maxLen > 9 ? 36 : maxLen > 7 ? 42 : 48; 
@@ -68,7 +71,7 @@ export function generateTicketSVG(data: {
 
     <line x1="64" y1="336" x2="1216" y2="336" stroke="#222222" stroke-width="1.5"/> 
 
-    <text x="64" y="400" font-family="Arial, sans-serif" font-size="24" fill="#444444">${data.quantity}× lístků</text> 
+    <text x="64" y="400" font-family="Arial, sans-serif" font-size="24" fill="#444444">${sold}× lístků prodáno z ${data.quantity}</text> 
     <text x="360" y="400" font-family="Arial, sans-serif" font-size="24" fill="#444444">ROI ${isProfit ? '+' : ''}${data.roi.toFixed(1)}%</text> 
 
     <text x="1216" y="400" font-family="'Arial Black', Arial, sans-serif" font-size="24" font-weight="900" fill="${isProfit ? '#4ade80' : '#f87171'}" text-anchor="end" letter-spacing="1">ticketclub.vip</text> 
@@ -80,6 +83,7 @@ function BannerCard({ banner }: { banner: Banner }) {
   const svg = generateTicketSVG({
     eventName: banner.event_name,
     quantity: banner.quantity,
+    quantitySold: banner.quantity_sold,
     buyPrice: banner.buy_price * banner.quantity,
     sellPrice: banner.sell_price,
     profit: banner.profit,
