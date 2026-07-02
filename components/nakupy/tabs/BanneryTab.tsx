@@ -46,11 +46,11 @@ export function generateTicketSVG(data: {
   <rect x="2" y="2" width="1276" height="596" rx="22" fill="none" stroke="${isProfit ? '#4ade80' : '#f87171'}" stroke-width="8" opacity="0.06"/> 
 
   <!-- UZAVŘENÝ FLIP badge vpravo hore --> 
-  <rect x="910" y="30" width="340" height="48" rx="24" fill="none" stroke="${isProfit ? '#4ade80' : '#f87171'}" stroke-width="1" opacity="0.5"/> 
-  <text x="1080" y="60" font-family="Arial, sans-serif" font-size="20" fill="${isProfit ? '#4ade80' : '#f87171'}" letter-spacing="3" text-anchor="middle">UZAVŘENÝ FLIP</text> 
+  <rect x="910" y="30" width="340" height="48" rx="24" fill="none" stroke="#D4AF37" stroke-width="1" opacity="0.5"/> 
+  <text x="1080" y="60" font-family="Arial, sans-serif" font-size="20" fill="#D4AF37" letter-spacing="3" text-anchor="middle">UZAVŘENÝ FLIP</text> 
 
   <!-- Názov eventu — menší --> 
-  <text x="64" y="72" font-family="'Arial Black', Arial, sans-serif" font-size="52" font-weight="900" fill="#ffffff">${data.eventName.toUpperCase().substring(0, 20)}</text> 
+  <text x="64" y="72" font-family="'Arial Black', Arial, sans-serif" font-size="52" font-weight="900" fill="#D4AF37">${data.eventName.toUpperCase().substring(0, 20)}</text> 
 
   <!-- Separator --> 
   <line x1="64" y1="110" x2="1216" y2="110" stroke="#222222" stroke-width="1.5"/> 
@@ -77,7 +77,7 @@ export function generateTicketSVG(data: {
   <text x="64" y="390" font-family="'Arial Black', Arial, sans-serif" font-size="110" font-weight="900" fill="${profitColor}">${profitStr}</text> 
 
   <!-- ROI --> 
-  <text x="64" y="434" font-family="Arial, sans-serif" font-size="36" font-weight="900" fill="${isProfit ? '#4ade80' : '#f87171'}">ROI ${isProfit ? '+' : ''}${data.roi.toFixed(1)}%</text> 
+  <text x="64" y="470" font-family="Arial, sans-serif" font-size="36" font-weight="900" fill="${isProfit ? '#4ade80' : '#f87171'}">ROI ${isProfit ? '+' : ''}${data.roi.toFixed(1)}%</text> 
 
   <!-- Separator --> 
   <line x1="64" y1="460" x2="1216" y2="460" stroke="#222222" stroke-width="1.5"/> 
