@@ -113,7 +113,7 @@ export default function UvodTab() {
 
         let salesQuery = supabase
           .from("sales")
-          .select("sell_price, quantity_sold, fees, purchases(buy_price), sold_at, purchase_id")
+          .select("id, purchase_id, sell_price, quantity_sold, fees, sold_at, purchases(id, buy_price, status)")
           .eq("user_id", user.id);
 
         if (from) salesQuery = salesQuery.gte("sold_at", from);
@@ -131,7 +131,9 @@ export default function UvodTab() {
 
         // Only closed (sold) purchases
         const soldPurchases = purchases.filter(p => p.status === "sold");
-        const soldSales = sales.filter(s => soldPurchases.some(p => p.id === s.purchase_id));
+        const soldSales = sales.filter((s: any) => soldPurchases.some(p => p.id === s.purchase_id));
+
+        console.log("[uvod] soldPurchases:", soldPurchases.length, "soldSales:", soldSales.length);
 
         const soldRevenue = soldSales.reduce((acc, s) => acc + (s.sell_price ?? 0) * (s.quantity_sold ?? 0), 0);
         const soldCost = soldSales.reduce((acc, s) => {
@@ -193,6 +195,8 @@ export default function UvodTab() {
       setTotalBuy(calcTotalBuy);
       setAvgRoi(calcAvgRoi);
       setSoldChartData(calcSoldChartData);
+
+      console.log("[uvod] soldChartData:", calcSoldChartData);
 
       // Cache the data
       setCached(cacheKey, {
