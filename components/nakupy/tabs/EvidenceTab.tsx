@@ -430,7 +430,6 @@ export default function EvidenceTab() {
             >
               <option value="">— Vyberte —</option>
               {options.map(o => <option key={o} value={o}>{o}</option>)}
-              <option value="Jiné">Jiné</option>
             </select>
             {showCustom && (
               <input
