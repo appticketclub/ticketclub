@@ -45,7 +45,7 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
   const services = [
     {
       id: "nakupy",
-      title: "Seznam nákupů",
+      title: "Evidence nákupů",
       description: "P&L tracker pro ticket resellery.",
       icon: "🎟️",
       href: "/nakupy",
@@ -54,7 +54,7 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
     {
       id: "chrome-launcher",
       title: "Chrome Launcher",
-      description: "Spusťte všechny Chrome profily najednou.",
+      description: "Spusťte víc Chrome profilů najednou s jedním odkazem.",
       icon: "🚀",
       href: "/chrome-launcher",
       free: false,
@@ -62,7 +62,7 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
     {
       id: "refresh-bot",
       title: "Refresh Bot",
-      description: "Automatické monitorování vstupenek na Ticketmaster.",
+      description: "Automatické refreshování vstupenek na Ticketmaster.",
       icon: "🔄",
       href: "/refresh-bot",
       free: false,
@@ -70,7 +70,7 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
     {
       id: "presale-bot",
       title: "Pre-sale Bot",
-      description: "Automatická registrace na pre-sale akce.",
+      description: "Automatické hromadné registrace na předprodeje.",
       icon: "⚡",
       href: "/presale-bot",
       free: true,

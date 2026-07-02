@@ -103,7 +103,7 @@ export default async function HomePage() {
             { icon: "📊", title: "P&L Tracker", desc: "Sledujte každý nákup a prodej. Automatické výpočty zisku, ROI a equity křivka v reálném čase." },
             { icon: "🤖", title: "AI Statistiky", desc: "Umělá inteligence analyzuje vaše obchody a dává konkrétní doporučení pro zlepšení výnosů." },
             { icon: "🎯", title: "Doporučené akce", desc: "Ticketmaster API + AI scoring nadcházejících eventů podle vašeho resell profilu." },
-            { icon: "🚀", title: "Chrome Launcher", desc: "Spusťte všechny Chrome profily najednou. Ideální pro správu více reseller účtů." },
+            { icon: "🚀", title: "Chrome Launcher", desc: "Spusťte víc Chrome profilů najednou s jedním odkazem. Ideální pro správu více reseller účtů." },
             { icon: "⚡", title: "Extension", desc: "Automatické přidávání lístků do košíku na Ticketmaster. Licencovaná ochrana." },
             { icon: "📅", title: "Kalendář eventů", desc: "Přehled všech vašich nákupů a prodejů podle data na přehledném kalendáři." },
             { icon: "🧮", title: "Kalkulačka profitů", desc: "Break-even analýza a výpočet minimální prodejní ceny před každým nákupem." },

@@ -14,7 +14,7 @@ export default function PresaleBotClient() {
           ⚡ Pre-sale Bot
         </h1>
         <p style={{ fontSize: 14, color: "#ededed" , lineHeight: 1.7 }}>
-          Automatická registrace na pre-sale akce.
+          Automatické hromadné registrace na předprodeje.
         </p>
       </div>
 

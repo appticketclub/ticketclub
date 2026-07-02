@@ -13,7 +13,7 @@ export default function RefreshBotClient() {
           🔄 Refresh Bot
         </h1>
         <p style={{ fontSize: 14, color: "#ededed", lineHeight: 1.7 }}>
-          Automatické monitorování vstupenek na Ticketmaster. Bot obnovuje stránku a klikne za vás.
+          Automatické refreshování vstupenek na Ticketmaster. Bot obnovuje stránku a klikne za vás.
         </p>
       </div>
 
