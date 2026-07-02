@@ -46,18 +46,18 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
             <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#fff", margin: 0, letterSpacing: "-0.02em" }}>
               Upgrade na Pro
             </h2>
-            <p style={{ fontSize: 13, color: "#525252", marginTop: 4 }}>
+            <p style={{ fontSize: 13, color: "#f5f5f5", marginTop: 4 }}>
               Odemkněte všechny funkce TicketClubu
             </p>
           </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "#f5f5f5", cursor: "pointer", fontSize: 22 }}>×</button>
         </div>
 
         {/* Scrollable content area */}
         <div style={{ overflowY: "auto", flex: 1, padding: "1.25rem 1.5rem" }}>
           {/* Info text */}
-          <p style={{ fontSize: 12, color: "#ffffff", lineHeight: 1.6, margin: 0, marginBottom: "1rem", fontStyle: "italic" }}>
-            Předplatné zahrnuje Chrome Extension, Refresh Bot, Pre-Sale Bot a všechny budoucí doplňky.
+          <p style={{ fontSize: 12, color: "#f5f5f5", lineHeight: 1.6, margin: 0, marginBottom: "1rem", fontStyle: "italic" }}>
+            Předplatné zahrnuje Chrome Extension, Refresh Bot a všechny budoucí doplňky.
           </p>
 
           {/* Plans — side by side on all screens */}
@@ -78,9 +78,9 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
             onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.borderColor = "#2a2a2a"}
             onClick={() => handleCheckout("monthly")}
             >
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#525252", marginBottom: "0.75rem", letterSpacing: "0.08em" }}>MĚSÍČNÍ</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#f5f5f5", marginBottom: "0.75rem", letterSpacing: "0.08em" }}>MĚSÍČNÍ</div>
               <div style={{ fontSize: 28, fontWeight: 900, color: "#fff", letterSpacing: "-0.03em", marginBottom: 4 }}>€19.95</div>
-              <div style={{ fontSize: 12, color: "#525252", marginBottom: "1.5rem" }}>≈ 498 CZK / měsíc</div>
+              <div style={{ fontSize: 12, color: "#f5f5f5", marginBottom: "1.5rem" }}>≈ 498 CZK / měsíc</div>
               <button
                 disabled={loading === "monthly"}
                 onClick={e => { e.stopPropagation(); handleCheckout("monthly"); }}
@@ -124,7 +124,7 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
 
               <div style={{ fontSize: 13, fontWeight: 600, color: "#a78bfa", marginBottom: "0.75rem", letterSpacing: "0.08em" }}>ROČNÍ</div>
               <div style={{ fontSize: 28, fontWeight: 900, color: "#a78bfa", letterSpacing: "-0.03em", marginBottom: 4 }}>€179.95</div>
-              <div style={{ fontSize: 12, color: "#525252", marginBottom: 4 }}>≈ 4 498 CZK / rok</div>
+              <div style={{ fontSize: 12, color: "#f5f5f5", marginBottom: 4 }}>≈ 4 498 CZK / rok</div>
               <div style={{ fontSize: 11, color: "#a78bfa", marginBottom: "1.5rem" }}>= €14.99/měsíc · Ušetříte €59.45</div>
 
               <button
@@ -174,7 +174,7 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
             </div>
           </div> */}
 
-          <p style={{ fontSize: 11, color: "#3a3a3a", textAlign: "center" as const, marginTop: "1rem" }}>
+          <p style={{ fontSize: 11, color: "#f5f5f5", textAlign: "center" as const, marginTop: "1rem" }}>
             Zrušit lze kdykoliv · Bezpečná platba přes Stripe
           </p>
         </div>
