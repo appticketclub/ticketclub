@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { getCapital, setCapital } from "@/lib/actions/capital";
 import { createClient } from "@/lib/supabase/client";
 import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid,
+  AreaChart, Area, XAxis, YAxis,
   Tooltip, ResponsiveContainer
 } from "recharts";
 import { useCurrency } from "@/lib/context/CurrencyContext";
@@ -28,6 +28,8 @@ export default function UvodTab() {
   const [soldProfit, setSoldProfit] = useState(0);
   const [totalBuy, setTotalBuy] = useState(0);
   const [avgRoi, setAvgRoi] = useState(0);
+  const [soldChartData, setSoldChartData] = useState<any[]>([]);
+  const [activeChart, setActiveChart] = useState<"zisk" | "investovano" | "roi">("zisk");
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
   const [customFrom, setCustomFrom] = useState("");
   const [customTo, setCustomTo] = useState("");
@@ -69,7 +71,7 @@ export default function UvodTab() {
         setSoldProfit(cached.soldProfit);
         setTotalBuy(cached.totalBuy);
         setAvgRoi(cached.avgRoi);
-        setChartData(cached.chartData);
+        setSoldChartData(cached.soldChartData);
         setLoading(false);
         return;
       }
@@ -101,6 +103,7 @@ export default function UvodTab() {
       let calcSoldProfit = 0;
       let calcTotalBuy = 0;
       let calcAvgRoi = 0;
+      let calcSoldChartData: any[] = [];
       
       try {
         const purchasesQuery = supabase
@@ -139,6 +142,30 @@ export default function UvodTab() {
         calcTotalBuy = soldCost;
         calcAvgRoi = soldCost > 0 ? (calcSoldProfit / soldCost) * 100 : 0;
 
+        // Build chart data from sales grouped by date — only sold purchases 
+        const chartDataByDate = soldSales.reduce((acc: any, sale: any) => { 
+          const date = new Date(sale.sold_at).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" }); 
+          if (!acc[date]) acc[date] = { date, revenue: 0, cost: 0, qty: 0 }; 
+          const purchase = soldPurchases.find(p => p.id === sale.purchase_id); 
+          acc[date].revenue += (sale.sell_price ?? 0) * (sale.quantity_sold ?? 0); 
+          acc[date].cost += (purchase?.buy_price ?? 0) * (sale.quantity_sold ?? 0); 
+          acc[date].qty += sale.quantity_sold ?? 0; 
+          return acc; 
+        }, {}); 
+ 
+        let cumulativeProfit = 0; 
+        let cumulativeCost = 0; 
+        const calcSoldChartData = Object.values(chartDataByDate).map((d: any) => { 
+          cumulativeProfit += d.revenue - d.cost; 
+          cumulativeCost += d.cost; 
+          return { 
+            date: d.date, 
+            zisk: Math.round(cumulativeProfit * 100) / 100, 
+            investovano: Math.round(cumulativeCost * 100) / 100, 
+            roi: cumulativeCost > 0 ? Math.round((cumulativeProfit / cumulativeCost) * 1000) / 10 : 0, 
+          }; 
+        });
+
         // Calculate total invested
         const totalInvested = purchases 
           .filter(p => p.status === "active" || p.status === "partial") 
@@ -165,30 +192,7 @@ export default function UvodTab() {
       setSoldProfit(calcSoldProfit);
       setTotalBuy(calcTotalBuy);
       setAvgRoi(calcAvgRoi);
-
-      // Build chart data
-      const initialCap = data?.capital_initial ?? data?.capital ?? 0; 
-      const chartCurrentBal = data?.capital ?? initialCap; 
-      let chartData: any[] = [];
-
-      if (history && history.length > 0) { 
-        // Always start with initial capital as first point 
-        chartData = [ 
-          { date: "Start", hodnota: Math.round(initialCap) }, 
-          ...history.map((h: any) => ({ 
-            date: new Date(h.created_at).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" }), 
-            hodnota: Math.round(h.balance_after), 
-          })), 
-        ]; 
-      } else { 
-        // No history yet — flat line at initial capital 
-        chartData = [ 
-          { date: "Start", hodnota: Math.round(initialCap) }, 
-          { date: "Nyní", hodnota: Math.round(chartCurrentBal) }, 
-        ]; 
-      }
-
-      setChartData(chartData);
+      setSoldChartData(calcSoldChartData);
 
       // Cache the data
       setCached(cacheKey, {
@@ -197,7 +201,7 @@ export default function UvodTab() {
         soldProfit: calcSoldProfit,
         totalBuy: calcTotalBuy,
         avgRoi: calcAvgRoi,
-        chartData,
+        soldChartData: calcSoldChartData,
       });
       setLoading(false);
     });
@@ -298,64 +302,84 @@ export default function UvodTab() {
         ))}
       </div>
 
-      {/* Equity curve chart */}
-      <div style={{
-        background: "#111111",
-        border: "1px solid #1a1a1a",
-        borderRadius: 20, padding: "1.75rem",
-        position: "relative", overflow: "hidden",
-      }}>
-        {/* Top chrome line */}
+      {/* Chart */}
+      <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 20, padding: "1.75rem", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #34d39966, transparent)" }} />
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-          <div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: "#ffffff", marginBottom: 4 }}>EQUITY KŘIVKA</div>
-            <div style={{ fontSize: "1.5rem", fontWeight: 700, color: isProfit ? "#34d399" : "#f87171" }}>
-              {isProfit ? "+" : ""}{format(Math.abs(stats.profit), baseCurrency)}
-            </div>
-          </div>
-          <div style={{
-            padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 600,
-            background: isProfit ? "#0a2a1a" : "#2a0a0a",
-            border: `1px solid ${isProfit ? "#34d39944" : "#f8717144"}`,
-            color: isProfit ? "#34d399" : "#f87171",
-          }}>
-            {isProfit ? "▲" : "▼"} {stats.invested > 0 ? Math.abs(Math.round((stats.profit / stats.invested) * 100)) : 0}% ROI
+        {/* Prepínače */}
+        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem" }}>
+          {([
+            { key: "zisk", label: "ZISK CELKEM" },
+            { key: "investovano", label: "INVESTOVÁNO" },
+            { key: "roi", label: "PRŮMĚRNÁ ZISKOVOST" },
+          ] as const).map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveChart(tab.key)}
+              style={{
+                padding: "6px 16px",
+                borderRadius: 8,
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: "0.08em",
+                border: "1px solid",
+                cursor: "pointer",
+                background: activeChart === tab.key ? "#ffffff" : "transparent",
+                borderColor: activeChart === tab.key ? "#ffffff" : "#2a2a2a",
+                color: activeChart === tab.key ? "#000000" : "#525252",
+                transition: "all 0.15s",
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Hodnota */}
+        <div style={{ marginBottom: "1.25rem" }}>
+          <div style={{ fontSize: "1.5rem", fontWeight: 700, color: activeChart === "roi"
+            ? (avgRoi >= 0 ? "#34d399" : "#f87171")
+            : (soldProfit >= 0 ? "#34d399" : "#f87171") }}>
+            {activeChart === "zisk" && `${soldProfit >= 0 ? "+" : ""}${format(Math.abs(soldProfit), baseCurrency)}`}
+            {activeChart === "investovano" && format(totalBuy, baseCurrency)}
+            {activeChart === "roi" && `${avgRoi >= 0 ? "+" : ""}${avgRoi.toFixed(1)}%`}
           </div>
         </div>
 
-        <ResponsiveContainer width="100%" height={220}>
-          <AreaChart data={chartData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
-            <defs>
-              <linearGradient id="equityGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#34d399" stopOpacity={0.25} />
-                <stop offset="95%" stopColor="#34d399" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a" vertical={false} />
-            <XAxis dataKey="date" tick={{ fill: "#3a3a3a", fontSize: 11 }} axisLine={false} tickLine={false} />
-            <YAxis 
-              tick={{ fill: "#3a3a3a", fontSize: 11 }} 
-              axisLine={false} 
-              tickLine={false} 
-              width={70} 
-              domain={['auto', 'auto']} 
-              tickFormatter={(v) => `${v.toLocaleString("cs-CZ")}`} 
-            />
-            <Tooltip
-              contentStyle={{ background: "#111111", border: "1px solid #2a2a2a", borderRadius: 10, color: "#fff", fontSize: 13 }}
-              labelStyle={{ color: "#525252" }}
-              formatter={(value: any) => [format(Number(value), baseCurrency), "Hodnota"]}
-            />
-            <Area
-              type="monotone" dataKey="hodnota"
-              stroke="#34d399" strokeWidth={2}
-              fill="url(#equityGradient)"
-              dot={false} activeDot={{ r: 4, fill: "#34d399", stroke: "#111111", strokeWidth: 2 }}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+        {/* Graf */}
+        {soldChartData.length > 1 ? (
+          <ResponsiveContainer width="100%" height={220}>
+            <AreaChart data={soldChartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#34d399" stopOpacity={0.15}/>
+                  <stop offset="95%" stopColor="#34d399" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="date" tick={{ fill: "#525252", fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: "#525252", fontSize: 11 }} axisLine={false} tickLine={false} width={60}
+                tickFormatter={v => activeChart === "roi" ? `${v}%` : `${v}`} />
+              <Tooltip
+                contentStyle={{ background: "#111", border: "1px solid #2a2a2a", borderRadius: 8, fontSize: 12 }}
+                labelStyle={{ color: "#fff" }}
+                formatter={(v: any) => activeChart === "roi" ? `${v}%` : `${v} ${baseCurrency}`}
+              />
+              <Area
+                type="monotone"
+                dataKey={activeChart}
+                stroke="#34d399"
+                strokeWidth={2}
+                fill="url(#chartGrad)"
+                dot={false}
+                activeDot={{ r: 4, fill: "#34d399", stroke: "#111111", strokeWidth: 2 }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        ) : (
+          <div style={{ height: 220, display: "flex", alignItems: "center", justifyContent: "center", color: "#525252", fontSize: 13 }}>
+            Zatím žádná uzavřená data
+          </div>
+        )}
       </div>
     </div>
   );
