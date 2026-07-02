@@ -23,12 +23,11 @@ type TimeRange = (typeof timeRangeOptions)[number]["id"];
 export default function UvodTab() {
   const { format } = useCurrency();
   const [loading, setLoading] = useState(true);
-  const [chartData, setChartData] = useState<any[]>([]);
   const [stats, setStats] = useState({ invested: 0, profit: 0, balance: 0 });
   const [soldProfit, setSoldProfit] = useState(0);
   const [totalBuy, setTotalBuy] = useState(0);
   const [avgRoi, setAvgRoi] = useState(0);
-  const [soldChartData, setSoldChartData] = useState<any[]>([]);
+  const [chartData, setChartData] = useState<any[]>([]);
   const [activeChart, setActiveChart] = useState<"zisk" | "investovano" | "roi">("zisk");
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
   const [customFrom, setCustomFrom] = useState("");
@@ -71,7 +70,7 @@ export default function UvodTab() {
         setSoldProfit(cached.soldProfit);
         setTotalBuy(cached.totalBuy);
         setAvgRoi(cached.avgRoi);
-        setSoldChartData(cached.soldChartData);
+        setChartData(cached.soldChartData);
         setLoading(false);
         return;
       }
@@ -103,7 +102,6 @@ export default function UvodTab() {
       let calcSoldProfit = 0;
       let calcTotalBuy = 0;
       let calcAvgRoi = 0;
-      let calcSoldChartData: any[] = [];
       
       try {
         const purchasesQuery = supabase
@@ -163,7 +161,7 @@ export default function UvodTab() {
  
         let cumulativeProfit = 0; 
         let cumulativeCost = 0; 
-        const calcSoldChartData = Object.values(chartDataByDate).map((d) => { 
+        const computedChartData = Object.values(chartDataByDate).map((d) => { 
           cumulativeProfit += d.revenue - d.cost; 
           cumulativeCost += d.cost; 
           return { 
@@ -175,7 +173,7 @@ export default function UvodTab() {
         }); 
  
         console.log("[uvod] chartDataByDate:", chartDataByDate); 
-        console.log("[uvod] soldChartData fixed:", calcSoldChartData);
+        console.log("[uvod] soldChartData fixed:", computedChartData);
 
         // Calculate total invested
         const totalInvested = purchases 
@@ -203,9 +201,9 @@ export default function UvodTab() {
       setSoldProfit(calcSoldProfit);
       setTotalBuy(calcTotalBuy);
       setAvgRoi(calcAvgRoi);
-      setSoldChartData(calcSoldChartData);
+      setChartData(computedChartData);
 
-      console.log("[uvod] soldChartData:", calcSoldChartData);
+      console.log("[uvod] chartData:", computedChartData);
 
       // Cache the data
       setCached(cacheKey, {
@@ -214,7 +212,7 @@ export default function UvodTab() {
         soldProfit: calcSoldProfit,
         totalBuy: calcTotalBuy,
         avgRoi: calcAvgRoi,
-        soldChartData: calcSoldChartData,
+        soldChartData: computedChartData,
       });
       setLoading(false);
     });
@@ -360,9 +358,9 @@ export default function UvodTab() {
         </div>
 
         {/* Graf */}
-        {soldChartData.length > 1 ? (
+        {chartData.length > 1 ? (
           <ResponsiveContainer width="100%" height={220}>
-            <AreaChart data={soldChartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#34d399" stopOpacity={0.15}/>
