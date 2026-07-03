@@ -79,8 +79,8 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
             onClick={() => handleCheckout("monthly")}
             >
               <div style={{ fontSize: 13, fontWeight: 600, color: "#f5f5f5", marginBottom: "0.75rem", letterSpacing: "0.08em" }}>MĚSÍČNÍ</div>
-              <div style={{ fontSize: 28, fontWeight: 900, color: "#fff", letterSpacing: "-0.03em", marginBottom: 4 }}>€19.95</div>
-              <div style={{ fontSize: 12, color: "#f5f5f5", marginBottom: "1.5rem" }}>≈ 498 CZK / měsíc</div>
+              <div style={{ fontSize: 28, fontWeight: 900, color: "#fff", letterSpacing: "-0.03em", marginBottom: 4 }}>€19.99</div>
+              <div style={{ fontSize: 12, color: "#f5f5f5", marginBottom: "1.5rem" }}>≈ 499 CZK / měsíc</div>
               <button
                 disabled={loading === "monthly"}
                 onClick={e => { e.stopPropagation(); handleCheckout("monthly"); }}
