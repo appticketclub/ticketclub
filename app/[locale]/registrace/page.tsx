@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { signUpWithEmail, signInWithGoogle } from "@/lib/auth/actions";
 
 export default function RegisterPage() {
@@ -11,6 +12,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -62,6 +64,10 @@ export default function RegisterPage() {
         setError(result.error);
       } else if (result?.success) {
         setSuccess(result.success);
+        // Redirect to dashboard after successful registration
+        setTimeout(() => {
+          router.push("/nakupy");
+        }, 500);
       }
     } catch (e) {
       setError("Chyba reCAPTCHA. Zkuste to znovu.");

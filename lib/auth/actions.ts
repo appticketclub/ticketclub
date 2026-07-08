@@ -20,7 +20,12 @@ export async function signUpWithEmail(email: string, password: string, fullName:
     },
   });
   if (error) return { error: error.message };
-  return { success: "Zkontrolujte svůj e-mail a potvrďte registraci." };
+  
+  // Auto sign in after registration (email confirmation disabled)
+  const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+  if (signInError) return { error: signInError.message };
+ 
+  return { success: "Registrace byla úspěšná." };
 }
 
 export async function signInWithGoogle() {
