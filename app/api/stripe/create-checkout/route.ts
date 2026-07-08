@@ -15,13 +15,13 @@ export async function POST(request: NextRequest) {
       .single();
 
     // Check if customer already exists
-    const { data: subscription } = await supabase
+    const { data: existingSub } = await supabase
       .from("subscriptions")
-      .select("stripe_customer_id")
+      .select("stripe_customer_id, status")
       .eq("user_id", user.id)
       .single();
 
-    let customerId = subscription?.stripe_customer_id;
+    let customerId = existingSub?.stripe_customer_id;
 
     // Create Stripe customer if doesn't exist
     if (!customerId) {
@@ -32,6 +32,8 @@ export async function POST(request: NextRequest) {
       });
       customerId = customer.id;
     }
+
+    const alreadyHadTrial = existingSub?.stripe_customer_id != null;
 
     const { plan } = await request.json().catch(() => ({ plan: "monthly" }));
 
@@ -59,7 +61,7 @@ export async function POST(request: NextRequest) {
         supabase_user_id: user.id,
       },
       subscription_data: {
-        trial_period_days: 14,
+        ...(alreadyHadTrial ? {} : { trial_period_days: 14 }),
         metadata: {
           supabase_user_id: user.id,
         },
