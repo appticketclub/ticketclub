@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useCurrency } from "@/lib/context/CurrencyContext";
 
 const PLATFORMS = [
-  { name: "Viagogo", fee: 25 },
+  { name: "Viagogo", fee: 15 },
   { name: "StubHub", fee: 15 },
   { name: "Ticketmaster", fee: 15 },
   { name: "SeatGeek", fee: 10 },
