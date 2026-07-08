@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import HandleAuth from "@/components/HandleAuth";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -8,6 +9,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <HandleAuth />
       <style>{`
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
