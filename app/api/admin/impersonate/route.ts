@@ -6,7 +6,6 @@ const ADMIN_SECRET = process.env.ADMIN_SECRET_KEY!;
 export async function POST(request: NextRequest) {
   const { userId, adminSecret } = await request.json();
 
-  // Verify admin secret
   if (adminSecret !== ADMIN_SECRET) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -16,13 +15,18 @@ export async function POST(request: NextRequest) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  // Generate magic link for the user
   const { data, error } = await supabase.auth.admin.generateLink({
     type: "magiclink",
-    email: userId, // can pass email or user_id
+    email: userId,
+    options: {
+      redirectTo: "https://app.ticketclub.vip/auth/callback?next=/nakupy"
+    }
   });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
 
-  return NextResponse.json({ link: data.properties?.action_link });
+  return NextResponse.json({
+    link: data.properties?.action_link,
+    token: data.properties?.hashed_token
+  });
 }
