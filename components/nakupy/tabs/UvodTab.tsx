@@ -135,9 +135,8 @@ export default function UvodTab() {
         console.log("[uvod] soldPurchases:", soldPurchases.length, "soldSales:", soldSales.length);
 
         const soldRevenue = soldSales.reduce((acc, s) => acc + (s.sell_price ?? 0) * (s.quantity_sold ?? 0), 0);
-        const soldCost = soldSales.reduce((acc, s) => {
-          const purchase = soldPurchases.find(p => p.id === s.purchase_id);
-          return acc + (purchase?.buy_price ?? 0) * (s.quantity_sold ?? 0);
+        const soldCost = soldPurchases.reduce((acc, p) => {
+          return acc + (p.buy_price ?? 0) * (p.quantity ?? 0);
         }, 0);
         calcSoldProfit = soldRevenue - soldCost;
         calcTotalBuy = soldCost;

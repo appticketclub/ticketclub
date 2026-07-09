@@ -53,7 +53,10 @@ export function CurrencyProvider({ children, initialCurrency }: { children: Reac
   function format(amount: number, from: Currency): string { 
     const converted = convert(amount, from); 
     const symbol = currency === "EUR" ? "€" : "Kč"; 
-    const formatted = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 }).format(converted); 
+    const formatted = new Intl.NumberFormat("fr-FR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(converted); 
     return formatted + " " + symbol; 
   } 
 
