@@ -128,8 +128,9 @@ export default function UvodTab() {
 
         console.log("Sales loaded:", sales?.length, sales);
 
-        // Only closed (sold) purchases
-        const soldPurchases = purchases.filter(p => p.status === "sold");
+        // Filter sold purchases only by those that have sales in the selected time range
+        const soldSalesPurchaseIds = new Set(sales.map((s: any) => s.purchase_id));
+        const soldPurchases = purchases.filter(p => p.status === "sold" && soldSalesPurchaseIds.has(p.id));
         const soldSales = sales.filter((s: any) => soldPurchases.some(p => p.id === s.purchase_id));
 
         console.log("[uvod] soldPurchases:", soldPurchases.length, "soldSales:", soldSales.length);
