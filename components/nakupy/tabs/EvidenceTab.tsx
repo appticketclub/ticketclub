@@ -5,6 +5,7 @@ import { EXCHANGES } from "@/lib/constants/exchanges";
 import { useCurrency } from "@/lib/context/CurrencyContext";
 import { AddPurchaseModal } from "./NakupyTab";
 import { generateTicketSVG } from "./BanneryTab";
+import { clearCache } from "@/lib/hooks/useDataCache";
 
 function isThisMonth(dateStr: string | null): boolean {
   if (!dateStr) return false;
@@ -30,6 +31,9 @@ type EvidenceRow = {
   delivered: boolean;
   notes: string | null;
   quantity_remaining: number | null;
+  venue?: string | null;
+  sector?: string | null;
+  tags?: string[] | null;
   // From sales
   sell_price_total: number;
   profit: number;
@@ -58,6 +62,7 @@ const COLS = [
   { key: "delivered", label: "Doručeno", width: 90 },
   { key: "notes", label: "Poznámky", width: 160 },
   { key: "banner", label: "", width: 50 },
+  { key: "duplicate", label: "", width: 40 },
   { key: "delete", label: "", width: 40 },
 ];
 
@@ -78,6 +83,8 @@ export default function EvidenceTab() {
 
   const [deleteConfirmRow, setDeleteConfirmRow] = useState<EvidenceRow | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [duplicateConfirmRow, setDuplicateConfirmRow] = useState<EvidenceRow | null>(null);
+  const [duplicating, setDuplicating] = useState(false);
 
   const [saleUpdateModal, setSaleUpdateModal] = useState<{
     row: EvidenceRow;
@@ -105,7 +112,7 @@ export default function EvidenceTab() {
 
     const [{ data: purchases }, { data: sales }, { data: accs }] = await Promise.all([
       supabase.from("purchases")
-        .select("id, event_name, event_date, event_actual_date, city, quantity, quantity_remaining, buy_price, currency, status, exchange, account_ref, ticket_type_custom, paid_out, delivered, notes")
+        .select("id, event_name, event_date, event_actual_date, city, venue, sector, quantity, quantity_remaining, buy_price, currency, status, exchange, account_ref, ticket_type_custom, paid_out, delivered, notes, tags")
         .eq("user_id", user.id)
         .order("event_date", { ascending: false }),
       supabase.from("sales")
@@ -145,6 +152,9 @@ export default function EvidenceTab() {
         delivered: p.delivered ?? false,
         notes: p.notes,
         quantity_remaining: p.quantity_remaining,
+        venue: p.venue,
+        sector: p.sector,
+        tags: p.tags,
         sell_price_total: sellTotal,
         profit,
         roi,
@@ -198,6 +208,61 @@ export default function EvidenceTab() {
     await supabase.from("purchases").delete().eq("id", row.id);
     setDeleteConfirmRow(null);
     setDeleting(false);
+    loadData();
+  }
+
+  async function handleDuplicatePurchase(row: EvidenceRow) {
+    setDuplicating(true);
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setDuplicating(false); return; }
+
+    const totalCost = row.buy_price * row.quantity;
+
+    await supabase.from("purchases").insert({
+      user_id: user.id,
+      event_name: row.event_name,
+      event_date: row.event_date,
+      event_actual_date: row.event_actual_date,
+      city: row.city,
+      venue: row.venue,
+      sector: row.sector,
+      buy_price: row.buy_price,
+      quantity: row.quantity,
+      quantity_remaining: row.quantity,
+      currency: row.currency,
+      exchange: row.exchange,
+      account_ref: row.account_ref,
+      ticket_type_custom: row.ticket_type_custom,
+      status: "active",
+      delivered: false,
+      paid_out: false,
+      notes: row.notes,
+      tags: row.exchange ? [row.exchange] : [],
+      platform_id: null,
+    });
+
+    // Update capital balance
+    const { data: profile } = await supabase.from("profiles").select("capital, capital_currency").eq("id", user.id).single();
+    if (profile) {
+      const newBalance = (profile.capital ?? 0) - totalCost;
+      await supabase.from("profiles").update({ capital: newBalance }).eq("id", user.id);
+      await supabase.from("capital_history").insert({
+        user_id: user.id,
+        amount: -totalCost,
+        type: "purchase",
+        description: `Duplikát nákupu: ${row.event_name}`,
+        balance_after: newBalance,
+      });
+    }
+
+    // Clear cache
+    clearCache(`nakupy_${user.id}`);
+    clearCache(`uvod_${user.id}`);
+    clearCache(`kalendar_${user.id}`);
+
+    setDuplicateConfirmRow(null);
+    setDuplicating(false);
     loadData();
   }
 
@@ -919,6 +984,19 @@ export default function EvidenceTab() {
                       </button>
                     </td>
 
+                    {/* Duplicate button */}
+                    <td style={{ ...cellStyle(40), textAlign: "center" }}>
+                      <button
+                        onClick={() => setDuplicateConfirmRow(row)}
+                        title="Duplikovat nákup"
+                        style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, color: "#ededed", padding: 4, transition: "color 0.2s" }}
+                        onMouseEnter={e => (e.currentTarget.style.color = "#60a5fa")}
+                        onMouseLeave={e => (e.currentTarget.style.color = "#ededed")}
+                      >
+                        📋
+                      </button>
+                    </td>
+
                     {/* Delete button */}
                     <td style={{ ...cellStyle(40), textAlign: "center" }}>
                       <button
@@ -1187,6 +1265,51 @@ export default function EvidenceTab() {
               >
                 ↗ Sdílet
               </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Duplicate Confirm Modal */}
+      {duplicateConfirmRow && (
+        <>
+          <div
+            onClick={() => setDuplicateConfirmRow(null)}
+            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", zIndex: 200, backdropFilter: "blur(4px)" }}
+          />
+          <div style={{
+            position: "fixed", top: "50%", left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "100%", maxWidth: 400,
+            background: "#111111", border: "1px solid #2a2a2a",
+            borderRadius: 20, zIndex: 201, overflow: "hidden",
+          }}>
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #60a5fa, transparent)" }} />
+            <div style={{ padding: "1.5rem" }}>
+              <div style={{ fontSize: 32, marginBottom: "0.75rem", textAlign: "center" }}>📋</div>
+              <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0, marginBottom: "0.5rem", textAlign: "center" }}>
+                Duplikovat nákup?
+              </h2>
+              <p style={{ fontSize: 13, color: "#525252", textAlign: "center", marginBottom: "1.5rem" }}>
+                <strong style={{ color: "#fff" }}>{duplicateConfirmRow.event_name}</strong>
+                <br />
+                Vytvoří se nová kopie tohoto nákupu se statusem aktivní.
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                <button
+                  onClick={() => setDuplicateConfirmRow(null)}
+                  style={{ padding: "0.8rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#525252", cursor: "pointer", fontSize: 13 }}
+                >
+                  Zrušit
+                </button>
+                <button
+                  onClick={() => handleDuplicatePurchase(duplicateConfirmRow)}
+                  disabled={duplicating}
+                  style={{ padding: "0.8rem", background: "linear-gradient(135deg, #60a5fa, #3b82f6)", border: "none", borderRadius: 10, color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 700 }}
+                >
+                  {duplicating ? "Kopíruji..." : "Duplikovat"}
+                </button>
+              </div>
             </div>
           </div>
         </>
