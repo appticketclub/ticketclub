@@ -694,12 +694,33 @@ export default function EvidenceTab() {
                   <tr
                     key={row.id}
                     style={{
-                      background: idx % 2 === 0 ? "#111111" : "#0d0d0d",
+                      background: (() => {
+                        const isFullySold = row.status === "sold";
+                        const isDelivered = row.delivered === true || row.delivered === "ANO";
+                        const isPaidOut = row.paid_out === true || row.paid_out === "ANO";
+
+                        const defaultBg = idx % 2 === 0 ? "#111111" : "#0d0d0d";
+                        
+                        if (!isFullySold || !isDelivered || !isPaidOut) {
+                          return "rgba(234, 179, 8, 0.06)"; // slabo žltá
+                        }
+                        return defaultBg;
+                      })(),
                       borderBottom: "1px solid #1a1a1a",
                       transition: "background 0.15s",
                     }}
                     onMouseEnter={e => { e.currentTarget.style.background = "#161616"; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = idx % 2 === 0 ? "#111111" : "#0d0d0d"; }}
+                    onMouseLeave={e => { 
+                      const isFullySold = row.status === "sold";
+                      const isDelivered = row.delivered === true || row.delivered === "ANO";
+                      const isPaidOut = row.paid_out === true || row.paid_out === "ANO";
+                      const defaultBg = idx % 2 === 0 ? "#111111" : "#0d0d0d";
+                      if (!isFullySold || !isDelivered || !isPaidOut) {
+                        e.currentTarget.style.background = "rgba(234, 179, 8, 0.06)";
+                      } else {
+                        e.currentTarget.style.background = defaultBg;
+                      }
+                    }}
                   >
                     {/* Datum nákupu */}
                     <DateCell rowId={row.id} field="event_date" value={row.event_date} width={100} />
