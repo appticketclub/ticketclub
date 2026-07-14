@@ -695,31 +695,18 @@ export default function EvidenceTab() {
                     key={row.id}
                     style={{
                       background: (() => {
-                        const isFullySold = row.status === "sold";
-                        const isDelivered = row.delivered === true || String(row.delivered).toUpperCase() === "ANO";
-                        const isPaidOut = row.paid_out === true || String(row.paid_out).toUpperCase() === "ANO";
-                        
+                        const isComplete = row.status === "sold" && row.delivered === true && row.paid_out === true;
                         const defaultBg = idx % 2 === 0 ? "#111111" : "#0d0d0d";
-                        
-                        if (!isFullySold || !isDelivered || !isPaidOut) {
-                          return "rgba(234, 179, 8, 0.06)";
-                        }
-                        return defaultBg;
+                        return isComplete ? defaultBg : "rgba(234, 179, 8, 0.06)";
                       })(),
                       borderBottom: "1px solid #1a1a1a",
                       transition: "background 0.15s",
                     }}
                     onMouseEnter={e => { e.currentTarget.style.background = "#161616"; }}
                     onMouseLeave={e => { 
-                      const isFullySold = row.status === "sold";
-                      const isDelivered = row.delivered === true || String(row.delivered).toUpperCase() === "ANO";
-                      const isPaidOut = row.paid_out === true || String(row.paid_out).toUpperCase() === "ANO";
+                      const isComplete = row.status === "sold" && row.delivered === true && row.paid_out === true;
                       const defaultBg = idx % 2 === 0 ? "#111111" : "#0d0d0d";
-                      if (!isFullySold || !isDelivered || !isPaidOut) {
-                        e.currentTarget.style.background = "rgba(234, 179, 8, 0.06)";
-                      } else {
-                        e.currentTarget.style.background = defaultBg;
-                      }
+                      e.currentTarget.style.background = isComplete ? defaultBg : "rgba(234, 179, 8, 0.06)";
                     }}
                   >
                     {/* Datum nákupu */}
