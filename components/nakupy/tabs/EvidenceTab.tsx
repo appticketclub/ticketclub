@@ -696,13 +696,13 @@ export default function EvidenceTab() {
                     style={{
                       background: (() => {
                         const isFullySold = row.status === "sold";
-                        const isDelivered = row.delivered === true || row.delivered === "ANO";
-                        const isPaidOut = row.paid_out === true || row.paid_out === "ANO";
-
+                        const isDelivered = row.delivered === true || String(row.delivered).toUpperCase() === "ANO";
+                        const isPaidOut = row.paid_out === true || String(row.paid_out).toUpperCase() === "ANO";
+                        
                         const defaultBg = idx % 2 === 0 ? "#111111" : "#0d0d0d";
                         
                         if (!isFullySold || !isDelivered || !isPaidOut) {
-                          return "rgba(234, 179, 8, 0.06)"; // slabo žltá
+                          return "rgba(234, 179, 8, 0.06)";
                         }
                         return defaultBg;
                       })(),
@@ -712,8 +712,8 @@ export default function EvidenceTab() {
                     onMouseEnter={e => { e.currentTarget.style.background = "#161616"; }}
                     onMouseLeave={e => { 
                       const isFullySold = row.status === "sold";
-                      const isDelivered = row.delivered === true || row.delivered === "ANO";
-                      const isPaidOut = row.paid_out === true || row.paid_out === "ANO";
+                      const isDelivered = row.delivered === true || String(row.delivered).toUpperCase() === "ANO";
+                      const isPaidOut = row.paid_out === true || String(row.paid_out).toUpperCase() === "ANO";
                       const defaultBg = idx % 2 === 0 ? "#111111" : "#0d0d0d";
                       if (!isFullySold || !isDelivered || !isPaidOut) {
                         e.currentTarget.style.background = "rgba(234, 179, 8, 0.06)";
