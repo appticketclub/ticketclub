@@ -26,7 +26,9 @@ type EvidenceRow = {
   status: string;
   exchange: string | null;
   account_ref: string | null;
+  account?: string | null;
   ticket_type_custom: string | null;
+  ticket_type?: string | null;
   paid_out: boolean;
   delivered: boolean;
   notes: string | null;
@@ -34,6 +36,7 @@ type EvidenceRow = {
   venue?: string | null;
   sector?: string | null;
   tags?: string[] | null;
+  purchased_at?: string | null;
   // From sales
   sell_price_total: number;
   profit: number;
@@ -112,11 +115,11 @@ export default function EvidenceTab() {
 
     const [{ data: purchases }, { data: sales }, { data: accs }] = await Promise.all([
       supabase.from("purchases")
-        .select("id, event_name, event_date, event_actual_date, city, venue, sector, quantity, quantity_remaining, buy_price, currency, status, exchange, account_ref, ticket_type_custom, paid_out, delivered, notes, tags")
+        .select("id, event_name, event_date, event_actual_date, city, venue, sector, quantity, quantity_remaining, buy_price, currency, status, exchange, account_ref, ticket_type_custom, paid_out, delivered, notes, tags, purchased_at")
         .eq("user_id", user.id)
         .order("event_date", { ascending: false }),
       supabase.from("sales")
-        .select("purchase_id, sell_price, quantity_sold, fees, sold_at, platform")
+        .select("purchase_id, sell_price, quantity_sold, fees, sold_at, platform, currency")
         .eq("user_id", user.id),
       supabase.from("accounts").select("id, name").eq("type", "purchase").order("name"),
     ]);
@@ -147,7 +150,9 @@ export default function EvidenceTab() {
         status: p.status,
         exchange: p.exchange,
         account_ref: p.account_ref,
+        account: p.account_ref,
         ticket_type_custom: p.ticket_type_custom,
+        ticket_type: p.ticket_type_custom,
         paid_out: p.paid_out,
         delivered: p.delivered ?? false,
         notes: p.notes,
@@ -155,6 +160,7 @@ export default function EvidenceTab() {
         venue: p.venue,
         sector: p.sector,
         tags: p.tags,
+        purchased_at: p.purchased_at,
         sell_price_total: sellTotal,
         profit,
         roi,
@@ -217,49 +223,48 @@ export default function EvidenceTab() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setDuplicating(false); return; }
 
-    const totalCost = row.buy_price * row.quantity;
-
-    await supabase.from("purchases").insert({
+    // Insert duplicate purchase with ALL fields
+    const { data: newPurchase, error } = await supabase.from("purchases").insert({
       user_id: user.id,
       event_name: row.event_name,
       event_date: row.event_date,
       event_actual_date: row.event_actual_date,
-      city: row.city,
       venue: row.venue,
-      sector: row.sector,
       buy_price: row.buy_price,
       quantity: row.quantity,
-      quantity_remaining: row.quantity,
+      quantity_remaining: row.quantity_remaining,
       currency: row.currency,
       exchange: row.exchange,
       account_ref: row.account_ref,
       ticket_type_custom: row.ticket_type_custom,
-      status: "active",
-      delivered: false,
-      paid_out: false,
+      status: row.status,
+      delivered: row.delivered,
+      paid_out: row.paid_out,
       notes: row.notes,
-      tags: row.exchange ? [row.exchange] : [],
-      platform_id: null,
-    });
+      purchased_at: row.purchased_at ?? new Date().toISOString(),
+    }).select().single();
 
-    // Update capital balance
-    const { data: profile } = await supabase.from("profiles").select("capital, capital_currency").eq("id", user.id).single();
-    if (profile) {
-      const newBalance = (profile.capital ?? 0) - totalCost;
-      await supabase.from("profiles").update({ capital: newBalance }).eq("id", user.id);
-      await supabase.from("capital_history").insert({
-        user_id: user.id,
-        amount: -totalCost,
-        type: "purchase",
-        description: `Duplikát nákupu: ${row.event_name}`,
-        balance_after: newBalance,
-      });
+    if (!error && newPurchase) {
+      // Also duplicate sales data if exists
+      const { data: existingSales } = await supabase
+        .from("sales")
+        .select("*")
+        .eq("purchase_id", row.id);
+
+      if (existingSales && existingSales.length > 0) {
+        for (const sale of existingSales) {
+          await supabase.from("sales").insert({
+            user_id: user.id,
+            purchase_id: newPurchase.id,
+            quantity_sold: sale.quantity_sold,
+            sell_price: sale.sell_price,
+            currency: sale.currency,
+            sold_at: sale.sold_at,
+            fees: sale.fees,
+          });
+        }
+      }
     }
-
-    // Clear cache
-    clearCache(`nakupy_${user.id}`);
-    clearCache(`uvod_${user.id}`);
-    clearCache(`kalendar_${user.id}`);
 
     setDuplicateConfirmRow(null);
     setDuplicating(false);
