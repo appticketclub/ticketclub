@@ -25,18 +25,15 @@ type EvidenceRow = {
   currency: string;
   status: string;
   exchange: string | null;
-  account_ref: string | null;
-  account?: string | null;
-  ticket_type_custom: string | null;
-  ticket_type?: string | null;
+  account: string | null;
+  ticket_type: string | null;
   paid_out: boolean;
   delivered: boolean;
   notes: string | null;
   quantity_remaining: number | null;
-  venue?: string | null;
-  sector?: string | null;
-  tags?: string[] | null;
-  purchased_at?: string | null;
+  venue: string | null;
+  tags: string[] | null;
+  purchased_at: string | null;
   // From sales
   sell_price_total: number;
   profit: number;
@@ -58,8 +55,8 @@ const COLS = [
   { key: "profit", label: "Celkový\nzisk", width: 120 },
   { key: "roi", label: "Ziskovost", width: 90 },
   { key: "exchange", label: "Burza", width: 120 },
-  { key: "account_ref", label: "Účet", width: 120 },
-  { key: "ticket_type_custom", label: "Druh\nlístků", width: 120 },
+  { key: "account", label: "Účet", width: 120 },
+  { key: "ticket_type", label: "Druh\nlístků", width: 120 },
   { key: "sold_at", label: "Datum\nprodeje", width: 100 },
   { key: "paid_out", label: "Vyplaceno", width: 90 },
   { key: "delivered", label: "Doručeno", width: 90 },
@@ -113,9 +110,9 @@ export default function EvidenceTab() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    const [{ data: purchases }, { data: sales }, { data: accs }] = await Promise.all([
+    const [{ data: purchases, error: purchasesError }, { data: sales }, { data: accs }] = await Promise.all([
       supabase.from("purchases")
-        .select("id, event_name, event_date, event_actual_date, city, venue, sector, quantity, quantity_remaining, buy_price, currency, status, exchange, account_ref, ticket_type_custom, paid_out, delivered, notes, tags, purchased_at")
+        .select("id, event_name, event_date, event_actual_date, city, venue, quantity, quantity_remaining, buy_price, currency, status, exchange, account, ticket_type, paid_out, delivered, notes, tags, purchased_at")
         .eq("user_id", user.id)
         .order("event_date", { ascending: false }),
       supabase.from("sales")
@@ -123,6 +120,8 @@ export default function EvidenceTab() {
         .eq("user_id", user.id),
       supabase.from("accounts").select("id, name").eq("type", "purchase").order("name"),
     ]);
+
+    if (purchasesError) console.error("purchases error:", purchasesError);
 
     console.log("purchases:", purchases?.length);
     console.log("sales:", sales?.length);
@@ -149,16 +148,13 @@ export default function EvidenceTab() {
         currency: p.currency,
         status: p.status,
         exchange: p.exchange,
-        account_ref: p.account_ref,
-        account: p.account_ref,
-        ticket_type_custom: p.ticket_type_custom,
-        ticket_type: p.ticket_type_custom,
+        account: p.account,
+        ticket_type: p.ticket_type,
         paid_out: p.paid_out,
         delivered: p.delivered ?? false,
         notes: p.notes,
         quantity_remaining: p.quantity_remaining,
         venue: p.venue,
-        sector: p.sector,
         tags: p.tags,
         purchased_at: p.purchased_at,
         sell_price_total: sellTotal,
@@ -940,14 +936,14 @@ export default function EvidenceTab() {
                     {/* Účet — DROPDOWN from nákupní účty */}
                     <DropdownCell
                       rowId={row.id}
-                      field="account_ref"
-                      value={row.account_ref}
+                      field="account"
+                      value={row.account}
                       width={120}
                       options={accounts.map(a => a.name)}
                     />
 
                     {/* Druh lístků — DROPDOWN */}
-                    <DropdownCell rowId={row.id} field="ticket_type_custom" value={row.ticket_type_custom} width={120} options={["Mobile Transfer", "E-Ticket"]} />
+                    <DropdownCell rowId={row.id} field="ticket_type" value={row.ticket_type} width={120} options={["Mobile Transfer", "E-Ticket"]} />
 
                     {/* Datum prodeje */}
                     <DateCell rowId={row.id} field="sold_at" value={row.sold_at ? row.sold_at.split("T")[0] : null} width={100} table="sales" />
