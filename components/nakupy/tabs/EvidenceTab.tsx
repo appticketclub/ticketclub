@@ -702,11 +702,14 @@ export default function EvidenceTab() {
                       borderBottom: "1px solid #1a1a1a",
                       transition: "background 0.15s",
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.background = "#161616"; }}
+                    onMouseEnter={e => { 
+                      const isComplete = row.status === "sold" && row.delivered === true && row.paid_out === true; 
+                      if (isComplete) e.currentTarget.style.background = "#1a1a1a"; 
+                    }} 
                     onMouseLeave={e => { 
-                      const isComplete = row.status === "sold" && row.delivered === true && row.paid_out === true;
-                      const defaultBg = idx % 2 === 0 ? "#111111" : "#0d0d0d";
-                      e.currentTarget.style.background = isComplete ? defaultBg : "rgba(234, 179, 8, 0.15)";
+                      const isComplete = row.status === "sold" && row.delivered === true && row.paid_out === true; 
+                      const defaultBg = idx % 2 === 0 ? "#111111" : "#0d0d0d"; 
+                      e.currentTarget.style.background = isComplete ? defaultBg : "rgba(234, 179, 8, 0.15)"; 
                     }}
                   >
                     {/* Datum nákupu */}
