@@ -219,7 +219,6 @@ export default function EvidenceTab() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setDuplicating(false); return; }
 
-    // Insert duplicate purchase with ALL fields
     const { data: newPurchase, error } = await supabase.from("purchases").insert({
       user_id: user.id,
       event_name: row.event_name,
@@ -231,8 +230,8 @@ export default function EvidenceTab() {
       quantity_remaining: row.quantity_remaining,
       currency: row.currency,
       exchange: row.exchange,
-      account_ref: row.account_ref,
-      ticket_type_custom: row.ticket_type_custom,
+      account: row.account,
+      ticket_type: row.ticket_type,
       status: row.status,
       delivered: row.delivered,
       paid_out: row.paid_out,
@@ -241,7 +240,6 @@ export default function EvidenceTab() {
     }).select().single();
 
     if (!error && newPurchase) {
-      // Also duplicate sales data if exists
       const { data: existingSales } = await supabase
         .from("sales")
         .select("*")
@@ -298,7 +296,7 @@ export default function EvidenceTab() {
 
     async function save() {
       const supabase = createClient();
-      const purchaseFields = ["event_name", "city", "event_actual_date", "event_date", "exchange", "account_ref", "ticket_type_custom", "paid_out", "notes"];
+      const purchaseFields = ["event_name", "city", "event_actual_date", "event_date", "exchange", "account", "ticket_type", "paid_out", "notes"];
       const saleFields = ["sell_price_total", "sold_at", "platform"];
 
       let newValue: any = val;
