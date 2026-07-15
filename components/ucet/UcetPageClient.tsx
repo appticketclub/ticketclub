@@ -193,17 +193,17 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
     const rows = purchases.map(p => {
       const sale = p.sales?.[0];
       return {
-        "Datum nákupu": p.purchased_at ? new Date(p.purchased_at).toLocaleDateString("cs-CZ") : "",
+        "Datum nákupu": p.created_at ? new Date(p.created_at).toLocaleDateString("cs-CZ") : "",
         "Kapela / Název akce": p.event_name ?? "",
-        "Místo akce": p.venue ?? "",
+        "Místo akce": p.city ?? p.venue ?? "",
         "Datum koncertu": p.event_actual_date ? new Date(p.event_actual_date).toLocaleDateString("cs-CZ") : "",
         "Počet lístků": p.quantity ?? 0,
-        "Nákupní cena celkem (EUR)": p.buy_price ?? 0,
+        "Nákupní cena celkem (EUR)": (p.buy_price ?? 0) * (p.quantity ?? 1),
         "Počet prodaných lístků": sale?.quantity_sold ?? 0,
         "Prodejní cena celkem (EUR)": sale ? (sale.sell_price * sale.quantity_sold) : 0,
         "Burza": p.exchange ?? "",
         "Účet": p.account_ref ?? "",
-        "Druh vstupenky": p.ticket_type ?? "",
+        "Druh vstupenky": p.ticket_type_custom ?? p.ticket_type ?? "",
         "Datum prodeje": sale?.sold_at ? new Date(sale.sold_at).toLocaleDateString("cs-CZ") : "",
         "Vyplaceno (ANO/NE)": p.paid_out ? "ANO" : "NE",
         "Doručeno (ANO/NE)": p.delivered ? "ANO" : "NE",
