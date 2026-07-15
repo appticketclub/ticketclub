@@ -10,9 +10,11 @@ const protectedRoutes = ["/dashboard", "/nakupy", "/dostupne-sluzby", "/ucet", "
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Bypass everything for auth callback
+  // Bypass everything for auth callback or confirm
   if (pathname === "/auth/callback" || 
-      pathname.startsWith("/auth/callback")) {
+      pathname.startsWith("/auth/callback") || 
+      pathname === "/auth/confirm" || 
+      pathname.startsWith("/auth/confirm")) {
     return NextResponse.next();
   }
 
@@ -21,9 +23,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Allow access to protected routes if magic link token is present
+  const searchParams = request.nextUrl.searchParams;
+  const hasMagicLinkToken = searchParams.get("token_hash") && searchParams.get("type");
+
   const isProtected = protectedRoutes.some(route => pathname.startsWith(route));
  
-  if (isProtected) {
+  if (isProtected && !hasMagicLinkToken) {
     const allCookies = request.cookies.getAll();
     console.log("Cookies:", allCookies.map(c => c.name));
     // Supabase stores auth in these cookies

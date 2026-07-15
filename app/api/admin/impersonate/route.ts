@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     type: "magiclink",
     email: userId,
     options: {
-      redirectTo: "https://app.ticketclub.vip/nakupy"
+      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/confirm?next=/nakupy`
     }
   });
 
