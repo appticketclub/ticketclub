@@ -29,7 +29,7 @@ export default function SalesTrackerClient() {
 
   const s = data?.marketData?.summary;
   const e = data?.marketData?.event;
-  const sales = data?.sales ?? [];
+  const sales = (data?.sales ?? []).slice(0, 50);
 
   function fmt(v: any, dec = 0) {
     if (v == null) return "—";
