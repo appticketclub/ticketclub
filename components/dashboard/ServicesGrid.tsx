@@ -75,6 +75,14 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
       href: "/presale-bot",
       free: true,
     },
+    {
+      id: "sales-tracker",
+      title: "Sales Tracker",
+      description: "Sledujte prodeje a ceny vstupenek na Viagogo v reálném čase.",
+      icon: "📊",
+      href: "/sales-tracker",
+      free: false,
+    },
   ];
 
   return (
