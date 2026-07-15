@@ -61,7 +61,6 @@ export async function POST(request: NextRequest) {
         supabase_user_id: user.id,
       },
       subscription_data: {
-        ...(alreadyHadTrial ? {} : { trial_period_days: 14 }),
         metadata: {
           supabase_user_id: user.id,
         },
