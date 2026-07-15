@@ -956,7 +956,7 @@ export default function EvidenceTab() {
                       loadData();
                     }} style={{ ...cellStyle(90), textAlign: "center", cursor: "pointer" }}>
                       <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 4, background: row.paid_out ? "#0a2a1a" : "#2a2a1a", color: row.paid_out ? "#34d399" : "#ededed", fontWeight: 600 }}>
-                        {row.paid_out ? "ANO" : "NIE"}
+                        {row.paid_out ? "ANO" : "NE"}
                       </span>
                     </td>
 
@@ -967,7 +967,7 @@ export default function EvidenceTab() {
                       loadData();
                     }} style={{ ...cellStyle(90), textAlign: "center", cursor: "pointer" }}>
                       <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 4, background: row.delivered ? "#0a2a1a" : "#1a1a1a", color: row.delivered ? "#34d399" : "#ededed", fontWeight: 600 }}>
-                        {row.delivered ? "ANO" : "NIE"}
+                        {row.delivered ? "ANO" : "NE"}
                       </span>
                     </td>
 
