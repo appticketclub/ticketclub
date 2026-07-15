@@ -10,11 +10,12 @@ const protectedRoutes = ["/dashboard", "/nakupy", "/dostupne-sluzby", "/ucet", "
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Bypass everything for auth callback or confirm
+  // Bypass everything for auth callback, confirm, or admin impersonate
   if (pathname === "/auth/callback" || 
       pathname.startsWith("/auth/callback") || 
       pathname === "/auth/confirm" || 
-      pathname.startsWith("/auth/confirm")) {
+      pathname.startsWith("/auth/confirm") ||
+      pathname.startsWith("/admin/impersonate")) {
     return NextResponse.next();
   }
 
