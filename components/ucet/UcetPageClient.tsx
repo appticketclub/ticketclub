@@ -172,6 +172,58 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
     setLoadingKey(false);
   }
 
+  async function handleDownloadBackup() {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    // Fetch all purchases
+    const { data: purchases } = await  supabase
+      .from("purchases")
+      .select("*, sales(*)")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (!purchases) return;
+
+    // Generate Excel
+    const XLSX = await import("xlsx");
+    const wb = XLSX.utils.book_new();
+
+    const rows = purchases.map(p => {
+      const sale = p.sales?.[0];
+      return {
+        "Datum nákupu": p.purchased_at ? new Date(p.purchased_at).toLocaleDateString("cs-CZ") : "",
+        "Kapela / Název akce": p.event_name ?? "",
+        "Místo akce": p.venue ?? "",
+        "Datum koncertu": p.event_actual_date ? new Date(p.event_actual_date).toLocaleDateString("cs-CZ") : "",
+        "Počet lístků": p.quantity ?? 0,
+        "Nákupní cena celkem (EUR)": p.buy_price ?? 0,
+        "Počet prodaných lístků": sale?.quantity_sold ?? 0,
+        "Prodejní cena celkem (EUR)": sale ? (sale.sell_price * sale.quantity_sold) : 0,
+        "Burza": p.exchange ?? "",
+        "Účet": p.account_ref ?? "",
+        "Druh vstupenky": p.ticket_type ?? "",
+        "Datum prodeje": sale?.sold_at ? new Date(sale.sold_at).toLocaleDateString("cs-CZ") : "",
+        "Vyplaceno (ANO/NE)": p.paid_out ? "ANO" : "NE",
+        "Doručeno (ANO/NE)": p.delivered ? "ANO" : "NE",
+        "Poznámky": p.notes ?? "",
+      };
+    });
+
+    const ws = XLSX.utils.json_to_sheet(rows);
+    ws["!cols"] = [
+      { wch: 14 }, { wch: 25 }, { wch: 15 }, { wch: 14 },
+      { wch: 12 }, { wch: 22 }, { wch: 22 }, { wch: 22 },
+      { wch: 15 }, { wch: 22 }, { wch: 18 }, { wch: 14 },
+      { wch: 18 }, { wch: 16 }, { wch: 20 },
+    ];
+    XLSX.utils.book_append_sheet(wb, ws, "Záloha");
+
+    const date = new Date().toISOString().split("T")[0];
+    XLSX.writeFile(wb, `ticketclub-zaloha-${date}.xlsx`);
+  }
+
   useEffect(() => {
     getExtensionKey();
   }, []);
@@ -365,6 +417,30 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
           </a>
         </div>
       )}
+
+      {/* Záloha */}
+      <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.25rem 1.5rem", marginBottom: "1rem", position: "relative" as const, overflow: "hidden" as const }}>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #eeeeee22, transparent)" }} />
+        <div style={{ fontSize: 13, fontWeight: 700, color: "#ffffff", marginBottom: 4 }}>ZÁLOHA DAT</div>
+        <div style={{ fontSize: 12, color: "#ffffff", marginBottom: "1rem" }}>
+          Stáhněte zálohu všech vašich nákupů a prodejů ve formátu Excel.
+        </div>
+        <button
+          onClick={handleDownloadBackup}
+          style={{
+            padding: "0.7rem 1.25rem",
+            background: "linear-gradient(135deg, #ffffff, #a0a0a0)",
+            border: "none",
+            borderRadius: 10,
+            color: "#000",
+            fontWeight: 700,
+            fontSize: 13,
+            cursor: "pointer",
+          }}
+        >
+          ⬇ Stáhnout zálohu (.xlsx)
+        </button>
+      </div>
 
       {/* Danger zone */}
       <div style={{ ...cardStyle, border: "1px solid rgba(248,113,113,0.2)", background: "#110a0a" }}>
