@@ -52,19 +52,27 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
       free: true,
     },
     {
-      id: "chrome-launcher",
-      title: "Chrome Launcher",
-      description: "Spusťte víc Chrome profilů najednou s jedním odkazem.",
-      icon: "🚀",
-      href: "/chrome-launcher",
-      free: false,
-    },
-    {
       id: "refresh-bot",
       title: "Refresh Bot",
       description: "Automatické refreshování vstupenek na Ticketmaster.",
       icon: "🔄",
       href: "/refresh-bot",
+      free: false,
+    },
+    {
+      id: "sales-tracker",
+      title: "Sales Tracker",
+      description: "Sledujte prodeje a ceny vstupenek na Viagogo v reálném čase.",
+      icon: "📊",
+      href: "/sales-tracker",
+      free: false,
+    },
+    {
+      id: "chrome-launcher",
+      title: "Chrome Launcher",
+      description: "Spusťte víc Chrome profilů najednou s jedním odkazem.",
+      icon: "🚀",
+      href: "/chrome-launcher",
       free: false,
     },
     {
@@ -74,14 +82,6 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
       icon: "⚡",
       href: "/presale-bot",
       free: true,
-    },
-    {
-      id: "sales-tracker",
-      title: "Sales Tracker",
-      description: "Sledujte prodeje a ceny vstupenek na Viagogo v reálném čase.",
-      icon: "📊",
-      href: "/sales-tracker",
-      free: false,
     },
   ];
 
@@ -108,7 +108,7 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
           <UpgradeButton />
         </div>
       )}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
         {services.map(service => {
           const locked = !service.free && !isPro;
           return (
