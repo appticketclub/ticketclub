@@ -764,7 +764,7 @@ export default function EvidenceTab() {
                       background: (() => {
                         const isComplete = row.status === "sold";
                         const defaultBg = idx % 2 === 0 ? "#111111" : "#0d0d0d";
-                        return isComplete ? defaultBg : "rgba(234, 179, 8, 0.15)";
+                        return isComplete ? defaultBg : "rgba(251, 191, 36, 0.12)";
                       })(),
                       borderBottom: "1px solid #1a1a1a",
                       transition: "background 0.15s",
@@ -776,7 +776,7 @@ export default function EvidenceTab() {
                     onMouseLeave={e => { 
                       const isComplete = row.status === "sold"; 
                       const defaultBg = idx % 2 === 0 ? "#111111" : "#0d0d0d"; 
-                      e.currentTarget.style.background = isComplete ? defaultBg : "rgba(234, 179, 8, 0.15)"; 
+                      e.currentTarget.style.background = isComplete ? defaultBg : "rgba(251, 191, 36, 0.12)"; 
                     }}
                   >
                     {/* Datum nákupu */}
