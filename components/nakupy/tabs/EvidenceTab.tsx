@@ -762,7 +762,7 @@ export default function EvidenceTab() {
                     key={row.id}
                     style={{
                       background: (() => {
-                        const isComplete = row.status === "sold" && row.delivered === true && row.paid_out === true;
+                        const isComplete = row.status === "sold";
                         const defaultBg = idx % 2 === 0 ? "#111111" : "#0d0d0d";
                         return isComplete ? defaultBg : "rgba(234, 179, 8, 0.15)";
                       })(),
@@ -770,11 +770,11 @@ export default function EvidenceTab() {
                       transition: "background 0.15s",
                     }}
                     onMouseEnter={e => { 
-                      const isComplete = row.status === "sold" && row.delivered === true && row.paid_out === true; 
+                      const isComplete = row.status === "sold"; 
                       if (isComplete) e.currentTarget.style.background = "#1a1a1a"; 
                     }} 
                     onMouseLeave={e => { 
-                      const isComplete = row.status === "sold" && row.delivered === true && row.paid_out === true; 
+                      const isComplete = row.status === "sold"; 
                       const defaultBg = idx % 2 === 0 ? "#111111" : "#0d0d0d"; 
                       e.currentTarget.style.background = isComplete ? defaultBg : "rgba(234, 179, 8, 0.15)"; 
                     }}
