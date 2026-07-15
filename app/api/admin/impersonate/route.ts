@@ -25,8 +25,9 @@ export async function POST(request: NextRequest) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
 
-  return NextResponse.json({
-    link: data.properties?.action_link,
-    token: data.properties?.hashed_token
+  return NextResponse.json({ 
+    link: data.properties?.action_link, 
+    token: data.properties?.hashed_token, 
+    confirmUrl: `${process.env.NEXT_PUBLIC_APP_URL}/auth/confirm?token_hash=${data.properties?.hashed_token}&type=magiclink&next=/nakupy` 
   });
 }
