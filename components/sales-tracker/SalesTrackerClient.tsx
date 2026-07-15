@@ -47,6 +47,7 @@ export default function SalesTrackerClient() {
   }
 
   const stats = [
+    { label: "Celkový počet prodejů", value: fmt(s?.listings_sold), sub: s?.listings_sold_24h != null ? `${trendArrow(s.listings_sold_24h)} ${fmt(s.listings_sold_24h)} za 24h` : null, subColor: trendColor(s?.listings_sold_24h) },
     { label: "Prodaných lístků", value: fmt(s?.tickets_sold), sub: s?.tickets_sold_24h != null ? `${trendArrow(s.tickets_sold_24h)} ${fmt(s.tickets_sold_24h)} za 24h` : null, subColor: trendColor(s?.tickets_sold_24h) },
     { label: "Prodáno za 24h (ks)", value: fmt(s?.tickets_sold_24h), sub: s?.tickets_sold_24h_percentage != null ? `${trendArrow(s.tickets_sold_24h_percentage)} ${fmt(s.tickets_sold_24h_percentage, 1)} %` : null, subColor: trendColor(s?.tickets_sold_24h_percentage) },
     { label: "Dostupných lístků", value: fmt(s?.available_tickets), sub: s?.available_tickets_24h != null ? `${trendArrow(s.available_tickets_24h)} ${fmt(s.available_tickets_24h)} za 24h` : null, subColor: trendColor(s?.available_tickets_24h) },
@@ -54,8 +55,6 @@ export default function SalesTrackerClient() {
     { label: "Nejnižší cena (get-in)", value: s?.get_in_price != null ? `${fmt(s.get_in_price, 2)} ${s?.currency ?? ""}` : "—", sub: s?.get_in_price_24h != null ? `${trendArrow(s.get_in_price_24h)} ${fmt(s.get_in_price_24h, 2)} za 24h` : null, subColor: trendColor(s?.get_in_price_24h) },
     { label: "Nejvyšší prodejní cena", value: s?.highest_sale_price != null ? `${fmt(s.highest_sale_price, 2)} ${s?.currency ?? ""}` : "—", sub: null, subColor: "#525252" },
     { label: "Celkový objem prodeje", value: s?.total_volume != null ? `${fmt(s.total_volume, 2)} ${s?.currency ?? ""}` : "—", sub: null, subColor: "#525252" },
-    { label: "Celkový počet prodejů", value: fmt(s?.listings_sold), sub: s?.listings_sold_24h != null ? `${trendArrow(s.listings_sold_24h)} ${fmt(s.listings_sold_24h)} za 24h` : null, subColor: trendColor(s?.listings_sold_24h) },
-    { label: "Aktivní nabídky", value: fmt(s?.listings_available), sub: s?.listings_available_24h != null ? `${trendArrow(s.listings_available_24h)} ${fmt(s.listings_available_24h)} za 24h` : null, subColor: trendColor(s?.listings_available_24h) },
   ];
 
   return (
@@ -222,7 +221,7 @@ export default function SalesTrackerClient() {
           {sales.length > 0 && (
             <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem", marginBottom: "1.5rem" }}>
               <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: "1rem" }}>
-                HISTÓRIA PREDAJOV
+                HISTORIE PRODEJŮ
               </div>
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
