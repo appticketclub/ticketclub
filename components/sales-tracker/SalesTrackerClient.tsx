@@ -1,11 +1,13 @@
 "use client";
 import { useState } from "react";
+import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 export default function SalesTrackerClient() {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [activeChart, setActiveChart] = useState<"tickets_sold" | "tickets_sold_24h" | "available_tickets" | "avg_price_sold" | "avg_price_available" | "highest_price">("tickets_sold");
 
   async function handleSearch() {
     if (!url.trim()) return;
@@ -128,34 +130,108 @@ export default function SalesTrackerClient() {
             </div>
           )}
 
-          {/* Daily stats table */}
+          {/* Chart section */}
           {data.daily_statistics?.length > 0 && (
-            <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem" }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: "1rem" }}>DENNÍ STATISTIKY</div>
-              <div style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
-                  <thead>
-                    <tr>
-                      {["Datum", "Prodáno", "Prodáno 24h", "Dostupné", "Prům. cena prodeje", "Prům. cena nabídky", "Nejvyšší cena"].map(h => (
-                        <th key={h} style={{ padding: "8px 12px", textAlign: "left", color: "#ededed", borderBottom: "1px solid #1a1a1a", fontWeight: 600, whiteSpace: "nowrap" }}>{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[...data.daily_statistics].reverse().map((day: any, i: number) => (
-                      <tr key={i} style={{ borderBottom: "1px solid #0d0d0d" }}>
-                        <td style={{ padding: "8px 12px", color: "#ededed" }}>{new Date(day.stat_date).toLocaleDateString("cs-CZ")}</td>
-                        <td style={{ padding: "8px 12px", color: "#fff" }}>{fmt(day.tickets_sold)}</td>
-                        <td style={{ padding: "8px 12px", color: trendColor(day.tickets_sold_24h) }}>{day.tickets_sold_24h != null ? `${trendArrow(day.tickets_sold_24h)} ${fmt(day.tickets_sold_24h)}` : "—"}</td>
-                        <td style={{ padding: "8px 12px", color: "#ededed" }}>{fmt(day.available_tickets)}</td>
-                        <td style={{ padding: "8px 12px", color: "#ededed" }}>{day.average_ticket_price_sold != null ? `${fmt(day.average_ticket_price_sold, 2)} ${s?.currency ?? ""}` : "—"}</td>
-                        <td style={{ padding: "8px 12px", color: "#ededed" }}>{day.average_ticket_price_available != null ? `${fmt(day.average_ticket_price_available, 2)} ${s?.currency ?? ""}` : "—"}</td>
-                        <td style={{ padding: "8px 12px", color: "#ededed" }}>{day.highest_sale_price != null ? `${fmt(day.highest_sale_price, 2)} ${s?.currency ?? ""}` : "—"}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem", marginBottom: "1.5rem" }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: "1rem" }}>VÝVOJ V ČASE</div>
+              
+              {/* Tab switcher */}
+              <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "1.25rem" }}>
+                {([
+                  { key: "tickets_sold", label: "Prodáno celkem" },
+                  { key: "tickets_sold_24h", label: "Prodáno 24h" },
+                  { key: "available_tickets", label: "Dostupné" },
+                  { key: "avg_price_sold", label: "Prům. cena prodeje" },
+                  { key: "avg_price_available", label: "Prům. cena nabídky" },
+                  { key: "highest_price", label: "Nejvyšší cena" },
+                ] as const).map(tab => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setActiveChart(tab.key)}
+                    style={{
+                      padding: "5px 12px",
+                      borderRadius: 8,
+                      fontSize: 11,
+                      fontWeight: 700,
+                      letterSpacing: "0.05em",
+                      border: "1px solid",
+                      cursor: "pointer",
+                      background: activeChart === tab.key ? "#ffffff" : "transparent",
+                      borderColor: activeChart === tab.key ? "#ffffff" : "#2a2a2a",
+                      color: activeChart === tab.key ? "#000000" : "#ededed",
+                      transition: "all 0.15s",
+                    }}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
               </div>
+
+              {/* Chart */}
+              {(() => {
+                const chartData = [...data.daily_statistics].map((d: any) => ({
+                  date: new Date(d.stat_date).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" }),
+                  tickets_sold: d.tickets_sold ?? 0,
+                  tickets_sold_24h: d.tickets_sold_24h ?? 0,
+                  available_tickets: d.available_tickets ?? 0,
+                  avg_price_sold: d.average_ticket_price_sold ? Number(d.average_ticket_price_sold) : 0,
+                  avg_price_available: d.average_ticket_price_available ? Number(d.average_ticket_price_available) : 0,
+                  highest_price: d.highest_sale_price ? Number(d.highest_sale_price) : 0,
+                }));
+
+                const isBar = activeChart === "tickets_sold_24h";
+                const currency = s?.currency ?? "";
+
+                const tooltipFormatter = (value: any) => {
+                  if (["avg_price_sold", "avg_price_available", "highest_price"].includes(activeChart)) {
+                    return [`${Number(value).toFixed(2)} ${currency}`, ""];
+                  }
+                  return [fmt(value), ""];
+                };
+
+                return (
+                  <ResponsiveContainer width="100%" height={240}>
+                    {isBar ? (
+                      <BarChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
+                        <XAxis dataKey="date" tick={{ fill: "#525252", fontSize: 10 }} axisLine={false} tickLine={false} />
+                        <YAxis tick={{ fill: "#525252", fontSize: 10 }} axisLine={false} tickLine={false} width={45} />
+                        <Tooltip
+                          contentStyle={{ background: "#111", border: "1px solid #2a2a2a", borderRadius: 8, fontSize: 12 }}
+                          labelStyle={{ color: "#fff" }}
+                          formatter={tooltipFormatter}
+                        />
+                        <Bar dataKey={activeChart} fill="#4ade80" radius={[3, 3, 0, 0]} />
+                      </BarChart>
+                    ) : (
+                      <AreaChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#4ade80" stopOpacity={0.15} />
+                            <stop offset="95%" stopColor="#4ade80" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <XAxis dataKey="date" tick={{ fill: "#525252", fontSize: 10 }} axisLine={false} tickLine={false} />
+                        <YAxis tick={{ fill: "#525252", fontSize: 10 }} axisLine={false} tickLine={false} width={55}
+                          tickFormatter={v => ["avg_price_sold", "avg_price_available", "highest_price"].includes(activeChart) ? `${v} ${currency}` : fmt(v)} />
+                        <Tooltip
+                          contentStyle={{ background: "#111", border: "1px solid #2a2a2a", borderRadius: 8, fontSize: 12 }}
+                          labelStyle={{ color: "#fff" }}
+                          formatter={tooltipFormatter}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey={activeChart}
+                          stroke="#4ade80"
+                          strokeWidth={2}
+                          fill="url(#chartGrad)"
+                          dot={false}
+                          activeDot={{ r: 4, fill: "#4ade80", stroke: "#111", strokeWidth: 2 }}
+                        />
+                      </AreaChart>
+                    )}
+                  </ResponsiveContainer>
+                );
+              })()}
             </div>
           )}
         </>
