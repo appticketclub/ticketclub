@@ -113,24 +113,6 @@ export default function SalesTrackerClient() {
             ))}
           </div>
 
-          {/* Price histogram */}
-          {data.marketData?.price_histogram?.data?.length > 0 && (
-            <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem", marginBottom: "1.5rem" }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: "1rem" }}>CENOVÉ ROZLOŽENÍ PRODEJŮ</div>
-              <div style={{ display: "flex", alignItems: "flex-end", gap: 4, height: 100 }}>
-                {(() => {
-                  const maxVal = Math.max(...data.marketData.price_histogram.data.map((b: any) => b.tickets_sold));
-                  return data.marketData.price_histogram.data.map((bin: any, i: number) => (
-                    <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-                      <div style={{ width: "100%", background: "#4ade80", borderRadius: "3px 3px 0 0", height: maxVal > 0 ? `${(bin.tickets_sold / maxVal) * 80}px` : "2px", opacity: 0.8 }} />
-                      <div style={{ fontSize: 9, color: "#525252", transform: "rotate(-45deg)", whiteSpace: "nowrap" }}>{Number(bin.start).toFixed(0)}</div>
-                    </div>
-                  ));
-                })()}
-              </div>
-            </div>
-          )}
-
           {/* Chart section */}
           {data.marketData?.daily_statistics?.length > 0 && (
             <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem", marginBottom: "1.5rem" }}>
@@ -238,9 +220,9 @@ export default function SalesTrackerClient() {
 
           {/* Sales history */}
           {sales.length > 0 && (
-            <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem" }}>
+            <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem", marginBottom: "1.5rem" }}>
               <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: "1rem" }}>
-                HISTÓRIA PREDAJOV <span style={{ fontSize: 11, color: "#525252", fontWeight: 400 }}>({sales.length} posledných)</span>
+                HISTÓRIA PREDAJOV
               </div>
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
@@ -268,6 +250,24 @@ export default function SalesTrackerClient() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          )}
+
+          {/* Price histogram */}
+          {data.marketData?.price_histogram?.data?.length > 0 && (
+            <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem" }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: "1rem" }}>CENOVÉ ROZLOŽENÍ PRODEJŮ</div>
+              <div style={{ display: "flex", alignItems: "flex-end", gap: 4, height: 100 }}>
+                {(() => {
+                  const maxVal = Math.max(...data.marketData.price_histogram.data.map((b: any) => b.tickets_sold));
+                  return data.marketData.price_histogram.data.map((bin: any, i: number) => (
+                    <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                      <div style={{ width: "100%", background: "#4ade80", borderRadius: "3px 3px 0 0", height: maxVal > 0 ? `${(bin.tickets_sold / maxVal) * 80}px` : "2px", opacity: 0.8 }} />
+                      <div style={{ fontSize: 9, color: "#525252", transform: "rotate(-45deg)", whiteSpace: "nowrap" }}>{Number(bin.start).toFixed(0)}</div>
+                    </div>
+                  ));
+                })()}
               </div>
             </div>
           )}
