@@ -13,12 +13,20 @@ export async function POST(request: NextRequest) {
   const eventId = `E-${match[1]}`;
 
   try {
-    const res = await fetch(`${DATA_BASE}/viagogo/${eventId}`, {
-      headers: { apikey: EVENTORY_KEY }
-    });
-    const marketData = await res.json();
-    if (!res.ok) return NextResponse.json({ error: marketData.message ?? "Event nenájdený" }, { status: 404 });
-    return NextResponse.json({ marketData });
+    const [marketRes, salesRes] = await Promise.all([
+      fetch(`${DATA_BASE}/viagogo/${eventId}`, {
+        headers: { apikey: EVENTORY_KEY }
+      }),
+      fetch(`${DATA_BASE}/sales/viagogo/${eventId}`, {
+        headers: { apikey: EVENTORY_KEY }
+      }),
+    ]);
+
+    const marketData = await marketRes.json();
+    const salesData = salesRes.ok ? await salesRes.json() : { sales: [] };
+
+    if (!marketRes.ok) return NextResponse.json({ error: marketData.message ?? "Event nenájdený" }, { status: 404 });
+    return NextResponse.json({ marketData, sales: salesData.sales ?? [] });
   } catch {
     return NextResponse.json({ error: "Chyba servera" }, { status: 500 });
   }

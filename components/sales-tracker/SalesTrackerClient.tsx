@@ -29,6 +29,7 @@ export default function SalesTrackerClient() {
 
   const s = data?.summary;
   const e = data?.event;
+  const sales = data?.sales ?? [];
 
   function fmt(v: any, dec = 0) {
     if (v == null) return "—";
@@ -232,6 +233,42 @@ export default function SalesTrackerClient() {
                   </ResponsiveContainer>
                 );
               })()}
+            </div>
+          )}
+
+          {/* Sales history */}
+          {sales.length > 0 && (
+            <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem" }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: "1rem" }}>
+                HISTÓRIA PREDAJOV <span style={{ fontSize: 11, color: "#525252", fontWeight: 400 }}>({sales.length} posledných)</span>
+              </div>
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                  <thead>
+                    <tr>
+                      {["Cena / ks", "Počet vstupenek", "Sekce", "Řada", "Místo", "Datum"].map(h => (
+                        <th key={h} style={{ padding: "8px 12px", textAlign: "left", color: "#ededed", borderBottom: "1px solid #1a1a1a", fontWeight: 600, whiteSpace: "nowrap" }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sales.map((sale: any, i: number) => (
+                      <tr key={i} style={{ borderBottom: "1px solid #0d0d0d" }}>
+                        <td style={{ padding: "8px 12px", color: "#4ade80", fontWeight: 700 }}>
+                          {sale.raw_price != null ? `${Number(sale.raw_price).toFixed(2)} ${s?.currency ?? ""}` : "—"}
+                        </td>
+                        <td style={{ padding: "8px 12px", color: "#fff" }}>{sale.sold_tickets ?? "—"}</td>
+                        <td style={{ padding: "8px 12px", color: "#ededed" }}>{sale.section ?? "—"}</td>
+                        <td style={{ padding: "8px 12px", color: "#ededed" }}>{sale.row ?? "—"}</td>
+                        <td style={{ padding: "8px 12px", color: "#ededed" }}>{sale.seat ?? "—"}</td>
+                        <td style={{ padding: "8px 12px", color: "#525252" }}>
+                          {sale.created_datetime ? new Date(sale.created_datetime).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </>
