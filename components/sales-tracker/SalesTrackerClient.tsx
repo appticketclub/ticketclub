@@ -22,13 +22,13 @@ export default function SalesTrackerClient() {
       });
       const json = await res.json();
       if (!res.ok) { setError(json.error); return; }
-      setData(json.marketData);
+      setData(json);
     } catch { setError("Chyba připojení"); }
     finally { setLoading(false); }
   }
 
-  const s = data?.summary;
-  const e = data?.event;
+  const s = data?.marketData?.summary;
+  const e = data?.marketData?.event;
   const sales = data?.sales ?? [];
 
   function fmt(v: any, dec = 0) {
@@ -114,13 +114,13 @@ export default function SalesTrackerClient() {
           </div>
 
           {/* Price histogram */}
-          {data.price_histogram?.data?.length > 0 && (
+          {data.marketData?.price_histogram?.data?.length > 0 && (
             <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem", marginBottom: "1.5rem" }}>
               <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: "1rem" }}>CENOVÉ ROZLOŽENÍ PRODEJŮ</div>
               <div style={{ display: "flex", alignItems: "flex-end", gap: 4, height: 100 }}>
                 {(() => {
-                  const maxVal = Math.max(...data.price_histogram.data.map((b: any) => b.tickets_sold));
-                  return data.price_histogram.data.map((bin: any, i: number) => (
+                  const maxVal = Math.max(...data.marketData.price_histogram.data.map((b: any) => b.tickets_sold));
+                  return data.marketData.price_histogram.data.map((bin: any, i: number) => (
                     <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
                       <div style={{ width: "100%", background: "#4ade80", borderRadius: "3px 3px 0 0", height: maxVal > 0 ? `${(bin.tickets_sold / maxVal) * 80}px` : "2px", opacity: 0.8 }} />
                       <div style={{ fontSize: 9, color: "#525252", transform: "rotate(-45deg)", whiteSpace: "nowrap" }}>{Number(bin.start).toFixed(0)}</div>
@@ -132,7 +132,7 @@ export default function SalesTrackerClient() {
           )}
 
           {/* Chart section */}
-          {data.daily_statistics?.length > 0 && (
+          {data.marketData?.daily_statistics?.length > 0 && (
             <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem", marginBottom: "1.5rem" }}>
               <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: "1rem" }}>VÝVOJ V ČASE</div>
               
@@ -170,7 +170,7 @@ export default function SalesTrackerClient() {
 
               {/* Chart */}
               {(() => {
-                const chartData = [...data.daily_statistics].map((d: any) => ({
+                const chartData = [...data.marketData.daily_statistics].map((d: any) => ({
                   date: new Date(d.stat_date).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" }),
                   tickets_sold: d.tickets_sold ?? 0,
                   tickets_sold_24h: d.tickets_sold_24h ?? 0,
