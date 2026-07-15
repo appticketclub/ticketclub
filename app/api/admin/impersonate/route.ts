@@ -10,37 +10,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
 
-  const supabase = createClient(supabaseUrl, serviceRoleKey);
-
-  // Get user by email
-  const { data: { users }, error: userError } = await supabase.auth.admin.listUsers();
-  const user = users?.find(u => u.email === userId);
-  
-  if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
-  // Call GoTrue API directly to create a session for the user
-  const response = await fetch(`${supabaseUrl}/auth/v1/admin/users/${user.id}/tokens`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${serviceRoleKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({}),
+  const { data, error } = await supabase.auth.admin.generateLink({
+    type: "magiclink",
+    email: userId,
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ error: "Failed to create session" }));
-    return NextResponse.json({ error: errorData.error ?? "No session" }, { status: 400 });
-  }
+  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
 
-  const data = await response.json();
-
-  // Return session tokens
   return NextResponse.json({
-    access_token: data.access_token,
-    refresh_token: data.refresh_token,
+    link: data.properties?.action_link,
+    token: data.properties?.hashed_token
   });
 }
