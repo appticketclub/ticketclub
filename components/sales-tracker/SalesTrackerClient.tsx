@@ -140,7 +140,7 @@ export default function SalesTrackerClient() {
               <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "1.25rem" }}>
                 {([
                   { key: "tickets_sold", label: "Prodáno celkem" },
-                  { key: "tickets_sold_24h", label: "Prodáno 24h" },
+                  { key: "tickets_sold_24h", label: "Denní prodeje" },
                   { key: "available_tickets", label: "Dostupné" },
                   { key: "avg_price_sold", label: "Prům. cena prodeje" },
                   { key: "avg_price_available", label: "Prům. cena nabídky" },
