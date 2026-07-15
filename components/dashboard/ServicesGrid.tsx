@@ -13,7 +13,7 @@ function UpgradeButton() {
         border: "none", borderRadius: 10, color: "#fff",
         cursor: "pointer", whiteSpace: "nowrap" as const,
       }}>
-        Vyzkoušet zdarma →
+        Upgradovat na PRO →
       </button>
       {show && <UpgradeModal onClose={() => setShow(false)} />}
     </>
@@ -32,7 +32,7 @@ function UpgradeLink() {
         fontWeight: 600,
         fontSize: 13,
       }}>
-        Vyzkoušet zdarma →
+        Upgradovat na PRO →
       </button>
       {show && <UpgradeModal onClose={() => setShow(false)} />}
     </>
@@ -99,10 +99,10 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #7c3aed, transparent)" }} />
           <div>
             <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 4 }}>
-              ⭐ Vyzkoušej PRO zdarma
+              ⭐ Upgradovat na PRO
             </div>
             <div style={{ fontSize: 12, color: "#f5f5f5" }}>
-              Akce platí do 15.7.
+              Odemkněte všechny funkce TicketClubu
             </div>
           </div>
           <UpgradeButton />
