@@ -102,6 +102,18 @@ export default function Sidebar({
 
       <div style={{ marginTop: "auto", paddingTop: "1rem", borderTop: "1px solid #1a1a1a" }}>
         <Link
+          href="/sales-tracker"
+          style={{
+            display: "flex", alignItems: "center", gap: "0.75rem",
+            padding: "0.6rem 0.75rem", borderRadius: 10,
+            fontSize: 13, color: "#ffffff", textDecoration: "none",
+          }}
+          onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.color = "#34d399"}
+          onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.color = "#ffffff"}
+        >
+          📊 Sales Tracker
+        </Link>
+        <Link
           href="/dostupne-sluzby"
           style={{
             display: "flex", alignItems: "center", gap: "0.75rem",
