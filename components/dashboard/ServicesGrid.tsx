@@ -87,6 +87,18 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
 
   return (
     <div>
+      <style>{`
+        @media (max-width: 640px) {
+          .services-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+        @media (min-width: 641px) and (max-width: 1024px) {
+          .services-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+      `}</style>
       {!isPro && (
         <div style={{
           background: "linear-gradient(135deg, #0f0a1f, #0a0a1a)",
@@ -108,7 +120,7 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
           <UpgradeButton />
         </div>
       )}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
+      <div className="services-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
         {services.map(service => {
           const locked = !service.free && !isPro;
           return (
