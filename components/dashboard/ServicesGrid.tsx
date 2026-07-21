@@ -201,7 +201,11 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
                   </a>
                   {videoMap[service.title] && (
                     <button
-                      onClick={() => setVideoUrl(videoMap[service.title])}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        setVideoUrl(videoMap[service.title]);
+                      }}
                       style={{ background: "none", border: "1px solid #2a2a2a", borderRadius: 8, padding: "4px 10px", color: "#ededed", fontSize: 12, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}
                     >
                       ℹ️ Video ukázka
