@@ -140,7 +140,6 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
                 border: `1px solid ${locked ? "#1a1a1a" : "#ededed"}`,
                 borderRadius: 16, padding: "1.5rem",
                 cursor: locked ? "default" : "pointer",
-                opacity: locked ? 0.6 : 1,
                 position: "relative", overflow: "hidden",
                 transition: "border-color 0.2s, transform 0.2s",
               }}
@@ -163,6 +162,7 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
                   background: isPro ? "linear-gradient(135deg, #7c3aed, #5b21b6)" : "#1a1a1a",
                   color: isPro ? "#fff" : "#ededed",
                   border: isPro ? "none" : "1px solid #2a2a2a",
+                  opacity: locked ? 0.6 : 1,
                 }}>
                   {isPro ? "PRO" : "🔒 PRO"}
                 </div>
@@ -176,30 +176,33 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
                 border: "1px solid #ededed",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 fontSize: "1.5rem", marginBottom: "1.25rem",
+                opacity: locked ? 0.6 : 1,
               }}>
                 {service.icon}
               </div>
 
-              <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: locked ? "#ededed" : "#fff", marginBottom: "0.5rem" }}>
+              <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: locked ? "#ededed" : "#fff", marginBottom: "0.5rem", opacity: locked ? 0.6 : 1 }}>
                 {service.title}
               </h3>
-              <p style={{ fontSize: "0.875rem", color: "#f5f5f5", lineHeight: 1.6, marginBottom: "1.5rem" }}>
+              <p style={{ fontSize: "0.875rem", color: "#f5f5f5", lineHeight: 1.6, marginBottom: "1.5rem", opacity: locked ? 0.6 : 1 }}>
                 {service.description}
               </p>
 
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
-                {locked ? (
-                  <div style={{ fontSize: 13, color: "#f5f5f5", display: "flex", alignItems: "center", gap: 6 }}>
-                    🔒 Dostupné v Pro plánu
-                    <div style={{ marginLeft: "auto" }}>
-                      <UpgradeLink />
+                <div style={{ opacity: locked ? 0.6 : 1, flex: 1 }}>
+                  {locked ? (
+                    <div style={{ fontSize: 13, color: "#f5f5f5", display: "flex", alignItems: "center", gap: 6 }}>
+                      🔒 Dostupné v Pro plánu
+                      <div style={{ marginLeft: "auto" }}>
+                        <UpgradeLink />
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <a href={service.href} style={{ fontSize: 13, color: "#ffffff", textDecoration: "none" }}>
-                    Otevřít aplikaci →
-                  </a>
-                )}
+                  ) : (
+                    <a href={service.href} style={{ fontSize: 13, color: "#ffffff", textDecoration: "none" }}>
+                      Otevřít aplikaci →
+                    </a>
+                  )}
+                </div>
                 {videoMap[service.title] && (
                   <button
                     onClick={(e) => {
@@ -207,7 +210,19 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
                       e.preventDefault();
                       setVideoUrl(videoMap[service.title]);
                     }}
-                    style={{ background: "none", border: "1px solid #2a2a2a", borderRadius: 8, padding: "4px 10px", color: "#ffffff", fontSize: 12, cursor: "pointer", display: "flex", alignItems: "center", gap: 4, marginLeft: locked ? "8px" : "0" }}
+                    style={{ 
+                      background: "none", 
+                      border: "1px solid #2a2a2a", 
+                      borderRadius: 8, 
+                      padding: "4px 10px", 
+                      color: "#ffffff", 
+                      fontSize: 12, 
+                      cursor: "pointer", 
+                      display: "flex", 
+                      alignItems: "center", 
+                      gap: 4, 
+                      marginLeft: locked ? "8px" : "0", 
+                    }}
                   >
                     ℹ️ Video ukázka
                   </button>
