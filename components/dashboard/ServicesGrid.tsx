@@ -41,6 +41,14 @@ function UpgradeLink() {
 
 export default function ServicesGrid({ isPro }: { isPro: boolean }) {
   const router = useRouter();
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+
+  const videoMap: Record<string, string> = {
+    "Refresh Bot": "https://www.youtube.com/embed/LJyLx5W9NLU",
+    "Sales Tracker": "https://www.youtube.com/embed/M5XX5B0Wz30",
+    "Chrome Launcher": "https://www.youtube.com/embed/ugbHFLb5Wcs",
+    "Pre-sale Bot": "https://www.youtube.com/embed/tLOV3Jn4hzU",
+  };
 
   const services = [
     {
@@ -187,14 +195,55 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
                   </div>
                 </div>
               ) : (
-                <div style={{ fontSize: 13, color: "#ffffff", display: "flex", alignItems: "center", gap: 4 }}>
-                  Otevřít aplikaci →
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
+                  <a href={service.href} style={{ fontSize: 13, color: "#ffffff", textDecoration: "none" }}>
+                    Otevřít aplikaci →
+                  </a>
+                  {videoMap[service.title] && (
+                    <button
+                      onClick={() => setVideoUrl(videoMap[service.title])}
+                      style={{ background: "none", border: "1px solid #2a2a2a", borderRadius: 8, padding: "4px 10px", color: "#ededed", fontSize: 12, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}
+                    >
+                      ℹ️ Video ukázka
+                    </button>
+                  )}
                 </div>
               )}
             </div>
           );
         })}
       </div>
+
+      {videoUrl && (
+        <>
+          <div
+            onClick={() => setVideoUrl(null)}
+            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.9)", zIndex: 500, backdropFilter: "blur(4px)", cursor: "pointer" }}
+          />
+          <div style={{
+            position: "fixed", top: "50%", left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "90%", maxWidth: 800,
+            zIndex: 501, borderRadius: 16, overflow: "hidden",
+            boxShadow: "0 0 60px rgba(0,0,0,0.8)"
+          }}>
+            <div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+              <iframe
+                src={`${videoUrl}?autoplay=1`}
+                style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+            <button
+              onClick={() => setVideoUrl(null)}
+              style={{ position: "absolute", top: 12, right: 12, background: "rgba(0,0,0,0.7)", border: "none", borderRadius: "50%", width: 32, height: 32, color: "#fff", cursor: "pointer", fontSize: 16, zIndex: 502 }}
+            >
+              ×
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
