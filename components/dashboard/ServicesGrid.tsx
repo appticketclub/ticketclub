@@ -187,32 +187,32 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
                 {service.description}
               </p>
 
-              {locked ? (
-                <div style={{ fontSize: 13, color: "#f5f5f5", display: "flex", alignItems: "center", gap: 6 }}>
-                  🔒 Dostupné v Pro plánu
-                  <div style={{ marginLeft: "auto" }}>
-                    <UpgradeLink />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
+                {locked ? (
+                  <div style={{ fontSize: 13, color: "#f5f5f5", display: "flex", alignItems: "center", gap: 6 }}>
+                    🔒 Dostupné v Pro plánu
+                    <div style={{ marginLeft: "auto" }}>
+                      <UpgradeLink />
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
+                ) : (
                   <a href={service.href} style={{ fontSize: 13, color: "#ffffff", textDecoration: "none" }}>
                     Otevřít aplikaci →
                   </a>
-                  {videoMap[service.title] && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        setVideoUrl(videoMap[service.title]);
-                      }}
-                      style={{ background: "none", border: "1px solid #2a2a2a", borderRadius: 8, padding: "4px 10px", color: "#ededed", fontSize: 12, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}
-                    >
-                      ℹ️ Video ukázka
-                    </button>
-                  )}
-                </div>
-              )}
+                )}
+                {videoMap[service.title] && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      setVideoUrl(videoMap[service.title]);
+                    }}
+                    style={{ background: "none", border: "1px solid #2a2a2a", borderRadius: 8, padding: "4px 10px", color: "#ededed", fontSize: 12, cursor: "pointer", display: "flex", alignItems: "center", gap: 4, marginLeft: locked ? "8px" : "0" }}
+                  >
+                    ℹ️ Video ukázka
+                  </button>
+                )}
+              </div>
             </div>
           );
         })}
