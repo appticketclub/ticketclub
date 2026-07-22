@@ -152,7 +152,7 @@ export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) 
             <label style={labelStyle}>ÚVODNÍ URL (volitelné)</label>
             <input
               type="text"
-              placeholder="https://www.viagogo.com"
+              placeholder="https://www.ticketmaster.com"
               value={startUrl}
               onChange={e => setStartUrl(e.target.value)}
               style={inputStyle}
