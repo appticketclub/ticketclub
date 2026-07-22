@@ -442,6 +442,49 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
         </button>
       </div>
 
+      {/* Google Sheets záloha */}
+      <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.25rem 1.5rem", marginBottom: "1rem" }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: "#ffffff", marginBottom: 4 }}>GOOGLE SHEETS ZÁLOHA</div>
+        <div style={{ fontSize: 12, color: "#ffffff", marginBottom: "1rem" }}>
+          Automatická synchronizace dat do Google Sheets. Sdílejte sheet s: <code style={{ color: "#4ade80", fontSize: 11 }}>ticketclub-zaloha@ticketclub-sheets.iam.gserviceaccount.com</code>
+        </div>
+        <input
+          type="text"
+          placeholder="https://docs.google.com/spreadsheets/d/..."
+          id="sheetUrl"
+          style={{ width: "100%", padding: "0.6rem 1rem", background: "#1a1a1a", border: "1px solid #2a2a2a", borderRadius: 8, color: "#fff", fontSize: 13, marginBottom: "0.75rem", boxSizing: "border-box" }}
+        />
+        <div style={{ display: "flex", gap: "0.75rem" }}>
+          <button
+            onClick={async () => {
+              const url = (document.getElementById("sheetUrl") as HTMLInputElement).value;
+              const res = await fetch("/api/sheets/connect", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ sheetUrl: url })
+              });
+              const d = await res.json();
+              if (d.ok) alert("✓ Sheet prepojený!");
+              else alert("✗ " + d.error);
+            }}
+            style={{ padding: "0.6rem 1rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 8, color: "#fff", fontSize: 13, cursor: "pointer" }}
+          >
+            Prepojiť sheet
+          </button>
+          <button
+            onClick={async () => {
+              const res = await fetch("/api/sheets/sync", { method: "POST" });
+              const d = await res.json();
+              if (d.ok) alert(`✓ Synchronizované ${d.synced} nákupů!`);
+              else alert("✗ " + d.error);
+            }}
+            style={{ padding: "0.6rem 1rem", background: "linear-gradient(135deg, #ffffff, #a0a0a0)", border: "none", borderRadius: 8, color: "#000", fontWeight: 700, fontSize: 13, cursor: "pointer" }}
+          >
+            Synchronizovat teraz
+          </button>
+        </div>
+      </div>
+
       {/* Danger zone */}
       <div style={{ ...cardStyle, border: "1px solid rgba(248,113,113,0.2)", background: "#110a0a" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, rgba(248,113,113,0.4), transparent)" }} />
