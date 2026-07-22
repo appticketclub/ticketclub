@@ -31,9 +31,7 @@ function ImpersonateContent() {
 
       if (access_token && refresh_token) {
         const supabase = createClient();
-        // Sign out current admin session first
-        await supabase.auth.signOut();
-        // Set new session as target user
+        // Set new session as target user (overwrites current session)
         const { error } = await supabase.auth.setSession({ access_token, refresh_token });
         if (error) {
           alert("Chyba session: " + error.message);
