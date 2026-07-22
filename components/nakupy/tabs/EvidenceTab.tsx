@@ -26,6 +26,7 @@ type EvidenceRow = {
   status: string;
   exchange: string | null;
   account_ref: string | null;
+  ticket_type: string | null;
   ticket_type_custom: string | null;
   paid_out: boolean;
   delivered: boolean;
@@ -158,6 +159,7 @@ export default function EvidenceTab() {
         status: p.status,
         exchange: p.exchange,
         account_ref: p.account_ref,
+        ticket_type: p.ticket_type,
         ticket_type_custom: p.ticket_type_custom,
         paid_out: p.paid_out,
         delivered: p.delivered ?? false,
@@ -965,8 +967,8 @@ export default function EvidenceTab() {
                                 .from("purchases")
                                 .update({ ticket_type_custom: newVal, updated_at: new Date().toISOString() })
                                 .eq("id", row.id);
+                              setRows(prev => prev.map(r => r.id === row.id ? { ...r, ticket_type_custom: newVal } : r));
                               setEditingCell(null);
-                              loadData();
                             }}
                             onBlur={() => setEditingCell(null)}
                             style={{ width: "100%", padding: "0.5rem", background: "#0d0d2a", border: "2px solid #7c3aed", color: "#fff", fontSize: 12, outline: "none", boxSizing: "border-box" as const }}
@@ -1010,9 +1012,10 @@ export default function EvidenceTab() {
 
                     {/* Vyplaceno — TOGGLE */}
                     <td onClick={async () => {
+                      const newVal = !row.paid_out;
                       const supabase = createClient();
-                      await supabase.from("purchases").update({ paid_out: !row.paid_out }).eq("id", row.id);
-                      loadData();
+                      await supabase.from("purchases").update({ paid_out: newVal }).eq("id", row.id);
+                      setRows(prev => prev.map(r => r.id === row.id ? { ...r, paid_out: newVal } : r));
                     }} style={{ 
                       ...cellStyle(90), 
                       textAlign: "center", 
@@ -1041,9 +1044,10 @@ export default function EvidenceTab() {
 
                     {/* Doručeno — TOGGLE */}
                     <td onClick={async () => {
+                      const newVal = !row.delivered;
                       const supabase = createClient();
-                      await supabase.from("purchases").update({ delivered: !row.delivered }).eq("id", row.id);
-                      loadData();
+                      await supabase.from("purchases").update({ delivered: newVal }).eq("id", row.id);
+                      setRows(prev => prev.map(r => r.id === row.id ? { ...r, delivered: newVal } : r));
                     }} style={{ 
                       ...cellStyle(90), 
                       textAlign: "center", 
