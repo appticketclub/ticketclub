@@ -200,7 +200,7 @@ export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) 
           marginBottom: "0.75rem",
         }}
       >
-        {downloading ? "⏳ Generuji launcher..." : "⬇ Stáhnout Chrome Launcher"}
+        {downloading ? "⏳ Generuji launcher..." : "⬇ Stáhnout Soubor"}
       </button>
 
       {downloaded && (
