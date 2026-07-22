@@ -67,6 +67,14 @@ const COLS = [
   { key: "delete", label: "", width: 40 },
 ];
 
+const ticketTypeOptions = [
+  { value: "Mobile Transfer", label: "Mobile Transfer", color: "#f97316", bg: "rgba(249,115,22,0.15)" },
+  { value: "E-Ticket", label: "E-Ticket", color: "#3b82f6", bg: "rgba(59,130,246,0.15)" },
+  { value: "Transfer odeslán", label: "Transfer odeslán", color: "#eab308", bg: "rgba(234,179,8,0.15)" },
+  { value: "Transfer přijat", label: "Transfer přijat", color: "#22c55e", bg: "rgba(34,197,94,0.15)" },
+  { value: "E-Ticket nenahraný", label: "E-Ticket nenahraný", color: "#a855f7", bg: "rgba(168,85,247,0.15)" },
+];
+
 export default function EvidenceTab() {
   const { format, currency, convert } = useCurrency();
   const [rows, setRows] = useState<EvidenceRow[]>([]);
@@ -944,7 +952,53 @@ export default function EvidenceTab() {
                     />
 
                     {/* Druh lístků — DROPDOWN */}
-                    <DropdownCell rowId={row.id} field="ticket_type_custom" value={row.ticket_type_custom} width={120} options={["Mobile Transfer", "E-Ticket"]} />
+                    {editingCell?.rowId === row.id && editingCell?.field === "ticket_type_custom" ? (
+                      <td style={{ ...cellStyle(120), padding: 0, background: "#1a1a2e", minWidth: 120 }}>
+                        <div style={{ display: "flex", flexDirection: "column" as const }}>
+                          <select
+                            autoFocus
+                            value={editValue}
+                            onChange={e => {
+                              setEditValue(e.target.value);
+                              const supabase = createClient();
+                              supabase.from("purchases").update({ ticket_type_custom: e.target.value || null, updated_at: new Date().toISOString() }).eq("id", row.id);
+                              setEditingCell(null);
+                              loadData();
+                            }}
+                            onBlur={() => setEditingCell(null)}
+                            style={{ width: "100%", padding: "0.5rem", background: "#0d0d2a", border: "2px solid #7c3aed", color: "#fff", fontSize: 12, outline: "none", boxSizing: "border-box" as const }}
+                          >
+                            <option value="">— Vyberte —</option>
+                            {ticketTypeOptions.map(opt => (
+                              <option key={opt.value} value={opt.value}>{opt.label}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </td>
+                    ) : (
+                      <td onClick={() => { setEditingCell({ rowId: row.id, field: "ticket_type_custom" }); setEditValue(String(row.ticket_type_custom ?? "")); }}
+                        style={{ ...cellStyle(120), cursor: "pointer" }} title="Klikněte pro úpravu"
+                      >
+                        {(() => {
+                          const opt = ticketTypeOptions.find(o => o.value === row.ticket_type_custom);
+                          if (!opt) return <span style={{ color: "#525252" }}>—</span>;
+                          return (
+                            <span style={{
+                              background: opt.bg,
+                              color: opt.color,
+                              border: `1px solid ${opt.color}40`,
+                              borderRadius: 20,
+                              padding: "2px 10px",
+                              fontSize: 11,
+                              fontWeight: 600,
+                              whiteSpace: "nowrap" as const,
+                            }}>
+                              {opt.label}
+                            </span>
+                          );
+                        })()}
+                      </td>
+                    )}
 
                     {/* Datum prodeje */}
                     <DateCell rowId={row.id} field="sold_at" value={row.sold_at ? row.sold_at.split("T")[0] : null} width={100} table="sales" />
