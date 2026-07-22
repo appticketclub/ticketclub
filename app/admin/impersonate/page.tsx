@@ -11,11 +11,6 @@ function ImpersonateContent() {
     if (!token) return;
     
     (async () => {
-      // First sign out current session
-      const supabase = createClient();
-      await supabase.auth.signOut();
-      
-      // Then verify token and get magic link
       const res = await fetch("/api/admin/impersonate-verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -23,10 +18,31 @@ function ImpersonateContent() {
       });
       const d = await res.json();
       
-      if (d.magic_link) {
-        window.location.href = d.magic_link;
-      } else {
+      if (!d.magic_link) {
         alert("Chyba: " + d.message);
+        return;
+      }
+
+      // Extract tokens from magic link hash
+      const hashStr = d.magic_link.split('#')[1] ?? '';
+      const hashParams = new URLSearchParams(hashStr);
+      const access_token = hashParams.get('access_token');
+      const refresh_token = hashParams.get('refresh_token');
+
+      if (access_token && refresh_token) {
+        const supabase = createClient();
+        // Sign out current admin session first
+        await supabase.auth.signOut();
+        // Set new session as target user
+        const { error } = await supabase.auth.setSession({ access_token, refresh_token });
+        if (error) {
+          alert("Chyba session: " + error.message);
+          return;
+        }
+        window.location.href = '/nakupy';
+      } else {
+        // Fallback
+        window.location.href = d.magic_link;
       }
     })();
   }, []);
