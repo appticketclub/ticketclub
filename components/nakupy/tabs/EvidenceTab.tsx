@@ -957,11 +957,14 @@ export default function EvidenceTab() {
                         <div style={{ display: "flex", flexDirection: "column" as const }}>
                           <select
                             autoFocus
-                            value={editValue}
-                            onChange={async e => {
-                              setEditValue(e.target.value);
+                            value={row.ticket_type_custom ?? row.ticket_type ?? ""}
+                            onChange={async (e) => {
+                              const newVal = e.target.value;
                               const supabase = createClient();
-                              await supabase.from("purchases").update({ ticket_type_custom: e.target.value || null, updated_at: new Date().toISOString() }).eq("id", row.id);
+                              await supabase
+                                .from("purchases")
+                                .update({ ticket_type_custom: newVal, updated_at: new Date().toISOString() })
+                                .eq("id", row.id);
                               setEditingCell(null);
                               loadData();
                             }}
@@ -976,11 +979,13 @@ export default function EvidenceTab() {
                         </div>
                       </td>
                     ) : (
-                      <td onClick={() => { setEditingCell({ rowId: row.id, field: "ticket_type_custom" }); setEditValue(String(row.ticket_type_custom ?? "")); }}
+                      <td onClick={() => { setEditingCell({ rowId: row.id, field: "ticket_type_custom" }); setEditValue(String(row.ticket_type_custom ?? row.ticket_type ?? "")); }}
                         style={{ ...cellStyle(120), cursor: "pointer" }} title="Klikněte pro úpravu"
                       >
                         {(() => {
-                          const opt = ticketTypeOptions.find(o => o.value === row.ticket_type_custom);
+                          const opt = ticketTypeOptions.find(o =>
+                            o.value === row.ticket_type_custom || o.value === row.ticket_type
+                          );
                           if (!opt) return <span style={{ color: "#525252" }}>—</span>;
                           return (
                             <span style={{
