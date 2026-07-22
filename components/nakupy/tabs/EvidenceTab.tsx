@@ -954,7 +954,13 @@ export default function EvidenceTab() {
                       const supabase = createClient();
                       await supabase.from("purchases").update({ paid_out: !row.paid_out }).eq("id", row.id);
                       loadData();
-                    }} style={{ ...cellStyle(90), textAlign: "center", cursor: "pointer" }}>
+                    }} style={{ 
+                      ...cellStyle(90), 
+                      textAlign: "center", 
+                      cursor: "pointer",
+                      background: row.paid_out === true ? "rgba(52,211,153,0.08)" : "transparent",
+                      border: row.paid_out === true ? "1px solid rgba(52,211,153,0.3)" : undefined
+                    }}>
                       <span style={row.paid_out ? { 
                         background: "rgba(52,211,153,0.1)", 
                         color: "#34d399", 
@@ -980,7 +986,13 @@ export default function EvidenceTab() {
                       const supabase = createClient();
                       await supabase.from("purchases").update({ delivered: !row.delivered }).eq("id", row.id);
                       loadData();
-                    }} style={{ ...cellStyle(90), textAlign: "center", cursor: "pointer" }}>
+                    }} style={{ 
+                      ...cellStyle(90), 
+                      textAlign: "center", 
+                      cursor: "pointer",
+                      background: row.delivered === true ? "rgba(52,211,153,0.08)" : "transparent",
+                      border: row.delivered === true ? "1px solid rgba(52,211,153,0.3)" : undefined
+                    }}>
                       <span style={row.delivered ? { 
                         background: "rgba(52,211,153,0.1)", 
                         color: "#34d399", 
