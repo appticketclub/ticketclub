@@ -955,7 +955,22 @@ export default function EvidenceTab() {
                       await supabase.from("purchases").update({ paid_out: !row.paid_out }).eq("id", row.id);
                       loadData();
                     }} style={{ ...cellStyle(90), textAlign: "center", cursor: "pointer" }}>
-                      <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 4, background: row.paid_out ? "#0a2a1a" : "rgba(248,113,113,0.1)", color: row.paid_out ? "#34d399" : "#f87171", fontWeight: 600 }}>
+                      <span style={row.paid_out ? { 
+                        background: "rgba(52,211,153,0.1)", 
+                        color: "#34d399", 
+                        border: "1px solid #34d399", 
+                        borderRadius: 6, 
+                        padding: "2px 8px", 
+                        fontSize: 11, 
+                        fontWeight: 700 
+                      } : { 
+                        fontSize: 11, 
+                        padding: "2px 8px", 
+                        borderRadius: 4, 
+                        background: "rgba(248,113,113,0.1)", 
+                        color: "#f87171", 
+                        fontWeight: 600 
+                      }}>
                         {row.paid_out ? "ANO" : "NE"}
                       </span>
                     </td>
@@ -966,7 +981,22 @@ export default function EvidenceTab() {
                       await supabase.from("purchases").update({ delivered: !row.delivered }).eq("id", row.id);
                       loadData();
                     }} style={{ ...cellStyle(90), textAlign: "center", cursor: "pointer" }}>
-                      <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 4, background: row.delivered ? "#0a2a1a" : "rgba(248,113,113,0.1)", color: row.delivered ? "#34d399" : "#f87171", fontWeight: 600 }}>
+                      <span style={row.delivered ? { 
+                        background: "rgba(52,211,153,0.1)", 
+                        color: "#34d399", 
+                        border: "1px solid #34d399", 
+                        borderRadius: 6, 
+                        padding: "2px 8px", 
+                        fontSize: 11, 
+                        fontWeight: 700 
+                      } : { 
+                        fontSize: 11, 
+                        padding: "2px 8px", 
+                        borderRadius: 4, 
+                        background: "rgba(248,113,113,0.1)", 
+                        color: "#f87171", 
+                        fontWeight: 600 
+                      }}>
                         {row.delivered ? "ANO" : "NE"}
                       </span>
                     </td>
