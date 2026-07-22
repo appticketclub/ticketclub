@@ -958,10 +958,10 @@ export default function EvidenceTab() {
                           <select
                             autoFocus
                             value={editValue}
-                            onChange={e => {
+                            onChange={async e => {
                               setEditValue(e.target.value);
                               const supabase = createClient();
-                              supabase.from("purchases").update({ ticket_type_custom: e.target.value || null, updated_at: new Date().toISOString() }).eq("id", row.id);
+                              await supabase.from("purchases").update({ ticket_type_custom: e.target.value || null, updated_at: new Date().toISOString() }).eq("id", row.id);
                               setEditingCell(null);
                               loadData();
                             }}
