@@ -964,7 +964,6 @@ export default function EvidenceTab() {
                       <span style={row.paid_out ? { 
                         background: "rgba(52,211,153,0.1)", 
                         color: "#34d399", 
-                        border: "1px solid #34d399", 
                         borderRadius: 6, 
                         padding: "2px 8px", 
                         fontSize: 11, 
@@ -996,7 +995,6 @@ export default function EvidenceTab() {
                       <span style={row.delivered ? { 
                         background: "rgba(52,211,153,0.1)", 
                         color: "#34d399", 
-                        border: "1px solid #34d399", 
                         borderRadius: 6, 
                         padding: "2px 8px", 
                         fontSize: 11, 
