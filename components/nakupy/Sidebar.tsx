@@ -113,7 +113,15 @@ export default function Sidebar({
             }}
           >
             {item.label}
-            {isActive && <span style={{ marginLeft: "auto", width: 4, height: 4, borderRadius: "50%", background: "#34d399" }} />}
+            {isActive && ( 
+              <span style={{ 
+                marginLeft: "auto",
+                color: "#ffffff", 
+                fontSize: 18, 
+                fontWeight: 700, 
+                lineHeight: 1 
+              }}>›</span> 
+            )}
           </button>
         );
       })}
