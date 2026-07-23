@@ -33,7 +33,13 @@ export async function POST(request: NextRequest) {
       customerId = customer.id;
     }
 
-    const { plan } = await request.json().catch(() => ({ plan: "monthly" }));
+    const { plan, promoCode } = await request.json().catch(() => ({ plan: "monthly", promoCode: "" }));
+
+    const PROMO_CODES: Record<string, number> = {
+      "SKOUSKA": 12,
+    };
+    
+    const trialDays = promoCode ? (PROMO_CODES[promoCode.toUpperCase()] ?? 0) : 0;
 
     const priceId = 
       plan === "yearly" ? process.env.STRIPE_PRO_YEARLY_PRICE_ID! :
@@ -59,6 +65,7 @@ export async function POST(request: NextRequest) {
         supabase_user_id: user.id,
       },
       subscription_data: {
+        ...(trialDays > 0 ? { trial_period_days: trialDays } : {}),
         metadata: {
           supabase_user_id: user.id,
         },

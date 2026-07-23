@@ -4,6 +4,8 @@ import { createPortal } from "react-dom";
 
 export default function UpgradeModal({ onClose }: { onClose: () => void }) {
   const [loading, setLoading] = useState<"monthly" | "yearly" | "pro_max_monthly" | "pro_max_yearly" | null>(null);
+  const [promoCode, setPromoCode] = useState("");
+  const [promoValid, setPromoValid] = useState(false);
 
   async function handleCheckout(plan: "monthly" | "yearly" | "pro_max_monthly" | "pro_max_yearly") {
     setLoading(plan);
@@ -11,7 +13,7 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
       const res = await fetch("/api/stripe/create-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan }),
+        body: JSON.stringify({ plan, promoCode }),
       });
       const data = await res.json();
       if (data.url) window.location.href = data.url;
@@ -59,6 +61,24 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
           <p style={{ fontSize: 12, color: "#f5f5f5", lineHeight: 1.6, margin: 0, marginBottom: "1rem", fontStyle: "italic" }}>
             Předplatné zahrnuje Chrome Extension, Refresh Bot a všechny budoucí doplňky.
           </p>
+
+          {/* Promo Code Input */}
+          <div style={{ padding: "0 0 1rem" }}>
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              <input
+                type="text"
+                placeholder="Promo kód (volitelné)"
+                value={promoCode}
+                onChange={e => {
+                  const code = e.target.value.toUpperCase();
+                  setPromoCode(code);
+                  setPromoValid(code === "SKOUSKA");
+                }}
+                style={{ flex: 1, padding: "0.6rem 1rem", background: "#1a1a1a", border: `1px solid ${promoValid ? "#4ade80" : "#2a2a2a"}`, borderRadius: 8, color: "#fff", fontSize: 13, outline: "none" }}
+              />
+            </div>
+            {promoValid && <div style={{ fontSize: 12, color: "#4ade80", marginTop: 4 }}>✓ Kód platný — 12 dní zdarma!</div>}
+          </div>
 
           {/* Plans — side by side on all screens */}
           <div style={{
