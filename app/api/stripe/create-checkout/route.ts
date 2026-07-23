@@ -33,8 +33,6 @@ export async function POST(request: NextRequest) {
       customerId = customer.id;
     }
 
-    const isNewUser = !existingSub?.stripe_customer_id;
-
     const { plan } = await request.json().catch(() => ({ plan: "monthly" }));
 
     const priceId = 
@@ -61,7 +59,6 @@ export async function POST(request: NextRequest) {
         supabase_user_id: user.id,
       },
       subscription_data: {
-        ...(isNewUser ? { trial_period_days: 12 } : {}),
         metadata: {
           supabase_user_id: user.id,
         },

@@ -46,8 +46,24 @@ export async function POST(request: NextRequest) {
         const session = event.data.object as any;
         const userId = session.metadata?.supabase_user_id;
         const customerId = session.customer as string;
-        const subscriptionId = session.subscription as string;
+        let subscriptionId = session.subscription as string;
         if (!userId) { console.log("No userId in metadata"); break; }
+
+        // Check if SKOUSKA coupon was used
+        const discounts = session.total_details?.breakdown?.discounts ?? [];
+        const usedSkouska = discounts.some((d: any) => 
+          d.discount?.coupon?.id === "SKOUSKA" || 
+          d.discount?.coupon?.name === "SKOUSKA" ||
+          d.discount?.promotion_code?.code === "SKOUSKA"
+        );
+        
+        if (usedSkouska && subscriptionId) {
+          // Apply 12-day trial to subscription
+          await stripe.subscriptions.update(subscriptionId, {
+            trial_end: Math.floor(Date.now() / 1000) + (12 * 24 * 60 * 60), // 12 days
+          });
+        }
+
         const sub = (await stripe.subscriptions.retrieve(subscriptionId)) as any;
         console.log("sub.current_period_end:", sub.current_period_end, typeof sub.current_period_end);
         const periodEndRaw = sub.current_period_end;
