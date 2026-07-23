@@ -14,14 +14,15 @@ export async function POST(request: NextRequest) {
   );
 
   // Get sheet ID from profiles
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("google_sheet_id")
     .eq("id", user.id)
     .single();
 
   console.log("[sheets/sync] user.id:", user.id);
-  console.log("[sheets/sync] profile:", profile);
+  console.log("[sheets/sync] profile:", JSON.stringify(profile));
+  console.log("[sheets/sync] profileError:", JSON.stringify(profileError));
 
   if (!profile?.google_sheet_id) {
     return NextResponse.json({ error: "Google Sheet nie je prepojený" }, { status: 400 });
