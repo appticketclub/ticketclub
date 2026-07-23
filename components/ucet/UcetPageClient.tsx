@@ -470,6 +470,9 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
         <div style={{ fontSize: 12, color: "#ffffff", marginBottom: "1rem" }}>
           Automatická synchronizace dat do Google Sheets. Sdílejte sheet s:{" "}
           <span style={{ color: "#4ade80", fontSize: 11 }}>ticketclub-zaloha@ticketclub-sheets.iam.gserviceaccount.com</span>
+          <div style={{ fontSize: 11, color: "#525252", marginTop: 6 }}>
+            Automatická záloha probíhá každý den o půlnoci.
+          </div>
         </div>
 
         {sheetConnected && (
