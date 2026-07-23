@@ -30,6 +30,7 @@ export default function SalesTrackerClient() {
   const s = data?.marketData?.summary;
   const e = data?.marketData?.event;
   const sales = data?.sales ?? [];
+  const lastDayStat = data?.marketData?.daily_statistics?.[data.marketData.daily_statistics.length - 1];
 
   function fmt(v: any, dec = 0) {
     if (v == null) return "—";
@@ -49,7 +50,7 @@ export default function SalesTrackerClient() {
   const stats = [
     { label: "Celkový počet prodejů", value: fmt(s?.listings_sold), sub: s?.listings_sold_24h != null ? `${trendArrow(s.listings_sold_24h)} ${fmt(s.listings_sold_24h)} za 24h` : null, subColor: trendColor(s?.listings_sold_24h) },
     { label: "Prodaných lístků", value: fmt(s?.tickets_sold), sub: s?.tickets_sold_24h != null ? `${trendArrow(s.tickets_sold_24h)} ${fmt(s.tickets_sold_24h)} za 24h` : null, subColor: trendColor(s?.tickets_sold_24h) },
-    { label: "Prodáno za 24h (ks)", value: fmt(s?.tickets_sold_24h), sub: s?.tickets_sold_24h_percentage != null ? `${trendArrow(s.tickets_sold_24h_percentage)} ${fmt(s.tickets_sold_24h_percentage, 1)} %` : null, subColor: trendColor(s?.tickets_sold_24h_percentage) },
+    { label: "Prodáno za 24h (ks)", value: fmt(lastDayStat?.tickets_sold_24h ?? s?.tickets_sold_24h), sub: null, subColor: "#525252" },
     { label: "Dostupných lístků", value: fmt(s?.available_tickets), sub: s?.available_tickets_24h != null ? `${trendArrow(s.available_tickets_24h)} ${fmt(s.available_tickets_24h)} za 24h` : null, subColor: trendColor(s?.available_tickets_24h) },
     { label: "Průměrná cena prodeje", value: s?.average_ticket_price_sold != null ? `${fmt(s.average_ticket_price_sold, 2)} ${s?.currency ?? ""}` : "—", sub: s?.average_ticket_price_sold_24h != null ? `${trendArrow(s.average_ticket_price_sold_24h)} ${fmt(s.average_ticket_price_sold_24h, 2)} za 24h` : null, subColor: trendColor(s?.average_ticket_price_sold_24h) },
     { label: "Nejnižší cena (get-in)", value: s?.get_in_price != null ? `${fmt(s.get_in_price, 2)} ${s?.currency ?? ""}` : "—", sub: s?.get_in_price_24h != null ? `${trendArrow(s.get_in_price_24h)} ${fmt(s.get_in_price_24h, 2)} za 24h` : null, subColor: trendColor(s?.get_in_price_24h) },
