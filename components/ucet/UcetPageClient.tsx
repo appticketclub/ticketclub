@@ -440,7 +440,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
         </div>
       )}
 
-      {/* Záloha */}
+      {/* Excel záloha - temporarily hidden 
       <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.25rem 1.5rem", marginBottom: "1rem", position: "relative" as const, overflow: "hidden" as const }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #eeeeee22, transparent)" }} />
         <div style={{ fontSize: 13, fontWeight: 700, color: "#ffffff", marginBottom: 4 }}>ZÁLOHA DAT</div>
@@ -462,7 +462,8 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
         >
           ⬇ Stáhnout zálohu (.xlsx)
         </button>
-      </div>
+      </div> 
+      */}
 
       {/* Google Sheets záloha */}
       <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.25rem 1.5rem", marginBottom: "1rem", position: "relative", overflow: "hidden" }}>
