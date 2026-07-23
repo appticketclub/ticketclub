@@ -34,6 +34,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
   const [sheetConnected, setSheetConnected] = useState(false);
   const [sheetLoading, setSheetLoading] = useState(false);
   const [syncLoading, setSyncLoading] = useState(false);
+  const [sheetsVideoOpen, setSheetsVideoOpen] = useState(false);
 
   async function handleUpgrade() {
     setLoadingCheckout(true);
@@ -491,7 +492,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
           style={{ width: "100%", padding: "0.6rem 1rem", background: "#1a1a1a", border: "1px solid #2a2a2a", borderRadius: 8, color: "#fff", fontSize: 13, marginBottom: "0.75rem", boxSizing: "border-box" as const }}
         />
 
-        <div style={{ display: "flex", gap: "0.5rem" }}>
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" as const, alignItems: "center" }}>
           <button
             onClick={async () => {
               if (sheetConnected) {
@@ -539,6 +540,13 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
               {syncLoading ? "Synchronizuji..." : "Synchronizovat nyní"}
             </button>
           )}
+          
+          <button
+            onClick={() => setSheetsVideoOpen(true)}
+            style={{ background: "none", border: "1px solid #2a2a2a", borderRadius: 8, padding: "0.6rem 1rem", color: "#ffffff", fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+          >
+            ℹ️ Ukázka a video návod
+          </button>
         </div>
       </div>
 
@@ -611,6 +619,38 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
           </div>
         </div>
       </div>
+
+      {/* Google Sheets video modal */}
+      {sheetsVideoOpen && (
+        <>
+          <div
+            onClick={() => setSheetsVideoOpen(false)}
+            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.9)", zIndex: 500, backdropFilter: "blur(4px)", cursor: "pointer" }}
+          />
+          <div style={{
+            position: "fixed", top: "50%", left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "90%", maxWidth: 800,
+            zIndex: 501, borderRadius: 16, overflow: "hidden",
+            boxShadow: "0 0 60px rgba(0,0,0,0.8)"
+          }}>
+            <div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+              <iframe
+                src="https://www.youtube.com/embed/gCGOvM6WMrQ?autoplay=1"
+                style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+            <button
+              onClick={() => setSheetsVideoOpen(false)}
+              style={{ position: "absolute", top: 12, right: 12, background: "rgba(0,0,0,0.7)", border: "none", borderRadius: "50%", width: 32, height: 32, color: "#fff", cursor: "pointer", fontSize: 16, zIndex: 502 }}
+            >
+              ×
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
