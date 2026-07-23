@@ -119,10 +119,10 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #7c3aed, transparent)" }} />
           <div>
             <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 4 }}>
-              ⭐ Upgradovat na PRO
+              ⭐ Vyzkoušej 12 dní zdarma
             </div>
             <div style={{ fontSize: 12, color: "#f5f5f5" }}>
-              Odemkněte všechny funkce TicketClubu
+              Použijte kód SKOUSKA při platbě
             </div>
           </div>
           <UpgradeButton />
