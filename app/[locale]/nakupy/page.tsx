@@ -18,6 +18,7 @@ import DetailyTab from "@/components/nakupy/tabs/DetailyTab";
 export default function NakupyPage() {
   const [activeTab, setActiveTab] = useState("uvod");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
@@ -50,10 +51,30 @@ export default function NakupyPage() {
 
   return (
     <div style={{ display: "flex", minHeight: "calc(100vh - 65px)", flexDirection: "row" }}>
-      <Sidebar activeTab={activeTab} onTabChange={setActiveTab} isAdmin={isAdmin} />
-      <main style={{ flex: 1, padding: "1.5rem clamp(1rem, 3vw, 2.5rem)", overflowY: "auto", minWidth: 0 }}>
+      <Sidebar activeTab={activeTab} onTabChange={setActiveTab} isAdmin={isAdmin} collapsed={collapsed} setCollapsed={setCollapsed} />
+      <main style={{ flex: 1, padding: "1.5rem clamp(1rem, 3vw, 2.5rem)", overflowY: "auto", minWidth: 0, transition: "all 0.25s ease" }}>
         {tabs[activeTab]}
       </main>
+      {collapsed && (
+        <button
+          onClick={() => setCollapsed(false)}
+          style={{
+            position: "fixed",
+            left: 8,
+            bottom: 20,
+            background: "#1a1a1a",
+            border: "1px solid #2a2a2a",
+            borderRadius: 8,
+            color: "#fff",
+            cursor: "pointer",
+            padding: "8px 10px",
+            fontSize: 16,
+            zIndex: 100,
+          }}
+        >
+          →
+        </button>
+      )}
     </div>
   );
 }
