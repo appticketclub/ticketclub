@@ -95,13 +95,15 @@ if [ -d "$USER_DATA/Default" ]; then
   sleep 2
 fi
 
-# Profily 1 az ${profilesCount}
-for i in $(seq 1 ${profilesCount}); do
-  TARGET="Profile $i"
-  if [ -d "$USER_DATA/$TARGET" ]; then
-    echo "Spoustim: $TARGET"
-    open -na "Google Chrome" --args --profile-directory="$TARGET" $URL
+# Profily - vsetky existujuce Profile *
+COUNT=0
+for dir in "$USER_DATA/"Profile\ */; do
+  if [ $COUNT -lt ${profilesCount} ]; then
+    PROFILE_NAME=$(basename "$dir")
+    echo "Spoustim: $PROFILE_NAME"
+    open -na "Google Chrome" --args --profile-directory="$PROFILE_NAME" $URL
     sleep 2
+    COUNT=$((COUNT + 1))
   fi
 done
 
@@ -171,12 +173,13 @@ if exist "%USER_DATA_DIR%\\Default" (
     timeout /t 2 /nobreak >nul
 )
 
-:: Profily 1 az ${profilesCount}
-for /L %%i in (1,1,${profilesCount}) do (
-    set "TARGET=Profile %%i"
-    if exist "%USER_DATA_DIR%\\!TARGET!" (
-        echo  Spoustim: !TARGET!
-        start "" "%CHROME_PATH%" --profile-directory="!TARGET!" --restore-last-session %URL%
+:: Otevri vsechny existujici profily (Profile *)
+set "COUNT=0"
+for /D %%d in ("%USER_DATA_DIR%\\Profile *") do (
+    if !COUNT! LSS ${profilesCount} (
+        set /a COUNT+=1
+        echo  Spoustim: %%~nd
+        start "" "%CHROME_PATH%" --profile-directory="%%~nd" --restore-last-session %URL%
         timeout /t 2 /nobreak >nul
     )
 )
