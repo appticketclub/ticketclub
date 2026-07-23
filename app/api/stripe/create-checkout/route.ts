@@ -39,7 +39,8 @@ export async function POST(request: NextRequest) {
       "SKOUSKA": 12,
     };
     
-    const trialDays = promoCode ? (PROMO_CODES[promoCode.toUpperCase()] ?? 0) : 0;
+    const isNewUser = !existingSub?.stripe_customer_id;
+    const trialDays = (promoCode && isNewUser) ? (PROMO_CODES[promoCode.toUpperCase()] ?? 0) : 0;
 
     const priceId = 
       plan === "yearly" ? process.env.STRIPE_PRO_YEARLY_PRICE_ID! :
