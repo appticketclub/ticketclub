@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
         },
       ],
       mode: "subscription",
-      allow_promotion_codes: true,
+      allow_promotion_codes: trialDays > 0 ? false : true,
       success_url: `https://app.ticketclub.vip/dostupne-sluzby?upgraded=true`,
       cancel_url: `https://app.ticketclub.vip/dostupne-sluzby?cancelled=true`,
       metadata: {
