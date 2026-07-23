@@ -20,6 +20,9 @@ export async function POST(request: NextRequest) {
     .eq("id", user.id)
     .single();
 
+  console.log("[sheets/sync] user.id:", user.id);
+  console.log("[sheets/sync] profile:", profile);
+
   if (!profile?.google_sheet_id) {
     return NextResponse.json({ error: "Google Sheet nie je prepojený" }, { status: 400 });
   }
