@@ -17,7 +17,7 @@ export async function syncPurchaseToSheet(sheetId: string, purchase: any, sale: 
   const sheets = getSheetsClient();
   
   const row = [
-    purchase.created_at ? new Date(purchase.created_at).toLocaleDateString("cs-CZ") : "",
+    purchase.event_date ? new Date(purchase.event_date).toLocaleDateString("cs-CZ") : (purchase.created_at ? new Date(purchase.created_at).toLocaleDateString("cs-CZ") : ""),
     purchase.event_name ?? "",
     purchase.city ?? purchase.venue ?? "",
     purchase.event_actual_date ? new Date(purchase.event_actual_date).toLocaleDateString("cs-CZ") : "",
@@ -91,7 +91,7 @@ export async function fullSyncToSheet(sheetId: string, purchases: any[], sales: 
   const rows = purchases.map(p => {
     const sale = sales.find(s => s.purchase_id === p.id);
     return [
-      p.created_at ? new Date(p.created_at).toLocaleDateString("cs-CZ") : "",
+      p.event_date ? new Date(p.event_date).toLocaleDateString("cs-CZ") : (p.created_at ? new Date(p.created_at).toLocaleDateString("cs-CZ") : ""),
       p.event_name ?? "",
       p.city ?? p.venue ?? "",
       p.event_actual_date ? new Date(p.event_actual_date).toLocaleDateString("cs-CZ") : "",
