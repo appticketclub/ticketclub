@@ -30,6 +30,10 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
   const [showKey, setShowKey] = useState(false);
   const [loadingCheckout, setLoadingCheckout] = useState(false);
   const [loadingPortal, setLoadingPortal] = useState(false);
+  const [sheetUrl, setSheetUrl] = useState("");
+  const [sheetConnected, setSheetConnected] = useState(false);
+  const [sheetLoading, setSheetLoading] = useState(false);
+  const [syncLoading, setSyncLoading] = useState(false);
 
   async function handleUpgrade() {
     setLoadingCheckout(true);
@@ -226,6 +230,24 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
 
   useEffect(() => {
     getExtensionKey();
+  }, []);
+
+  useEffect(() => {
+    async function loadSheetStatus() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("google_sheet_id")
+        .eq("id", user.id)
+        .single();
+      if (profile?.google_sheet_id) {
+        setSheetUrl(`https://docs.google.com/spreadsheets/d/${profile.google_sheet_id}`);
+        setSheetConnected(true);
+      }
+    }
+    loadSheetStatus();
   }, []);
 
   return (
@@ -443,45 +465,76 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
       </div>
 
       {/* Google Sheets záloha */}
-      <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.25rem 1.5rem", marginBottom: "1rem" }}>
+      <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.25rem 1.5rem", marginBottom: "1rem", position: "relative", overflow: "hidden" }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: "#ffffff", marginBottom: 4 }}>GOOGLE SHEETS ZÁLOHA</div>
         <div style={{ fontSize: 12, color: "#ffffff", marginBottom: "1rem" }}>
-          Automatická synchronizace dat do Google Sheets. Sdílejte sheet s: <code style={{ color: "#4ade80", fontSize: 11 }}>ticketclub-zaloha@ticketclub-sheets.iam.gserviceaccount.com</code>
+          Automatická synchronizace dat do Google Sheets. Sdílejte sheet s:{" "}
+          <span style={{ color: "#4ade80", fontSize: 11 }}>ticketclub-zaloha@ticketclub-sheets.iam.gserviceaccount.com</span>
         </div>
+
+        {sheetConnected && (
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.75rem", padding: "0.5rem 0.75rem", background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.3)", borderRadius: 8 }}>
+            <span style={{ color: "#34d399", fontSize: 12 }}>✓ Sheet prepojený</span>
+            <a href={sheetUrl} target="_blank" rel="noopener noreferrer" style={{ color: "#34d399", fontSize: 11, marginLeft: 4 }}>Otvoriť →</a>
+          </div>
+        )}
+
         <input
           type="text"
           placeholder="https://docs.google.com/spreadsheets/d/..."
-          id="sheetUrl"
-          style={{ width: "100%", padding: "0.6rem 1rem", background: "#1a1a1a", border: "1px solid #2a2a2a", borderRadius: 8, color: "#fff", fontSize: 13, marginBottom: "0.75rem", boxSizing: "border-box" }}
+          value={sheetUrl}
+          onChange={e => setSheetUrl(e.target.value)}
+          style={{ width: "100%", padding: "0.6rem 1rem", background: "#1a1a1a", border: "1px solid #2a2a2a", borderRadius: 8, color: "#fff", fontSize: 13, marginBottom: "0.75rem", boxSizing: "border-box" as const }}
         />
-        <div style={{ display: "flex", gap: "0.75rem" }}>
+
+        <div style={{ display: "flex", gap: "0.5rem" }}>
           <button
             onClick={async () => {
-              const url = (document.getElementById("sheetUrl") as HTMLInputElement).value;
+              if (sheetConnected) {
+                // Disconnect
+                const supabase = createClient();
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                  await supabase.from("profiles").update({ google_sheet_id: null }).eq("id", user.id);
+                  setSheetConnected(false);
+                  setSheetUrl("");
+                }
+                return;
+              }
+              setSheetLoading(true);
               const res = await fetch("/api/sheets/connect", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ sheetUrl: url })
+                body: JSON.stringify({ sheetUrl })
               });
               const d = await res.json();
-              if (d.ok) alert("✓ Sheet prepojený!");
-              else alert("✗ " + d.error);
+              setSheetLoading(false);
+              if (d.ok) {
+                setSheetConnected(true);
+              } else {
+                alert("✗ " + d.error);
+              }
             }}
-            style={{ padding: "0.6rem 1rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 8, color: "#fff", fontSize: 13, cursor: "pointer" }}
+            style={{ padding: "0.6rem 1rem", background: sheetConnected ? "transparent" : "transparent", border: "1px solid #2a2a2a", borderRadius: 8, color: sheetConnected ? "#f87171" : "#fff", fontSize: 13, cursor: "pointer" }}
           >
-            Prepojiť sheet
+            {sheetLoading ? "Pripájam..." : sheetConnected ? "Odpojiť sheet" : "Prepojiť sheet"}
           </button>
-          <button
-            onClick={async () => {
-              const res = await fetch("/api/sheets/sync", { method: "POST" });
-              const d = await res.json();
-              if (d.ok) alert(`✓ Synchronizované ${d.synced} nákupů!`);
-              else alert("✗ " + d.error);
-            }}
-            style={{ padding: "0.6rem 1rem", background: "linear-gradient(135deg, #ffffff, #a0a0a0)", border: "none", borderRadius: 8, color: "#000", fontWeight: 700, fontSize: 13, cursor: "pointer" }}
-          >
-            Synchronizovat teraz
-          </button>
+
+          {sheetConnected && (
+            <button
+              onClick={async () => {
+                setSyncLoading(true);
+                const res = await fetch("/api/sheets/sync", { method: "POST" });
+                const d = await res.json();
+                setSyncLoading(false);
+                if (d.ok) alert(`✓ Synchronizované ${d.synced} nákupov!`);
+                else alert("✗ " + d.error);
+              }}
+              style={{ padding: "0.6rem 1rem", background: "linear-gradient(135deg, #ffffff, #a0a0a0)", border: "none", borderRadius: 8, color: "#000", fontWeight: 700, fontSize: 13, cursor: "pointer" }}
+            >
+              {syncLoading ? "Synchronizujem..." : "Synchronizovať teraz"}
+            </button>
+          )}
         </div>
       </div>
 
