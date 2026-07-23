@@ -474,8 +474,8 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
 
         {sheetConnected && (
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.75rem", padding: "0.5rem 0.75rem", background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.3)", borderRadius: 8 }}>
-            <span style={{ color: "#34d399", fontSize: 12 }}>✓ Sheet prepojený</span>
-            <a href={sheetUrl} target="_blank" rel="noopener noreferrer" style={{ color: "#34d399", fontSize: 11, marginLeft: 4 }}>Otvoriť →</a>
+            <span style={{ color: "#34d399", fontSize: 12 }}>✓ Sheet propojen</span>
+            <a href={sheetUrl} target="_blank" rel="noopener noreferrer" style={{ color: "#34d399", fontSize: 11, marginLeft: 4 }}>Otevřít →</a>
           </div>
         )}
 
@@ -517,7 +517,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
             }}
             style={{ padding: "0.6rem 1rem", background: sheetConnected ? "transparent" : "transparent", border: "1px solid #2a2a2a", borderRadius: 8, color: sheetConnected ? "#f87171" : "#fff", fontSize: 13, cursor: "pointer" }}
           >
-            {sheetLoading ? "Pripájam..." : sheetConnected ? "Odpojiť sheet" : "Prepojiť sheet"}
+            {sheetLoading ? "Připojuji..." : sheetConnected ? "Odpojit sheet" : "Propojit sheet"}
           </button>
 
           {sheetConnected && (
@@ -532,7 +532,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
               }}
               style={{ padding: "0.6rem 1rem", background: "linear-gradient(135deg, #ffffff, #a0a0a0)", border: "none", borderRadius: 8, color: "#000", fontWeight: 700, fontSize: 13, cursor: "pointer" }}
             >
-              {syncLoading ? "Synchronizujem..." : "Synchronizovať teraz"}
+              {syncLoading ? "Synchronizuji..." : "Synchronizovat nyní"}
             </button>
           )}
         </div>
