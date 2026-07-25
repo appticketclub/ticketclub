@@ -119,10 +119,10 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #7c3aed, transparent)" }} />
           <div>
             <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 4 }}>
-              ⭐ Vyzkoušej 12 dní zdarma
+              ⭐ Upgraduj na PRO
             </div>
             <div style={{ fontSize: 12, color: "#f5f5f5" }}>
-              Použijte kód SKOUSKA při platbě
+              Získejte PRO funkce jako Refresh Bot, Sales Tracker a mnoho dalšího
             </div>
           </div>
           <UpgradeButton />
