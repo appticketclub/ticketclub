@@ -2,17 +2,31 @@ import { NextRequest, NextResponse } from "next/server";
 
 const TICKSIGHTS_KEY = process.env.TICKSIGHTS_API_KEY!;
 const BASE = "https://api.ticksights.com";
-
 const headers = {
   "Authorization": `Bearer ${TICKSIGHTS_KEY}`,
   "Accept": "application/json",
 };
 
 export async function POST(request: NextRequest) {
-  const { eventId } = await request.json();
+  const { eventId, search } = await request.json();
+
+  // Search mode
+  if (search) {
+    const res = await fetch(`${BASE}/events?limit=20&sort=date_asc`, { headers });
+    const data = await res.json();
+    // Filter by title/performer
+    const filtered = (data.events ?? []).filter((e: any) =>
+      e.title?.toLowerCase().includes(search.toLowerCase()) ||
+      e.Performer?.toLowerCase().includes(search.toLowerCase())
+    );
+    return NextResponse.json({ events: filtered });
+  }
+
   if (!eventId) return NextResponse.json({ error: "Event ID je povinný" }, { status: 400 });
 
-  const id = eventId.toString().trim();
+  let id = eventId.toString().trim();
+  const urlMatch = id.match(/\/(\d{6,})/);
+  if (urlMatch) id = urlMatch[1];
 
   try {
     const [eventRes, avgPriceRes, salesRes] = await Promise.all([
@@ -32,7 +46,7 @@ export async function POST(request: NextRequest) {
       salesRes.ok ? salesRes.json() : { sales: [] },
     ]);
 
-    return NextResponse.json({ event, avgPrice, sales: salesData.sales ?? [] });
+    return NextResponse.json({ event, avgPrice, sales: salesData.sales ?? [], total_count: salesData.total_count ?? 0 });
   } catch {
     return NextResponse.json({ error: "Chyba servera" }, { status: 500 });
   }
