@@ -245,7 +245,9 @@ export default function TickSightsClient() {
                     </tr>
                   </thead>
                   <tbody>
-                    {sales.map((sale: any, i: number) => (
+                    {[...sales].sort((a: any, b: any) =>
+                      new Date(b.date ?? 0).getTime() - new Date(a.date ?? 0).getTime()
+                    ).map((sale: any, i: number) => (
                       <tr key={i} style={{ borderBottom: "1px solid #0d0d0d" }}>
                         <td style={{ padding: "8px 12px", color: "#ededed" }}>{sale.block ?? "—"}</td>
                         <td style={{ padding: "8px 12px", color: "#ededed" }}>{sale.row || "—"}</td>
