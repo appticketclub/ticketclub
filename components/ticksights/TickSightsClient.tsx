@@ -80,7 +80,25 @@ export default function TickSightsClient() {
   ] : [];
 
   // Chart tabs
-  const [activeChart, setActiveChart] = useState<"sold" | "avg_price">("sold");
+  const [activeChart, setActiveChart] = useState<"sold" | "avg_price" | "sales_timeline">("sold");
+
+  // Group sales by date
+  const salesByDate = sales.reduce((acc: any, sale: any) => {
+    const date = sale.date ? sale.date.substring(0, 10) : "unknown";
+    if (!acc[date]) acc[date] = { date, tickets: 0, revenue: 0, count: 0 };
+    acc[date].tickets += sale.quantity ?? 0;
+    acc[date].revenue += (sale.price ?? 0) * (sale.quantity ?? 0);
+    acc[date].count += 1;
+    return acc;
+  }, {});
+
+  const salesTimelineData = Object.values(salesByDate)
+    .sort((a: any, b: any) => a.date.localeCompare(b.date))
+    .map((d: any) => ({
+      date: new Date(d.date).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" }),
+      tickets: d.tickets,
+      avg_price: d.count > 0 ? Math.round(d.revenue / d.tickets * 100) / 100 : 0,
+    }));
 
   const chartData = avgPrice
     .map((b: any) => ({
@@ -170,12 +188,13 @@ export default function TickSightsClient() {
           </div>
 
           {/* Chart */}
-          {avgPrice.length > 0 && (
+          {(avgPrice.length > 0 || sales.length > 0) && (
             <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem", marginBottom: "1.5rem" }}>
               <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.25rem", flexWrap: "wrap" as const }}>
                 {([
                   { key: "sold", label: "Prodáno celkem" },
                   { key: "avg_price", label: "Prům. cena prodeje" },
+                  { key: "sales_timeline", label: "Časový vývoj" },
                 ] as const).map(tab => (
                   <button
                     key={tab.key}
@@ -188,17 +207,26 @@ export default function TickSightsClient() {
               </div>
 
               <ResponsiveContainer width="100%" height={240}>
-                <BarChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 60 }}>
-                  <XAxis dataKey="block" tick={{ fill: "#525252", fontSize: 10 }} axisLine={false} tickLine={false} angle={-45} textAnchor="end" />
-                  <YAxis tick={{ fill: "#525252", fontSize: 10 }} axisLine={false} tickLine={false} width={55}
-                    tickFormatter={v => activeChart === "avg_price" ? `${v} ${currency}` : fmt(v)} />
-                  <Tooltip
-                    contentStyle={{ background: "#111", border: "1px solid #2a2a2a", borderRadius: 8, fontSize: 12 }}
-                    labelStyle={{ color: "#fff" }}
-                    formatter={(v: any) => activeChart === "avg_price" ? [`${fmt(v, 2)} ${currency}`, ""] : [fmt(v), ""]}
-                  />
-                  <Bar dataKey={activeChart === "avg_price" ? "avg_price" : "sold_tickets"} fill="#4ade80" radius={[3, 3, 0, 0]} />
-                </BarChart>
+                {activeChart === "sales_timeline" ? (
+                  <BarChart data={salesTimelineData} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
+                    <XAxis dataKey="date" tick={{ fill: "#525252", fontSize: 10 }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fill: "#525252", fontSize: 10 }} axisLine={false} tickLine={false} width={45} />
+                    <Tooltip contentStyle={{ background: "#111", border: "1px solid #2a2a2a", borderRadius: 8, fontSize: 12 }} labelStyle={{ color: "#fff" }} formatter={(v: any) => [fmt(v), ""]} />
+                    <Bar dataKey="tickets" fill="#4ade80" radius={[3, 3, 0, 0]} />
+                  </BarChart>
+                ) : (
+                  <BarChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 60 }}>
+                    <XAxis dataKey="block" tick={{ fill: "#525252", fontSize: 10 }} axisLine={false} tickLine={false} angle={-45} textAnchor="end" />
+                    <YAxis tick={{ fill: "#525252", fontSize: 10 }} axisLine={false} tickLine={false} width={55}
+                      tickFormatter={v => activeChart === "avg_price" ? `${v} ${currency}` : fmt(v)} />
+                    <Tooltip
+                      contentStyle={{ background: "#111", border: "1px solid #2a2a2a", borderRadius: 8, fontSize: 12 }}
+                      labelStyle={{ color: "#fff" }}
+                      formatter={(v: any) => activeChart === "avg_price" ? [`${fmt(v, 2)} ${currency}`, ""] : [fmt(v), ""]}
+                    />
+                    <Bar dataKey={activeChart === "avg_price" ? "avg_price" : "sold_tickets"} fill="#4ade80" radius={[3, 3, 0, 0]} />
+                  </BarChart>
+                )}
               </ResponsiveContainer>
             </div>
           )}
