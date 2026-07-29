@@ -29,6 +29,16 @@ export async function POST(request: NextRequest) {
   if (urlMatch) id = urlMatch[1];
 
   try {
+    // Auto-add event to TickSights tracking
+    try {
+      await fetch(`${BASE}/event`, {
+        method: "POST",
+        headers: { ...headers, "Content-Type": "application/json" },
+        body: JSON.stringify({ eventID: parseInt(id), marketplace: 1 }) // 1 = Viagogo
+      });
+    } catch {}
+
+    // Then fetch event data as before
     const [eventRes, avgPriceRes, salesRes] = await Promise.all([
       fetch(`${BASE}/event/${id}`, { headers }),
       fetch(`${BASE}/event/${id}/avgprice`, { headers }),
