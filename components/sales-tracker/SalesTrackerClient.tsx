@@ -410,6 +410,11 @@ function TickSightsSection({ data }: { data: any }) {
           {event.date && <div style={{ fontSize: 13, color: "#ededed", marginTop: 2 }}>{new Date(event.date).toLocaleDateString("cs-CZ", { day: "numeric", month: "long", year: "numeric" })}</div>}
           {event.Performer && <div style={{ fontSize: 12, color: "#4ade80", marginTop: 4 }}>{event.Performer}</div>}
           <div style={{ fontSize: 11, color: "#525252", marginTop: 2 }}>Marketplace: {event.marketplace?.name} · ID: {event.EventID}</div>
+          {event.last_update && (
+            <div style={{ fontSize: 11, color: "#525252", marginTop: 2 }}>
+              Posledná aktualizácia: {new Date(event.last_update).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+            </div>
+          )}
         </div>
         {event.map && <img src={event.map} alt="Seating map" style={{ width: 120, height: 80, borderRadius: 8, objectFit: "cover", opacity: 0.8 }} />}
       </div>
