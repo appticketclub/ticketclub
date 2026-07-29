@@ -39,10 +39,11 @@ export async function POST(request: NextRequest) {
     } catch {}
 
     // Then fetch event data as before
-    const [eventRes, avgPriceRes, salesRes] = await Promise.all([
+    const [eventRes, avgPriceRes, salesRes, devRes] = await Promise.all([
       fetch(`${BASE}/event/${id}`, { headers }),
       fetch(`${BASE}/event/${id}/avgprice`, { headers }),
       fetch(`${BASE}/event/${id}/sales?limit=50`, { headers }),
+      fetch(`${BASE}/event/${id}/sales/development`, { headers }),
     ]);
 
     if (!eventRes.ok) {
@@ -50,13 +51,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: err.message ?? "Event nenájdený" }, { status: 404 });
     }
 
-    const [event, avgPrice, salesData] = await Promise.all([
+    const [event, avgPrice, salesData, devData] = await Promise.all([
       eventRes.json(),
       avgPriceRes.ok ? avgPriceRes.json() : [],
       salesRes.ok ? salesRes.json() : { sales: [] },
+      devRes.ok ? devRes.json() : { points: [] },
     ]);
 
-    return NextResponse.json({ event, avgPrice, sales: salesData.sales ?? [], total_count: salesData.total_count ?? 0 });
+    return NextResponse.json({
+      event,
+      avgPrice,
+      sales: salesData.sales ?? [],
+      total_count: salesData.total_count ?? 0,
+      development: devData.points ?? [],
+    });
   } catch {
     return NextResponse.json({ error: "Chyba servera" }, { status: 500 });
   }
