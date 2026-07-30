@@ -332,7 +332,7 @@ function EventorySection({ data }: { data: any }) {
 
 /* ─── TickSights Section ───────────────────────────────────────────── */
 function TickSightsSection({ data }: { data: any }) {
-  const [activeChart, setActiveChart] = useState<"sold" | "avg_price" | "sales_timeline" | "daily_sales">("sold");
+  const [activeChart, setActiveChart] = useState<"sold" | "avg_price" | "sales_timeline">("sold");
 
   const event = data?.event;
   const sales: any[] = data?.sales ?? [];
@@ -445,7 +445,6 @@ function TickSightsSection({ data }: { data: any }) {
               { key: "sold", label: "Prodeje v sektorech" },
               { key: "avg_price", label: "Prům. cena prodeje" },
               { key: "sales_timeline", label: "Časový vývoj" },
-              { key: "daily_sales", label: "Denní prodeje" },
             ] as const).map(tab => (
               <button
                 key={tab.key}
@@ -459,7 +458,7 @@ function TickSightsSection({ data }: { data: any }) {
 
           <ResponsiveContainer width="100%" height={240}>
             <BarChart
-              data={activeChart === "daily_sales" ? tsDevChartData : activeChart === "sales_timeline" ? salesTimelineData : chartData}
+              data={activeChart === "sales_timeline" ? salesTimelineData : chartData}
               margin={{ top: 5, right: 10, left: 0, bottom: activeChart === "sold" || activeChart === "avg_price" ? 60 : 0 }}
             >
               <XAxis
@@ -482,7 +481,7 @@ function TickSightsSection({ data }: { data: any }) {
                 formatter={(v: any) => activeChart === "avg_price" ? [`${fmt(v, 2)} ${currency}`, ""] : [fmt(v), ""]}
               />
               <Bar
-                dataKey={activeChart === "avg_price" ? "avg_price" : activeChart === "daily_sales" ? "tickets" : activeChart === "sales_timeline" ? "tickets" : "sold_tickets"}
+                dataKey={activeChart === "avg_price" ? "avg_price" : activeChart === "sales_timeline" ? "tickets" : "sold_tickets"}
                 fill="#4ade80"
                 radius={[3, 3, 0, 0]}
               />
