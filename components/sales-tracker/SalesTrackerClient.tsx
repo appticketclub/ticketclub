@@ -332,10 +332,10 @@ function EventorySection({ data }: { data: any }) {
 
 /* ─── TickSights Section ───────────────────────────────────────────── */
 function TickSightsSection({ data }: { data: any }) {
-  const [activeChart, setActiveChart] = useState<"sold" | "avg_price" | "sales_timeline" | "daily_sales">("sold");
+  const [activeChart, setActiveChart] = useState<"sold" | "avg_price" | "sales_timeline">("sold");
 
   const event = data?.event;
-  const sales: any[] = data?.sales ?? [];
+  const tsSales: any[] = data?.sales ?? [];
   const avgPrice: any[] = data?.avgPrice ?? [];
   const tsDevelopment: any[] = data?.development ?? [];
 
@@ -353,7 +353,7 @@ function TickSightsSection({ data }: { data: any }) {
   const currency = event?.sales?.average_ticket_price?.currency ?? "EUR";
 
   const stats = event ? [
-    { label: "CELKOVÝ POČET PRODEJŮ", value: fmt(data?.total_count || sales.length) },
+    { label: "CELKOVÝ POČET PRODEJŮ", value: fmt(data?.total_count || tsSales.length) },
     { label: "PRODANÝCH LÍSTKŮ", value: fmt(event.sales?.sold_tickets_total) },
     { label: "PRODÁNO ZA 24H (KS)", value: fmt(event.sales?.sold_tickets_24h), color: "#4ade80" },
     { label: "DOSTUPNÝCH LÍSTKŮ", value: fmt(event.stock?.tickets) },
@@ -363,8 +363,8 @@ function TickSightsSection({ data }: { data: any }) {
     { label: "CELKOVÝ OBJEM PRODEJE", value: totalVolume > 0 ? `${fmt(totalVolume, 2)} ${currency}` : "—" },
   ] : [];
 
-  // Group sales by date
-  const salesByDate = sales.reduce((acc: any, sale: any) => {
+  // Generate continuous date range with zeros for missing days
+  const salesByDate = tsSales.reduce((acc: any, sale: any) => {
     const date = sale.date ? sale.date.substring(0, 10) : "unknown";
     if (!acc[date]) acc[date] = { date, tickets: 0, revenue: 0, count: 0 };
     acc[date].tickets += sale.quantity ?? 0;
@@ -373,13 +373,21 @@ function TickSightsSection({ data }: { data: any }) {
     return acc;
   }, {});
 
-  const salesTimelineData = Object.values(salesByDate)
-    .sort((a: any, b: any) => a.date.localeCompare(b.date))
-    .map((d: any) => ({
-      date: new Date(d.date).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" }),
-      tickets: d.tickets,
-      avg_price: d.count > 0 ? Math.round(d.revenue / d.tickets * 100) / 100 : 0,
-    }));
+  // Find min and max dates
+  const saleDates = Object.keys(salesByDate).filter(d => d !== "unknown").sort();
+  const salesTimelineData = saleDates.length > 0 ? (() => {
+    const start = new Date(saleDates[0]);
+    const end = new Date(saleDates[saleDates.length - 1]);
+    const result = [];
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      const dateStr = d.toISOString().substring(0, 10);
+      result.push({
+        date: new Date(dateStr).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" }),
+        tickets: salesByDate[dateStr]?.tickets ?? 0,
+      });
+    }
+    return result;
+  })() : [];
 
   const chartData = avgPrice
     .map((b: any) => ({
@@ -438,14 +446,13 @@ function TickSightsSection({ data }: { data: any }) {
       </div>
 
       {/* Chart */}
-      {(avgPrice.length > 0 || sales.length > 0 || tsDevelopment.length > 0) && (
+      {(avgPrice.length > 0 || tsSales.length > 0 || tsDevelopment.length > 0) && (
         <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem", marginBottom: "1.5rem" }}>
           <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.25rem", flexWrap: "wrap" as const }}>
             {([
               { key: "sold", label: "Prodeje v sektorech" },
               { key: "avg_price", label: "Prům. cena prodeje" },
               { key: "sales_timeline", label: "Časový vývoj" },
-              { key: "daily_sales", label: "Denní prodeje" },
             ] as const).map(tab => (
               <button
                 key={tab.key}
@@ -459,7 +466,7 @@ function TickSightsSection({ data }: { data: any }) {
 
           <ResponsiveContainer width="100%" height={240}>
             <BarChart
-              data={activeChart === "daily_sales" ? tsDevChartData : activeChart === "sales_timeline" ? salesTimelineData : chartData}
+              data={activeChart === "sales_timeline" ? salesTimelineData : chartData}
               margin={{ top: 5, right: 10, left: 0, bottom: activeChart === "sold" || activeChart === "avg_price" ? 60 : 0 }}
             >
               <XAxis
@@ -482,7 +489,7 @@ function TickSightsSection({ data }: { data: any }) {
                 formatter={(v: any) => activeChart === "avg_price" ? [`${fmt(v, 2)} ${currency}`, ""] : [fmt(v), ""]}
               />
               <Bar
-                dataKey={activeChart === "avg_price" ? "avg_price" : activeChart === "daily_sales" ? "tickets" : activeChart === "sales_timeline" ? "tickets" : "sold_tickets"}
+                dataKey={activeChart === "avg_price" ? "avg_price" : activeChart === "sales_timeline" ? "tickets" : "sold_tickets"}
                 fill="#4ade80"
                 radius={[3, 3, 0, 0]}
               />
@@ -492,7 +499,7 @@ function TickSightsSection({ data }: { data: any }) {
       )}
 
       {/* Sales history */}
-      {sales.length > 0 && (
+      {tsSales.length > 0 && (
         <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem" }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: "1rem" }}>HISTORIE PRODEJŮ</div>
           <div style={{ overflowX: "auto" }}>
@@ -505,7 +512,7 @@ function TickSightsSection({ data }: { data: any }) {
                 </tr>
               </thead>
               <tbody>
-                {[...sales].sort((a: any, b: any) =>
+                {[...tsSales].sort((a: any, b: any) =>
                   new Date(b.date ?? 0).getTime() - new Date(a.date ?? 0).getTime()
                 ).map((sale: any, i: number) => (
                   <tr key={i} style={{ borderBottom: "1px solid #0d0d0d" }}>
