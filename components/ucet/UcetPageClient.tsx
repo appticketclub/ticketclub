@@ -550,6 +550,33 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
         </div>
       </div>
 
+      {/* Email import */}
+      <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.25rem 1.5rem", marginBottom: "1rem" }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: "#ffffff", marginBottom: 4 }}>EMAIL IMPORT</div>
+        <div style={{ fontSize: 12, color: "#ededed", marginBottom: "0.75rem" }}>
+          Přeposílejte potvrzovací emaily z Ticketmaster na tuto adresu a automaticky se přidají do Evidence.
+        </div>
+        <div style={{
+          padding: "0.6rem 1rem",
+          background: "#1a1a1a",
+          border: "1px solid #2a2a2a",
+          borderRadius: 8,
+          color: "#4ade80",
+          fontSize: 13,
+          fontFamily: "monospace",
+          marginBottom: "0.5rem",
+          userSelect: "all" as const,
+          cursor: "pointer"
+        }}
+          onClick={() => navigator.clipboard.writeText(`${user?.id?.substring(0, 8)}@import.ticketclub.vip`)}
+        >
+          {user?.id?.substring(0, 8)}@import.ticketclub.vip
+        </div>
+        <div style={{ fontSize: 11, color: "#525252" }}>
+          Klikněte pro zkopírování adresy.
+        </div>
+      </div>
+
       {/* Danger zone */}
       <div style={{ ...cardStyle, border: "1px solid rgba(248,113,113,0.2)", background: "#110a0a" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, rgba(248,113,113,0.4), transparent)" }} />

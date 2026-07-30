@@ -51,15 +51,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: err.message ?? "Event nenájdený" }, { status: 404 });
     }
 
-    const [event, avgPrice, salesData] = await Promise.all([
+    const [event, avgPrice, salesData, devData] = await Promise.all([
       eventRes.json(),
       avgPriceRes.ok ? avgPriceRes.json() : [],
       salesRes.ok ? salesRes.json() : { sales: [] },
+      devRes.ok ? devRes.json() : { points: [] },
     ]);
-
-    console.log("[ticksights] development status:", devRes.status);
-    const devData = devRes.ok ? await devRes.json() : { points: [] };
-    console.log("[ticksights] development points:", devData.points?.length ?? 0);
 
     return NextResponse.json({
       event,
