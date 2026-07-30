@@ -8,7 +8,7 @@ export default function SalesTrackerClient() {
   const [eventoryData, setEventoryData] = useState<any>(null);
   const [ticksightsData, setTicksightsData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-  const [activeTracker, setActiveTracker] = useState<"eventory" | "ticksights">("eventory");
+  const [activeTracker, setActiveTracker] = useState<"eventory" | "ticksights">("ticksights");
 
   async function handleSearch() {
     if (!url.trim()) return;
@@ -79,8 +79,8 @@ export default function SalesTrackerClient() {
           {/* Tracker switcher */}
           <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem" }}>
             {[
-              { key: "eventory", label: "Sales Tracker (Eventory)" },
               { key: "ticksights", label: "TickSights Sales Tracker" },
+              { key: "eventory", label: "Sales Tracker (Eventory)" },
             ].map(tab => (
               <button
                 key={tab.key}
@@ -442,7 +442,7 @@ function TickSightsSection({ data }: { data: any }) {
         <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem", marginBottom: "1.5rem" }}>
           <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.25rem", flexWrap: "wrap" as const }}>
             {([
-              { key: "sold", label: "Prodáno celkem" },
+              { key: "sold", label: "Prodeje v sektorech" },
               { key: "avg_price", label: "Prům. cena prodeje" },
               { key: "sales_timeline", label: "Časový vývoj" },
               { key: "daily_sales", label: "Denní prodeje" },
