@@ -251,6 +251,19 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
     loadSheetStatus();
   }, []);
 
+  useEffect(() => {
+    async function saveImportEmail() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const importEmail = `${user.id.substring(0, 8)}@import.ticketclub.vip`;
+      await supabase.from("profiles")
+        .update({ import_email: importEmail })
+        .eq("id", user.id);
+    }
+    saveImportEmail();
+  }, []);
+
   return (
     <div>
       {/* Header */}

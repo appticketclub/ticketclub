@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     const { data: profiles } = await supabase
       .from("profiles")
       .select("id, email")
-      .filter("id::text", "ilike", `${recipientLocal}%`)
+      .eq("import_email", recipient)
       .limit(1);
 
     const profile = profiles?.[0];
