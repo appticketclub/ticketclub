@@ -5,17 +5,19 @@ export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.formData();
+    const body = await request.json();
 
-    const recipient = formData.get("recipient")?.toString() ?? "";
-    const sender = formData.get("sender")?.toString() ?? "";
-    const subject = formData.get("subject")?.toString() ?? "";
-    const bodyPlain = formData.get("body-plain")?.toString() ?? "";
-    const bodyHtml = formData.get("body-html")?.toString() ?? "";
+    const recipient = body.OriginalRecipient ?? body.To ?? "";
+    const sender = body.From ?? "";
+    const subject = body.Subject ?? "";
+    const bodyPlain = body.TextBody ?? "";
+    const bodyHtml = body.HtmlBody ?? "";
+    const mailboxHash = body.MailboxHash ?? "";
 
-    console.log("[email/inbound] From:", sender, "To:", recipient, "Subject:", subject);
+    console.log("[email/inbound] From:", sender, "To:", recipient, "Subject:", subject, "Hash:", mailboxHash);
 
-    const recipientLocal = recipient.split("@")[0];
+    // Use MailboxHash or extract from recipient
+    const recipientLocal = mailboxHash || recipient.split("@")[0];
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
