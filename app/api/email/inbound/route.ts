@@ -5,7 +5,12 @@ export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   try {
+    const contentType = request.headers.get("content-type");
+    console.log("[email/inbound] Content-Type:", contentType);
+
     const body = await request.json();
+    console.log("[email/inbound] Body keys:", Object.keys(body));
+    console.log("[email/inbound] From:", body.From, "Subject:", body.Subject);
 
     const recipient = body.OriginalRecipient ?? body.To ?? "";
     const sender = body.From ?? "";
