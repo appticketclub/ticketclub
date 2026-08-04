@@ -34,6 +34,8 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
   const [sheetConnected, setSheetConnected] = useState(false);
   const [sheetLoading, setSheetLoading] = useState(false);
   const [syncLoading, setSyncLoading] = useState(false);
+
+  const isAdmin = profile?.role === "admin";
   const [sheetsVideoOpen, setSheetsVideoOpen] = useState(false);
 
   async function handleUpgrade() {
@@ -564,68 +566,70 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
       </div>
 
       {/* Email Import */}
-      <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.25rem 1.5rem", marginBottom: "1rem", position: "relative", overflow: "hidden" }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: "#ffffff", marginBottom: 4 }}>EMAIL IMPORT</div>
-        <div style={{ fontSize: 12, color: "#ededed", marginBottom: "1rem" }}>
-          Přeposílejte potvrzovací emaily z Ticketmaster na vaši unikátní adresu — nákup se automaticky přidá do Evidence.
-        </div>
+      {isAdmin && (
+        <div style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.25rem 1.5rem", marginBottom: "1rem", position: "relative", overflow: "hidden" }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#ffffff", marginBottom: 4 }}>EMAIL IMPORT</div>
+          <div style={{ fontSize: 12, color: "#ededed", marginBottom: "1rem" }}>
+            Přeposílejte potvrzovací emaily z Ticketmaster na vaši unikátní adresu — nákup se automaticky přidá do Evidence.
+          </div>
 
-        {subscription?.plan === "pro" || profile?.role === "admin" ? (
-          <>
-            <div
-              onClick={() => {
-                navigator.clipboard.writeText(`${user?.id?.substring(0, 8)}@import.ticketclub.vip`);
-              }}
-              style={{
-                padding: "0.75rem 1rem",
-                background: "#0a0a0a",
-                border: "1px solid #2a2a2a",
-                borderRadius: 8,
-                color: "#4ade80",
-                fontSize: 14,
-                fontFamily: "monospace",
-                cursor: "pointer",
-                marginBottom: "0.5rem",
-                userSelect: "all" as const,
-              }}
-            >
-              {user?.id?.substring(0, 8)}@import.ticketclub.vip
-            </div>
-            <div style={{ fontSize: 11, color: "#525252" }}>Klikněte pro zkopírování adresy.</div>
-          </>
-        ) : (
-          <>
-            {/* Blurred overlay */}
-            <div style={{ position: "relative" }}>
-              <div style={{
-                padding: "0.75rem 1rem",
-                background: "#0a0a0a",
-                border: "1px solid #2a2a2a",
-                borderRadius: 8,
-                color: "#4ade80",
-                fontSize: 14,
-                fontFamily: "monospace",
-                filter: "blur(6px)",
-                userSelect: "none" as const,
-                marginBottom: "0.5rem",
-              }}>
-                xxxxxxxx@import.ticketclub.vip
+          {subscription?.plan === "pro" || profile?.role === "admin" ? (
+            <>
+              <div
+                onClick={() => {
+                  navigator.clipboard.writeText(`${user?.id?.substring(0, 8)}@import.ticketclub.vip`);
+                }}
+                style={{
+                  padding: "0.75rem 1rem",
+                  background: "#0a0a0a",
+                  border: "1px solid #2a2a2a",
+                  borderRadius: 8,
+                  color: "#4ade80",
+                  fontSize: 14,
+                  fontFamily: "monospace",
+                  cursor: "pointer",
+                  marginBottom: "0.5rem",
+                  userSelect: "all" as const,
+                }}
+              >
+                {user?.id?.substring(0, 8)}@import.ticketclub.vip
               </div>
-              <div style={{
-                position: "absolute",
-                inset: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "rgba(0,0,0,0.5)",
-                borderRadius: 8,
-              }}>
-                <span style={{ fontSize: 12, color: "#ffffff", fontWeight: 600 }}>🔒 Dostupné v PRO plánu</span>
+              <div style={{ fontSize: 11, color: "#525252" }}>Klikněte pro zkopírování adresy.</div>
+            </>
+          ) : (
+            <>
+              {/* Blurred overlay */}
+              <div style={{ position: "relative" }}>
+                <div style={{
+                  padding: "0.75rem 1rem",
+                  background: "#0a0a0a",
+                  border: "1px solid #2a2a2a",
+                  borderRadius: 8,
+                  color: "#4ade80",
+                  fontSize: 14,
+                  fontFamily: "monospace",
+                  filter: "blur(6px)",
+                  userSelect: "none" as const,
+                  marginBottom: "0.5rem",
+                }}>
+                  xxxxxxxx@import.ticketclub.vip
+                </div>
+                <div style={{
+                  position: "absolute",
+                  inset: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "rgba(0,0,0,0.5)",
+                  borderRadius: 8,
+                }}>
+                  <span style={{ fontSize: 12, color: "#ffffff", fontWeight: 600 }}>🔒 Dostupné v PRO plánu</span>
+                </div>
               </div>
-            </div>
-          </>
-        )}
-      </div>
+            </>
+          )}
+        </div>
+      )}
 
       {/* Danger zone */}
       <div style={{ ...cardStyle, border: "1px solid rgba(248,113,113,0.2)", background: "#110a0a" }}>

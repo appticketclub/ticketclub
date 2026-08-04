@@ -18,17 +18,7 @@ export default function SalesTrackerClient() {
     setTicksightsData(null);
 
     try {
-      // Load Eventory
-      const eventoryRes = await fetch("/api/sales-tracker", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: url.trim() })
-      });
-      const eventoryJson = await eventoryRes.json();
-      if (eventoryRes.ok) setEventoryData(eventoryJson);
-      else setError(eventoryJson.error);
-
-      // Auto-extract ID and load TickSights
+      // Only load TickSights automatically
       const match = url.match(/E-(\d+)/i) || url.match(/\/(\d{7,})/);
       if (match) {
         const tsRes = await fetch("/api/ticksights", {
@@ -38,6 +28,7 @@ export default function SalesTrackerClient() {
         });
         const tsJson = await tsRes.json();
         if (tsRes.ok) setTicksightsData(tsJson);
+        else setError(tsJson.error);
       }
     } catch { setError("Chyba připojení"); }
     finally { setLoading(false); }
@@ -67,7 +58,7 @@ export default function SalesTrackerClient() {
       </div>
 
       {/* Error */}
-      {error && (
+      {error && !error.includes("server") && !error.includes("Server") && (
         <div style={{ background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.3)", borderRadius: 12, padding: "1rem", color: "#f87171", marginBottom: "1.5rem" }}>
           {error}
         </div>
@@ -98,6 +89,30 @@ export default function SalesTrackerClient() {
               </button>
             ))}
           </div>
+
+          {activeTracker === "eventory" && !eventoryData && (
+            <div style={{ textAlign: "center", padding: "2rem" }}>
+              <button
+                onClick={async () => {
+                  setLoading(true);
+                  try {
+                    const res = await fetch("/api/sales-tracker", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ url: url.trim() })
+                    });
+                    const json = await res.json();
+                    if (res.ok) setEventoryData(json);
+                    else setError(json.error);
+                  } catch { setError("Chyba připojení"); }
+                  finally { setLoading(false); }
+                }}
+                style={{ padding: "0.75rem 1.5rem", background: "linear-gradient(135deg, #ffffff, #a0a0a0)", border: "none", borderRadius: 10, color: "#000", fontWeight: 700, fontSize: 14, cursor: "pointer" }}
+              >
+                Vyhledat v Eventory
+              </button>
+            </div>
+          )}
 
           {activeTracker === "eventory" && <EventorySection data={eventoryData} />}
           {activeTracker === "ticksights" && <TickSightsSection data={ticksightsData} />}
