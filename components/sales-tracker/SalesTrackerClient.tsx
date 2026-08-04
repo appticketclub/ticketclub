@@ -90,6 +90,20 @@ export default function SalesTrackerClient() {
             ))}
           </div>
 
+          {activeTracker === "eventory" && (
+            <div style={{
+              background: "rgba(234,179,8,0.1)",
+              border: "1px solid rgba(234,179,8,0.3)",
+              borderRadius: 10,
+              padding: "0.75rem 1rem",
+              marginBottom: "1rem",
+              fontSize: 12,
+              color: "#eab308",
+            }}>
+              ⚠️ Sales Tracker od Eventory může být méně spolehlivý — data nemusí být vždy aktuální.
+            </div>
+          )}
+
           {activeTracker === "eventory" && !eventoryData && (
             <div style={{ textAlign: "center", padding: "2rem" }}>
               <button
@@ -161,19 +175,6 @@ function EventorySection({ data }: { data: any }) {
 
   return (
     <>
-      {/* Warning banner */}
-      <div style={{
-        background: "rgba(234,179,8,0.1)",
-        border: "1px solid rgba(234,179,8,0.3)",
-        borderRadius: 10,
-        padding: "0.75rem 1rem",
-        marginBottom: "1rem",
-        fontSize: 12,
-        color: "#eab308",
-      }}>
-        ⚠️ Sales Tracker od Eventory může být méně spolehlivý — data nemusí být vždy aktuální.
-      </div>
-
       {/* Event header */}
       <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem", marginBottom: "1.5rem", display: "flex", gap: "1rem", alignItems: "center" }}>
         {e.event_image && <img src={e.event_image} alt="" style={{ width: 80, height: 80, borderRadius: 10, objectFit: "cover" }} />}
