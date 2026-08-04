@@ -1298,6 +1298,32 @@ export default function EvidenceTab() {
               <button onClick={() => setBannerRow(null)} style={{ background: "none", border: "none", color: "#ededed", cursor: "pointer", fontSize: 22 }}>×</button>
             </div>
 
+            {/* Copy text section */}
+            <div style={{ padding: "1rem 1.5rem 0" }}>
+              {(() => {
+                const copyText = `${bannerRow.event_name}
+${bannerRow.city ?? bannerRow.venue ?? ""}
+Ks: ${bannerRow.quantity}
+Nákup: ${bannerRow.buy_price ? Number(bannerRow.buy_price * bannerRow.quantity).toLocaleString("cs-CZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "—"}€
+Prodej: ${bannerRow.sell_price_total ? Number(bannerRow.sell_price_total).toLocaleString("cs-CZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "—"}€
+Zisk: ${bannerRow.profit ? Number(bannerRow.profit).toLocaleString("cs-CZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "—"}€ (${bannerRow.roi ? Number(bannerRow.roi).toLocaleString("cs-CZ", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "—"}%)`;
+
+                return (
+                  <div style={{ marginBottom: "1rem", padding: "1rem", background: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: 10 }}>
+                    <pre style={{ fontSize: 13, color: "#ededed", margin: 0, whiteSpace: "pre-wrap", fontFamily: "monospace", marginBottom: "0.75rem" }}>
+                      {copyText}
+                    </pre>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(copyText)}
+                      style={{ padding: "0.5rem 1rem", background: "linear-gradient(135deg, #ffffff, #a0a0a0)", border: "none", borderRadius: 8, color: "#000", fontWeight: 700, fontSize: 12, cursor: "pointer" }}
+                    >
+                      📋 Kopírovat
+                    </button>
+                  </div>
+                );
+              })()}
+            </div>
+
             {/* Banner preview */}
             <div ref={bannerRef} style={{ padding: "1rem" }}>
               <div style={{ width: "100%", aspectRatio: "1280/600", overflow: "hidden", borderRadius: 8 }}>
