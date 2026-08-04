@@ -134,21 +134,6 @@ export default function Sidebar({
         flexDirection: "column",
         gap: "0.5rem",
       }}>
-        <Link
-          href="/ticksights"
-          style={{
-            display: "flex", alignItems: "center", gap: "0.75rem",
-            padding: "0.6rem 0.75rem", borderRadius: 10,
-            fontSize: 13, color: "#ffffff", textDecoration: "none",
-            opacity: collapsed ? 0 : 1,
-            transition: "opacity 0.15s ease",
-            pointerEvents: collapsed ? "none" : "auto",
-          }}
-          onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.color = "#34d399"}
-          onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.color = "#ffffff"}
-        >
-          📈 TickSights Tracker
-        </Link>
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", justifyContent: "space-between" }}>
           <Link
             href="/dostupne-sluzby"
