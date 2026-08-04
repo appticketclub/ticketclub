@@ -958,12 +958,16 @@ export default function EvidenceTab() {
 
                     {/* Celkový zisk — READ ONLY */}
                     <td style={{ ...cellStyle(120), textAlign: "right", color: row.profit >= 0 ? "#34d399" : "#f87171", fontWeight: 700, cursor: "default" }} title="Pouze pro čtení">
-                      {row.sell_price_total > 0 ? `${row.profit >= 0 ? "+" : ""}${format(row.profit, row.currency as "EUR" | "CZK")}` : "—"}
+                      {row.quantity_remaining === 0
+                        ? (row.sell_price_total > 0 ? `${row.profit >= 0 ? "+" : ""}${format(row.profit, row.currency as "EUR" | "CZK")}` : "—")
+                        : "—"}
                     </td>
 
                     {/* Ziskovost — READ ONLY */}
                     <td style={{ ...cellStyle(90), textAlign: "right", color: row.roi >= 0 ? "#34d399" : "#f87171", fontWeight: 600, cursor: "default" }} title="Pouze pro čtení">
-                      {row.sell_price_total > 0 ? `${row.roi >= 0 ? "+" : ""}${row.roi.toFixed(1)}%` : "—"}
+                      {row.quantity_remaining === 0
+                        ? (row.sell_price_total > 0 ? `${row.roi >= 0 ? "+" : ""}${row.roi.toFixed(1)}%` : "—")
+                        : "—"}
                     </td>
 
                     {/* Burza — DROPDOWN */}
