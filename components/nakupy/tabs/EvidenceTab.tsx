@@ -799,7 +799,29 @@ export default function EvidenceTab() {
                     {/* Místo akce */}
                     <EditableCell rowId={row.id} field="city" value={row.city} width={140} />
 
-                    <td style={cellStyle(120)}>{row.sector ?? "—"}</td>
+                    <td style={cellStyle(120)}>
+                      <input
+                        value={row.venue ?? ""}
+                        onChange={async (e) => {
+                          const val = e.target.value;
+                          setRows(prev => prev.map(r => r.id === row.id ? { ...r, venue: val } : r));
+                        }}
+                        onBlur={async (e) => {
+                          const supabase = createClient();
+                          await supabase.from("purchases").update({ venue: e.target.value }).eq("id", row.id);
+                        }}
+                        style={{
+                          width: "100%",
+                          background: "transparent",
+                          border: "none",
+                          outline: "none",
+                          color: "#ededed",
+                          fontSize: 12,
+                          padding: 0,
+                          fontFamily: "inherit",
+                        }}
+                      />
+                    </td>
 
                     {/* Datum koncertu */}
                     <DateCell rowId={row.id} field="event_actual_date" value={row.event_actual_date} width={100} color={isThisMonth(row.event_actual_date) ? "#f87171" : undefined} />
