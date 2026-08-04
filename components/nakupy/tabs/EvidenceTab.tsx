@@ -49,6 +49,7 @@ const COLS = [
   { key: "event_date", label: "Datum\nnákupu", width: 100 },
   { key: "event_name", label: "Kapela", width: 200 },
   { key: "city", label: "Místo akce", width: 140 },
+  { key: "sector", label: "SEKTOR / SEDADLO", width: 120 },
   { key: "event_actual_date", label: "Datum\nkoncertu", width: 100 },
   { key: "quantity", label: "Počet\nlístků", width: 80 },
   { key: "buy_total", label: "Nákupní cena\ncelkem", width: 130 },
@@ -797,6 +798,8 @@ export default function EvidenceTab() {
 
                     {/* Místo akce */}
                     <EditableCell rowId={row.id} field="city" value={row.city} width={140} />
+
+                    <td style={cellStyle(120)}>{row.sector ?? "—"}</td>
 
                     {/* Datum koncertu */}
                     <DateCell rowId={row.id} field="event_actual_date" value={row.event_actual_date} width={100} color={isThisMonth(row.event_actual_date) ? "#f87171" : undefined} />
