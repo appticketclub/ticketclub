@@ -258,7 +258,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const importEmail = `${user.id.substring(0, 8)}@import.ticketclub.vip`;
+      const importEmail = `${user.id.substring(0, 8)}@mail.ticketclub.vip`;
       await supabase.from("profiles")
         .update({ import_email: importEmail })
         .eq("id", user.id);
@@ -577,7 +577,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
             <>
               <div
                 onClick={() => {
-                  navigator.clipboard.writeText(`${user?.id?.substring(0, 8)}@import.ticketclub.vip`);
+                  navigator.clipboard.writeText(`${user?.id?.substring(0, 8)}@mail.ticketclub.vip`);
                 }}
                 style={{
                   padding: "0.75rem 1rem",
@@ -592,7 +592,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
                   userSelect: "all" as const,
                 }}
               >
-                {user?.id?.substring(0, 8)}@import.ticketclub.vip
+                {user?.id?.substring(0, 8)}@mail.ticketclub.vip
               </div>
               <div style={{ fontSize: 11, color: "#525252" }}>Klikněte pro zkopírování adresy.</div>
             </>
@@ -612,7 +612,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
                   userSelect: "none" as const,
                   marginBottom: "0.5rem",
                 }}>
-                  xxxxxxxx@import.ticketclub.vip
+                  xxxxxxxx@mail.ticketclub.vip
                 </div>
                 <div style={{
                   position: "absolute",
