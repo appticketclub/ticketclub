@@ -124,6 +124,7 @@ CRITICAL RULES:
       status: "active",
       delivered: false,
       paid_out: false,
+      created_at: new Date().toISOString(),
     });
 
     if (error) {
