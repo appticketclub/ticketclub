@@ -55,36 +55,31 @@ export async function POST(request: NextRequest) {
         max_tokens: 500,
         messages: [{
           role: "user",
-          content: `You are parsing a Ticketmaster order confirmation email. The email may be forwarded multiple times (Fwd: Fwd: etc). Search through ALL content including forwarded parts carefully.
+          content: `You are a ticket purchase data extractor. Analyze this Ticketmaster confirmation email (may be forwarded multiple times - search ALL content).
 
 Email subject: ${subject}
-Email content: ${content.substring(0, 5000)}
+Email content:
+${content.substring(0, 5000)}
 
-Extract ALL of these fields:
-- event_name: Artist/band name and tour name (e.g. "Tame Impala - The Slow Rush Tour")
-- event_date: The CONCERT date in YYYY-MM-DD format (NOT today, NOT purchase date - look for day/month/year near venue info)
-- venue: Venue/arena name (e.g. "Co-op Live", "Ziggo Dome", "O2 Arena")
-- city: City where the concert is (e.g. "Manchester", "Amsterdam", "Prague")
-- quantity: Total number of tickets as integer (look for "x tickets", "6 tickets", "Qty:")
-- buy_price: Total order amount as number (look for "Order Total:", "Total:", "457,80 EUR", "Gesamtbetrag" - use the FINAL total)
-- currency: Currency code (EUR, GBP, CZK, USD)
-- ticket_type: "Mobile Transfer" or "E-Ticket" or "Paper" (look for "Mobile Ticket", "E-Ticket", "Print at Home")
-- exchange: Always "Ticketmaster"
-- is_ticketmaster_confirmation: true if this is a Ticketmaster order confirmation, false otherwise
-
-Return ONLY valid JSON, no markdown, no explanation:
+Extract the following and return ONLY a valid JSON object with no markdown, no explanation:
 {
-  "event_name": "string or null",
-  "event_date": "YYYY-MM-DD or null",
-  "venue": "string or null",
-  "city": "string or null",
-  "quantity": number or null",
-  "buy_price": number or null",
-  "currency": "EUR/GBP/CZK/USD or null",
+  "event_name": "artist/band name and tour if present",
+  "venue": "venue/arena name",
+  "city": "city name only",
+  "event_date": "YYYY-MM-DD format - this is the CONCERT DATE not purchase date",
+  "quantity": total number of tickets as integer,
+  "buy_price": total order amount as number (look for Order Total, Gesamtbetrag, Total),
+  "currency": "EUR/GBP/CZK/USD",
   "ticket_type": "Mobile Transfer or E-Ticket or Paper or null",
   "exchange": "Ticketmaster",
   "is_ticketmaster_confirmation": true or false
-}`
+}
+
+CRITICAL RULES:
+- event_date = CONCERT date (e.g. "Thu, 07 May 2026" = "2026-05-07"). NOT today.
+- buy_price = final Order Total amount as number (e.g. "457,80 EUR" = 457.80)
+- Search through ALL forwarded content for these values
+- Return ONLY the JSON, nothing else`
         }]
       })
     });
