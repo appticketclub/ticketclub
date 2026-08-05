@@ -76,8 +76,10 @@ Extract the following and return ONLY a valid JSON object with no markdown, no e
 }
 
 CRITICAL RULES:
-- event_date = CONCERT date (e.g. "Thu, 07 May 2026" = "2026-05-07"). NOT today.
-- buy_price = final Order Total amount as number (e.g. "457,80 EUR" = 457.80)
+- event_date = the CONCERT/EVENT date when the show happens (e.g. "Donnerstag, 07. Mai 2026" = "2026-05-07", "Thu 08 May 2026" = "2026-05-08"). This is NEVER today's date.
+- buy_price = final Order Total amount as number (e.g. "457,80 EUR" = 457.80, "457.80 EUR" = 457.80)
+- DO NOT use today's date as event_date
+- The event_date appears near venue/location info in the email
 - Search through ALL forwarded content for these values
 - Return ONLY the JSON, nothing else`
         }]
@@ -110,11 +112,12 @@ CRITICAL RULES:
       user_id: profile.id,
       event_name: parsed.event_name,
       event_date: parsed.event_date,
+      event_actual_date: parsed.event_date,
       venue: parsed.venue,
       city: parsed.city,
       quantity: parsed.quantity,
       quantity_remaining: parsed.quantity,
-      buy_price: parsed.buy_price,
+      buy_price: parsed.buy_price ?? 0,
       currency: parsed.currency ?? "EUR",
       ticket_type: parsed.ticket_type,
       exchange: parsed.exchange ?? "Ticketmaster",
