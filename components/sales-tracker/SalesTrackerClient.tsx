@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { createClient } from "@/lib/supabase/client";
 
 export default function SalesTrackerClient() {
   const [url, setUrl] = useState("");
@@ -9,6 +10,22 @@ export default function SalesTrackerClient() {
   const [ticksightsData, setTicksightsData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [activeTracker, setActiveTracker] = useState<"eventory" | "ticksights">("ticksights");
+  const [isProUser, setIsProUser] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    async function checkPro() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: sub } = await supabase
+        .from("subscriptions")
+        .select("plan")
+        .eq("user_id", user.id)
+        .single();
+      setIsProUser(sub?.plan === "pro" || sub?.plan === "yearly");
+    }
+    checkPro();
+  }, []);
 
   async function handleSearch() {
     if (!url.trim()) return;
@@ -108,7 +125,7 @@ export default function SalesTrackerClient() {
             </div>
           )}
 
-          {activeTracker === "eventory" && !eventoryData && (
+          {activeTracker === "eventory" && !eventoryData && !isProUser && (
             <div style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.3)", borderRadius: 12, padding: "1.5rem", textAlign: "center", marginTop: "1rem", marginBottom: "1rem" }}>
               <div style={{ fontSize: 32, marginBottom: "0.5rem" }}>🔒</div>
               <div style={{ fontSize: 14, fontWeight: 700, color: "#a855f7", marginBottom: 4 }}>Sales Tracker od Eventory</div>
