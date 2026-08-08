@@ -28,7 +28,7 @@ export default function SalesTrackerClient() {
         });
         const tsJson = await tsRes.json();
         if (tsJson.limitReached) {
-          setError("Denní limit vyčerpán. Upgradujte na PRO pro neomezené vyhledávání. 🔒");
+          setError(tsJson.error);
           return;
         }
         if (tsRes.ok) setTicksightsData(tsJson);
