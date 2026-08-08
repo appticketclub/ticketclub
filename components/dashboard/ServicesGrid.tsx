@@ -73,7 +73,7 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
       description: "Sledujte prodeje a ceny vstupenek na Viagogo v reálném čase.",
       icon: "📊",
       href: "/sales-tracker",
-      free: false,
+      free: true,
     },
     {
       id: "chrome-launcher",
