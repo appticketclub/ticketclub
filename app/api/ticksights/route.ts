@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     const { data: profile } = await supabaseService
       .from("profiles").select("role").eq("id", user.id).single();
 
-    const isPro = sub?.status === "active" || sub?.status === "trialing";
+    const isPro = sub?.plan === "pro" || sub?.plan === "yearly";
     const isAdmin = profile?.role === "admin";
 
     console.log("[ticksights] user:", user?.id, user?.email);
