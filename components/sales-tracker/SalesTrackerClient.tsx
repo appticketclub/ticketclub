@@ -27,6 +27,10 @@ export default function SalesTrackerClient() {
           body: JSON.stringify({ eventId: match[1] })
         });
         const tsJson = await tsRes.json();
+        if (tsJson.limitReached) {
+          setError("Denní limit vyčerpán. Upgradujte na PRO pro neomezené vyhledávání. 🔒");
+          return;
+        }
         if (tsRes.ok) setTicksightsData(tsJson);
         else setError(tsJson.error);
       }
@@ -105,6 +109,14 @@ export default function SalesTrackerClient() {
           )}
 
           {activeTracker === "eventory" && !eventoryData && (
+            <div style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.3)", borderRadius: 12, padding: "1.5rem", textAlign: "center", marginTop: "1rem", marginBottom: "1rem" }}>
+              <div style={{ fontSize: 32, marginBottom: "0.5rem" }}>🔒</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "#a855f7", marginBottom: 4 }}>Sales Tracker od Eventory</div>
+              <div style={{ fontSize: 13, color: "#ededed" }}>Dostupné pouze v PRO plánu.</div>
+            </div>
+          )}
+
+          {activeTracker === "eventory" && !eventoryData && (
             <div style={{ textAlign: "center", padding: "2rem" }}>
               <button
                 onClick={async () => {
@@ -116,8 +128,13 @@ export default function SalesTrackerClient() {
                       body: JSON.stringify({ url: url.trim() })
                     });
                     const json = await res.json();
-                    if (res.ok) setEventoryData(json);
-                    else setError(json.error);
+                    if (json.proRequired) {
+                      setEventoryData(null);
+                    } else if (res.ok) {
+                      setEventoryData(json);
+                    } else {
+                      setError(json.error);
+                    }
                   } catch { setError("Chyba připojení"); }
                   finally { setLoading(false); }
                 }}

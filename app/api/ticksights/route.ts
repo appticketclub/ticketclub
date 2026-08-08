@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient as createServiceClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/server";
 
 const TICKSIGHTS_KEY = process.env.TICKSIGHTS_API_KEY!;
 const BASE = "https://api.ticksights.com";
@@ -23,6 +25,46 @@ export async function POST(request: NextRequest) {
   }
 
   if (!eventId) return NextResponse.json({ error: "Event ID je povinný" }, { status: 400 });
+
+  // Rate limit for free users on event lookup
+  const sessionSupabase = await createClient();
+  const { data: { user } } = await sessionSupabase.auth.getUser();
+
+  if (user) {
+    const supabaseService = createServiceClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    const { data: sub } = await supabaseService
+      .from("subscriptions").select("status").eq("user_id", user.id).single();
+    const { data: profile } = await supabaseService
+      .from("profiles").select("role").eq("id", user.id).single();
+
+    const isPro = sub?.status === "active" || sub?.status === "trialing";
+    const isAdmin = profile?.role === "admin";
+
+    if (!isPro && !isAdmin) {
+      const today = new Date().toISOString().split("T")[0];
+      const { data: usage } = await supabaseService
+        .from("sales_tracker_usage")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("date", today);
+
+      if (usage && usage.length >= 1) {
+        return NextResponse.json({
+          error: "Denní limit vyčerpán. Upgradujte na PRO pro neomezené vyhledávání.",
+          limitReached: true
+        }, { status: 429 });
+      }
+
+      await supabaseService.from("sales_tracker_usage").insert({
+        user_id: user.id,
+        date: today,
+      });
+    }
+  }
 
   let id = eventId.toString().trim();
   const urlMatch = id.match(/\/(\d{6,})/);
