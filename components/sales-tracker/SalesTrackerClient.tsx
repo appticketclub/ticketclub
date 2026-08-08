@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { createClient } from "@/lib/supabase/client";
+import UpgradeModal from "@/components/ucet/UpgradeModal";
 
 export default function SalesTrackerClient() {
   const [url, setUrl] = useState("");
@@ -11,6 +12,7 @@ export default function SalesTrackerClient() {
   const [error, setError] = useState<string | null>(null);
   const [activeTracker, setActiveTracker] = useState<"eventory" | "ticksights">("ticksights");
   const [isProUser, setIsProUser] = useState<boolean | null>(null);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   useEffect(() => {
     async function checkPro() {
@@ -25,6 +27,12 @@ export default function SalesTrackerClient() {
       setIsProUser(sub?.plan === "pro" || sub?.plan === "yearly");
     }
     checkPro();
+  }, []);
+
+  useEffect(() => {
+    const handler = () => setShowUpgradeModal(true);
+    window.addEventListener("openUpgradeModal", handler);
+    return () => window.removeEventListener("openUpgradeModal", handler);
   }, []);
 
   async function handleSearch() {
@@ -59,6 +67,50 @@ export default function SalesTrackerClient() {
     <div style={{ maxWidth: 900, margin: "0 auto", padding: "2rem 1rem" }}>
       <h1 style={{ fontSize: "1.75rem", fontWeight: 800, color: "#fff", marginBottom: "0.5rem" }}>Sales Tracker</h1>
       <p style={{ color: "#ededed", fontSize: 14, marginBottom: "1.5rem" }}>Zadejte Viagogo URL akce pro zobrazení statistik prodeje.</p>
+
+      {/* PRO upgrade banner */}
+      {isProUser === false && (
+        <div style={{
+          background: "linear-gradient(135deg, #1a1a2e, #16213e)",
+          border: "1px solid rgba(168,85,247,0.3)",
+          borderRadius: 16,
+          padding: "1.25rem 1.5rem",
+          marginBottom: "1.5rem",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: "1rem",
+          flexWrap: "wrap" as const,
+        }}>
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "#a855f7", marginBottom: 4 }}>
+              ⭐ Upgraduj na PRO pro neomezené scrapování
+            </div>
+            <div style={{ fontSize: 12, color: "#ededed" }}>
+              Ve free plánu můžete udělat jeden scrap akce za 24 hodin.
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              window.dispatchEvent(new CustomEvent("openUpgradeModal"));
+            }}
+            style={{
+              padding: "0.6rem 1.25rem",
+              background: "linear-gradient(135deg, #a855f7, #7c3aed)",
+              border: "none",
+              borderRadius: 10,
+              color: "#fff",
+              fontWeight: 700,
+              fontSize: 13,
+              cursor: "pointer",
+              whiteSpace: "nowrap" as const,
+            }}
+          >
+            Upgradovat na PRO →
+          </button>
+        </div>
+      )}
 
       {/* Input */}
       <div style={{ display: "flex", gap: "0.75rem", marginBottom: "2rem" }}>
@@ -166,6 +218,7 @@ export default function SalesTrackerClient() {
           {activeTracker === "ticksights" && <TickSightsSection data={ticksightsData} />}
         </>
       )}
+      {showUpgradeModal && <UpgradeModal onClose={() => setShowUpgradeModal(false)} />}
     </div>
   );
 }
