@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     );
 
     const { data: sub } = await supabaseService
-      .from("subscriptions").select("status").eq("user_id", user.id).single();
+      .from("subscriptions").select("status, plan").eq("user_id", user.id).single();
     const { data: profile } = await supabaseService
       .from("profiles").select("role").eq("id", user.id).single();
 
