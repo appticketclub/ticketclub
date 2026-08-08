@@ -44,6 +44,9 @@ export async function POST(request: NextRequest) {
     const isPro = sub?.status === "active" || sub?.status === "trialing";
     const isAdmin = profile?.role === "admin";
 
+    console.log("[ticksights] user:", user?.id, user?.email);
+    console.log("[ticksights] isPro:", isPro, "isAdmin:", isAdmin);
+
     if (!isPro && !isAdmin) {
       // Check rolling 24h usage
       const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
@@ -67,12 +70,13 @@ export async function POST(request: NextRequest) {
       }
 
       // Log usage with email
-      await supabaseService.from("sales_tracker_usage").insert({
+      const { error: insertError } = await supabaseService.from("sales_tracker_usage").insert({
         user_id: user.id,
         date: new Date().toISOString().split("T")[0],
         searched_at: new Date().toISOString(),
         email: user.email,
       });
+      console.log("[ticksights] insert error:", insertError);
     }
   }
 
