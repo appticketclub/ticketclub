@@ -45,23 +45,33 @@ export async function POST(request: NextRequest) {
     const isAdmin = profile?.role === "admin";
 
     if (!isPro && !isAdmin) {
-      const today = new Date().toISOString().split("T")[0];
+      // Check rolling 24h usage
+      const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
       const { data: usage } = await supabaseService
         .from("sales_tracker_usage")
-        .select("id")
+        .select("searched_at")
         .eq("user_id", user.id)
-        .eq("date", today);
+        .gte("searched_at", since)
+        .order("searched_at", { ascending: false })
+        .limit(1);
 
       if (usage && usage.length >= 1) {
+        const lastSearch = new Date(usage[0].searched_at);
+        const nextSearch = new Date(lastSearch.getTime() + 24 * 60 * 60 * 1000);
+        const nextSearchTime = nextSearch.toLocaleTimeString("cs-CZ", { hour: "2-digit", minute: "2-digit" });
+
         return NextResponse.json({
-          error: "Denní limit vyčerpán. Upgradujte na PRO pro neomezené vyhledávání.",
+          error: `Denní limit vyčerpán. Další vyhledávání možné od ${nextSearchTime}.`,
           limitReached: true
         }, { status: 429 });
       }
 
+      // Log usage with email
       await supabaseService.from("sales_tracker_usage").insert({
         user_id: user.id,
-        date: today,
+        date: new Date().toISOString().split("T")[0],
+        searched_at: new Date().toISOString(),
+        email: user.email,
       });
     }
   }
