@@ -14,11 +14,13 @@ import DoporuceneAkceTab from "@/components/nakupy/tabs/DoporuceneAkceTab";
 import TymStatistikyTab from "@/components/nakupy/tabs/TymStatistikyTab";
 import EvidenceTab from "@/components/nakupy/tabs/EvidenceTab";
 import DetailyTab from "@/components/nakupy/tabs/DetailyTab";
+import SurveyModal from "@/components/survey/SurveyModal";
 
 export default function NakupyPage() {
   const [activeTab, setActiveTab] = useState("uvod");
   const [isAdmin, setIsAdmin] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [showSurvey, setShowSurvey] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
@@ -34,6 +36,22 @@ export default function NakupyPage() {
       }
     }
     fetchProfile();
+  }, [supabase]);
+
+  useEffect(() => {
+    async function checkSurvey() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("survey_completed")
+        .eq("id", user.id)
+        .single();
+      if (!profile?.survey_completed) {
+        setTimeout(() => setShowSurvey(true), 2000);
+      }
+    }
+    checkSurvey();
   }, [supabase]);
 
   const tabs: Record<string, React.ReactNode> = {
@@ -75,6 +93,7 @@ export default function NakupyPage() {
           →
         </button>
       )}
+      {showSurvey && <SurveyModal onClose={() => setShowSurvey(false)} />}
     </div>
   );
 }
