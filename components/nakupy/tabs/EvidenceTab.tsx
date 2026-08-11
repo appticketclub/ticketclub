@@ -321,6 +321,7 @@ export default function EvidenceTab() {
 
       if (purchaseFields.includes(field)) {
         await supabase.from("purchases").update({ [field]: newValue || null, updated_at: new Date().toISOString() }).eq("id", rowId);
+        setRows(prev => prev.map(r => r.id === rowId ? { ...r, [field]: newValue || null } : r));
       } else if (saleFields.includes(field)) {
         if (field === "sell_price_total") {
           const newSellTotal = Math.round(parseFloat(val.replace(",", ".")) * 100) / 100 || 0;
@@ -367,12 +368,13 @@ export default function EvidenceTab() {
               if (field === "platform") updateData.platform = val || null;
               await supabase.from("sales").update(updateData).eq("id", sales[0].id);
             }
+            if (field === "sold_at") setRows(prev => prev.map(r => r.id === rowId ? { ...r, sold_at: val ? new Date(val).toISOString() : null } : r));
+            if (field === "platform") setRows(prev => prev.map(r => r.id === rowId ? { ...r, platform: val || null } : r));
           }
         }
       }
 
       setEditing(false);
-      loadData();
     }
 
     if (editing) {
@@ -431,12 +433,15 @@ export default function EvidenceTab() {
       const dbVal = newVal ? newVal : null;
       if (table === "purchases") {
         await supabase.from("purchases").update({ [field]: dbVal, updated_at: new Date().toISOString() }).eq("id", rowId);
+        setRows(prev => prev.map(r => r.id === rowId ? { ...r, [field]: dbVal } : r));
       } else {
         const { data: sales } = await supabase.from("sales").select("id").eq("purchase_id", rowId).limit(1);
-        if (sales?.[0]) await supabase.from("sales").update({ [field]: newVal ? new Date(newVal).toISOString() : null }).eq("id", sales[0].id);
+        if (sales?.[0]) {
+          await supabase.from("sales").update({ [field]: newVal ? new Date(newVal).toISOString() : null }).eq("id", sales[0].id);
+          setRows(prev => prev.map(r => r.id === rowId ? { ...r, [field]: newVal ? new Date(newVal).toISOString() : null } : r));
+        }
       }
       setEditing(false);
-      loadData();
     }
 
     if (editing) {
@@ -478,13 +483,16 @@ export default function EvidenceTab() {
       const supabase = createClient();
       if (table === "purchases") {
         await supabase.from("purchases").update({ [field]: newVal || null, updated_at: new Date().toISOString() }).eq("id", rowId);
+        setRows(prev => prev.map(r => r.id === rowId ? { ...r, [field]: newVal || null } : r));
       } else {
         const { data: sales } = await supabase.from("sales").select("id").eq("purchase_id", rowId).limit(1);
-        if (sales?.[0]) await supabase.from("sales").update({ [field]: newVal || null }).eq("id", sales[0].id);
+        if (sales?.[0]) {
+          await supabase.from("sales").update({ [field]: newVal || null }).eq("id", sales[0].id);
+          setRows(prev => prev.map(r => r.id === rowId ? { ...r, [field]: newVal || null } : r));
+        }
       }
       setEditing(false);
       setShowCustom(false);
-      loadData();
     }
 
     if (editing) {
@@ -553,7 +561,7 @@ export default function EvidenceTab() {
       } else {
         const supabase = createClient();
         await supabase.from("purchases").update({ [field]: num, updated_at: new Date().toISOString() }).eq("id", rowId);
-        loadData();
+        setRows(prev => prev.map(r => r.id === rowId ? { ...r, [field]: num } : r));
       }
       setEditing(false);
     }
@@ -835,12 +843,13 @@ export default function EvidenceTab() {
                       suffix="×"
                       onSave={async (rowId, _, val) => {
                         const supabase = createClient();
+                        const newRemaining = Math.max(0, val - row.quantity_sold);
                         await supabase.from("purchases").update({
                           quantity: val,
-                          quantity_remaining: Math.max(0, val - row.quantity_sold),
+                          quantity_remaining: newRemaining,
                           updated_at: new Date().toISOString(),
                         }).eq("id", rowId);
-                        loadData();
+                        setRows(prev => prev.map(r => r.id === rowId ? { ...r, quantity: val, quantity_remaining: newRemaining } : r));
                       }}
                     />
 
@@ -859,7 +868,15 @@ export default function EvidenceTab() {
                           buy_price: pricePerTicket,
                           updated_at: new Date().toISOString(),
                         }).eq("id", rowId);
-                        loadData();
+                        const newBuyTotal = val;
+                        const newProfit = r.sell_price_total - newBuyTotal;
+                        const newRoi = newBuyTotal > 0 ? (newProfit / newBuyTotal) * 100 : 0;
+                        setRows(prev => prev.map(row => row.id === rowId ? {
+                          ...row,
+                          buy_price: pricePerTicket,
+                          profit: newProfit,
+                          roi: newRoi,
+                        } : row));
                       }}
                     />
 
@@ -927,8 +944,27 @@ export default function EvidenceTab() {
                               updated_at: new Date().toISOString(),
                             }).eq("id", row.id);
 
+                            const buyTotal = row.buy_price * row.quantity;
+                            let newSellTotal = 0;
+                            if (row.quantity_sold > 0 && newQty > 0) {
+                              const perTicket = row.sell_price_total / row.quantity_sold;
+                              newSellTotal = perTicket * newQty;
+                            } else if (newQty === 0) {
+                              newSellTotal = 0;
+                            }
+                            const newProfit = newSellTotal - buyTotal;
+                            const newRoi = buyTotal > 0 ? (newProfit / buyTotal) * 100 : 0;
+                            setRows(prev => prev.map(r => r.id === row.id ? {
+                              ...r,
+                              quantity_sold: newQty,
+                              quantity_remaining: newRemaining,
+                              status: newStatus,
+                              sold_at: newQty > 0 ? new Date().toISOString() : null,
+                              sell_price_total: newSellTotal,
+                              profit: newProfit,
+                              roi: newRoi,
+                            } : r));
                             setEditingCell(null);
-                            loadData();
                           }}
                           onBlur={() => setEditingCell(null)}
                           style={{ width: "100%", padding: "0.5rem", background: "#0d0d2a", border: "2px solid #7c3aed", color: "#fff", fontSize: 12, outline: "none" }}
@@ -1631,8 +1667,20 @@ Zisk: ${bannerRow.profit ? Number(bannerRow.profit).toLocaleString("cs-CZ", { mi
                         updated_at: new Date().toISOString(),
                       }).eq("id", row.id);
 
+                      const buyTotal = row.buy_price * row.quantity;
+                      const newProfit = newSellTotalFinal - buyTotal;
+                      const newRoi = buyTotal > 0 ? (newProfit / buyTotal) * 100 : 0;
+                      setRows(prev => prev.map(r => r.id === row.id ? {
+                        ...r,
+                        quantity_sold: newQty,
+                        quantity_remaining: newRemaining,
+                        status: newStatus,
+                        sold_at: newQty > 0 ? (row.sold_at || new Date().toISOString()) : null,
+                        sell_price_total: Math.round(newSellTotalFinal * 100) / 100,
+                        profit: Math.round(newProfit * 100) / 100,
+                        roi: Math.round(newRoi * 100) / 100,
+                      } : r));
                       setSaleUpdateModal(null);
-                      loadData();
                     }}
                     style={{
                       padding: "0.8rem",
