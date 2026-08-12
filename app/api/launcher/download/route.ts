@@ -193,18 +193,22 @@ if exist "%USER_DATA_DIR%\\Default" (
     timeout /t 2 /nobreak >nul
 )
 
-${profileNames ?
-  profileNames.map((name: string) => `
-:: Profil: ${name}
-if exist "%USER_DATA_DIR%\\${name}" (
-    echo  Spoustim: ${name}
-    start "" "%CHROME_PATH%" --profile-directory="${name}" --restore-last-session %URL%
-    timeout /t 2 /nobreak >nul
-) else (
-    echo  [SKIP] Profil "${name}" nenalezen
-)`).join("\n")
-  :
-  `:: Otevri prvnich ${profilesCount} existujicich profilu
+${profileNames ? `
+:: Hladat profily podla nazvu
+${profileNames.map((name: string) => `
+:: Hladaj profil s nazvom: ${name}
+for /D %%d in ("%USER_DATA_DIR%\\Profile *") do (
+    set "PREFS=%%d\\Preferences"
+    if exist "!PREFS!" (
+        findstr /C:"${name}" "!PREFS!" >nul 2>&1
+        if !ERRORLEVEL! == 0 (
+            echo  Spoustim: ${name} [%%~nd]
+            start "" "%CHROME_PATH%" --profile-directory="%%~nd" --restore-last-session %URL%
+            timeout /t 2 /nobreak >nul
+        )
+    )
+)`).join("\n")}` : `
+:: Otevri prvnich ${profilesCount} existujicich profilu
 set "COUNT=0"
 for /D %%d in ("%USER_DATA_DIR%\\Profile *") do (
     if !COUNT! LSS ${profilesCount} (
