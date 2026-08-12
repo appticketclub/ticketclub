@@ -150,6 +150,23 @@ export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) 
           </div>
 
           <div>
+            <label style={labelStyle}>KONKRÉTNÍ PROFILY (volitelné)</label>
+            <input
+              type="text"
+              placeholder="napr. Profil 1, Muj ucet, Test"
+              value={selectedProfiles}
+              onChange={e => setSelectedProfiles(e.target.value)}
+              style={inputStyle}
+            />
+            <p style={{ fontSize: 12, color: "#ededed", marginTop: 6 }}>
+              {selectedProfiles.trim()
+                ? `Otevře se: ${selectedProfiles.split(",").map(p => p.trim()).filter(Boolean).join(", ")}`
+                : `Prázdné = otevřít prvních ${profilesCount} profilů automaticky`
+              }
+            </p>
+          </div>
+
+          <div>
             <label style={labelStyle}>ÚVODNÍ URL (volitelné)</label>
             <input
               type="text"
