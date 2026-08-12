@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) {
   const [profilesCount, setProfilesCount] = useState(tokenData?.profiles_count ?? 5);
   const [startUrl, setStartUrl] = useState("");
+  const [selectedProfiles, setSelectedProfiles] = useState("");
   const [downloading, setDownloading] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
   const [os, setOs] = useState<"windows" | "mac">("windows");
@@ -19,7 +20,7 @@ export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) 
       const res = await fetch("/api/launcher/download", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profilesCount, startUrl, os }),
+        body: JSON.stringify({ profilesCount, startUrl, os, selectedProfiles }),
       });
 
       const blob = await res.blob();

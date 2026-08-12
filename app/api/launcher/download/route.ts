@@ -15,7 +15,15 @@ export async function POST(request: NextRequest) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  const { profilesCount, startUrl, os } = await request.json();
+  const { profilesCount, startUrl, os, selectedProfiles } = await request.json();
+
+  // Parse profile names - if specified, use those; otherwise use count
+  const profileNames = selectedProfiles
+    ? selectedProfiles.split(",").map((p: string) => p.trim()).filter(Boolean)
+    : null;
+
+  // If profile names specified, profilesCount is ignored
+  const effectiveCount = profileNames ? profileNames.length : profilesCount;
 
   // Get or create token
   let { data: tokenData } = await supabase
@@ -31,7 +39,7 @@ export async function POST(request: NextRequest) {
       .insert({
         user_id: user.id,
         token,
-        profiles_count: profilesCount,
+        profiles_count: effectiveCount,
         is_active: true,
       })
       .select("token")
@@ -42,7 +50,7 @@ export async function POST(request: NextRequest) {
   } else {
     await supabase
       .from("launcher_tokens")
-      .update({ profiles_count: profilesCount })
+      .update({ profiles_count: effectiveCount })
       .eq("user_id", user.id);
   }
 
@@ -95,7 +103,18 @@ if [ -d "$USER_DATA/Default" ]; then
   sleep 2
 fi
 
-# Profily - vsetky existujuce Profile *
+${profileNames ?
+  profileNames.map((name: string) => `
+# Profil: ${name}
+if [ -d "$USER_DATA/${name}" ]; then
+  echo "Spoustim: ${name}"
+  open -na "Google Chrome" --args --profile-directory="${name}" $URL
+  sleep 2
+else
+  echo "[SKIP] Profil '${name}' nenalezen"
+fi`).join("\n")
+  :
+  `# Otevri prvnich ${profilesCount} existujicich profilu
 COUNT=0
 for dir in "$USER_DATA/"Profile\ */; do
   if [ $COUNT -lt ${profilesCount} ]; then
@@ -105,12 +124,13 @@ for dir in "$USER_DATA/"Profile\ */; do
     sleep 2
     COUNT=$((COUNT + 1))
   fi
-done
+done`}
 
 echo "------------------------------------------------"
 echo "[OK] Vsechny profily zpracovany"
-echo ""
-read -p "Stisknete Enter pro ukonceni..."
+
+# Self-delete after execution
+rm -- "$0"
 `;
 
     return new NextResponse(sh, {
@@ -173,7 +193,18 @@ if exist "%USER_DATA_DIR%\\Default" (
     timeout /t 2 /nobreak >nul
 )
 
-:: Otevri vsechny existujici profily (Profile *)
+${profileNames ?
+  profileNames.map((name: string) => `
+:: Profil: ${name}
+if exist "%USER_DATA_DIR%\\${name}" (
+    echo  Spoustim: ${name}
+    start "" "%CHROME_PATH%" --profile-directory="${name}" --restore-last-session %URL%
+    timeout /t 2 /nobreak >nul
+) else (
+    echo  [SKIP] Profil "${name}" nenalezen
+)`).join("\n")
+  :
+  `:: Otevri prvnich ${profilesCount} existujicich profilu
 set "COUNT=0"
 for /D %%d in ("%USER_DATA_DIR%\\Profile *") do (
     if !COUNT! LSS ${profilesCount} (
@@ -182,12 +213,14 @@ for /D %%d in ("%USER_DATA_DIR%\\Profile *") do (
         start "" "%CHROME_PATH%" --profile-directory="%%~nd" --restore-last-session %URL%
         timeout /t 2 /nobreak >nul
     )
-)
+)`}
 
 echo  ------------------------------------------------
 echo  [OK] Vsechny profily zpracovany
 echo.
-pause
+
+:: Self-delete after execution
+(goto) 2>nul & del "%~f0"
 `;
 
   return new NextResponse(bat, {
