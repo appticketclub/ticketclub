@@ -5,7 +5,7 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
-  "Content-Type": "text/plain"
+  "Content-Type": "application/json"
 };
 
 export const dynamic = "force-dynamic";
@@ -22,8 +22,9 @@ export async function GET(request: NextRequest) {
 
   const key = request.nextUrl.searchParams.get("key");
   const email = request.nextUrl.searchParams.get("email");
+  const extensionType = request.nextUrl.searchParams.get("type") ?? "refresh_bot";
 
-  if (!key || !email) return new NextResponse("INVALID", { status: 200, headers: corsHeaders });
+  if (!key || !email) return NextResponse.json({ valid: false, reason: "Missing key or email" }, { headers: corsHeaders });
 
   const { data: license } = await supabase
     .from("extension_licenses")
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest) {
     .eq("license_key", key)
     .single();
 
-  if (!license || !license.is_active) return new NextResponse("INVALID", { status: 200, headers: corsHeaders });
+  if (!license || !license.is_active) return NextResponse.json({ valid: false, reason: "Invalid or inactive license" }, { headers: corsHeaders });
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -40,12 +41,24 @@ export async function GET(request: NextRequest) {
     .single();
 
   if (!profile || profile.email.toLowerCase() !== email.toLowerCase()) {
-    return new NextResponse("EMAIL_MISMATCH", { status: 200, headers: corsHeaders });
+    return NextResponse.json({ valid: false, reason: "Email mismatch" }, { headers: corsHeaders });
   }
 
-  const plan = license.plan ?? "single";
+  const { data: subscription } = await supabase
+    .from("subscriptions")
+    .select("plan")
+    .eq("user_id", license.user_id)
+    .single();
 
-  if (plan === "single") {
+  const plan = subscription?.plan ?? "free";
+
+  if (extensionType === "discord_watcher" && plan !== "scale") {
+    return NextResponse.json({ valid: false, reason: "Scale plan required for Discord Watcher" }, { headers: corsHeaders });
+  }
+
+  const licensePlan = license.plan ?? "single";
+
+  if (licensePlan === "single") {
     const profileId = request.nextUrl.searchParams.get("profileId");
     const forceActivate = request.nextUrl.searchParams.get("forceActivate") === "true";
 
@@ -57,10 +70,8 @@ export async function GET(request: NextRequest) {
         .single();
 
       if (!forceActivate && licenseData?.active_profile_id && licenseData.active_profile_id !== profileId) {
-        return new NextResponse("PROFILE_LIMIT", { status: 200, headers: corsHeaders });
+        return NextResponse.json({ valid: false, reason: "PROFILE_LIMIT" }, { headers: corsHeaders });
       }
-
-
 
       await supabase
         .from("extension_licenses")
@@ -69,5 +80,10 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return new NextResponse(`VALID:${plan}`, { status: 200, headers: corsHeaders });
+  return NextResponse.json({
+    valid: true,
+    plan,
+    type: extensionType,
+    unlimited: plan === "scale"
+  }, { headers: corsHeaders });
 }
