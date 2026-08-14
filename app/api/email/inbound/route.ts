@@ -55,33 +55,32 @@ export async function POST(request: NextRequest) {
         max_tokens: 500,
         messages: [{
           role: "user",
-          content: `You are a ticket purchase data extractor. Analyze this Ticketmaster confirmation email (may be forwarded multiple times - search ALL content).
+          content: `You are parsing a Ticketmaster confirmation email. The email may be forwarded and may be in any language (Spanish, German, Czech, Dutch, English, etc.). Search through ALL content carefully.
 
 Email subject: ${subject}
 Email content:
 ${content.substring(0, 5000)}
 
-Extract the following and return ONLY a valid JSON object with no markdown, no explanation:
-{
-  "event_name": "artist/band name and tour if present",
-  "venue": "venue/arena name",
-  "city": "city name only",
-  "event_date": "YYYY-MM-DD format - this is the CONCERT DATE not purchase date",
-  "quantity": total number of tickets as integer,
-  "buy_price": total order amount as number (look for Order Total, Gesamtbetrag, Total),
-  "currency": "EUR/GBP/CZK/USD",
-  "ticket_type": "Mobile Transfer or E-Ticket or Paper or null",
-  "exchange": "Ticketmaster",
-  "is_ticketmaster_confirmation": true or false
-}
+Extract ALL fields:
+- event_name: Artist/band name and tour (e.g. "Bad Bunny - World Tour")
+- event_date: The CONCERT date YYYY-MM-DD (look for concert day/date near venue, NOT purchase date)
+- venue: Venue/arena name only (e.g. "Estadi Olímpic Lluis Companys")
+- city: City where concert is (e.g. "Barcelona")
+- sector: Section/seat info (e.g. "Lateral Inferior / Sector 120 / Row 25")
+- quantity: Total number of tickets as integer (look for "x entrada(s)", "x tickets", "Qty:")
+- buy_price: TOTAL order amount as single number - look for "Total" with the GRAND TOTAL (e.g. "700,00 €" = 700, NOT per-ticket price, NOT sum of individual tickets)
+- currency: EUR/GBP/CZK/USD
+- ticket_type: "Mobile Transfer" if digital/mobile ticket, "E-Ticket" if PDF, "Paper" if physical
+- exchange: Always "Ticketmaster"
+- is_ticketmaster_confirmation: true if Ticketmaster order, false otherwise
 
 CRITICAL RULES:
-- event_date = the CONCERT/EVENT date when the show happens (e.g. "Donnerstag, 07. Mai 2026" = "2026-05-07", "Thu 08 May 2026" = "2026-05-08"). This is NEVER today's date.
-- buy_price = final Order Total amount as number (e.g. "457,80 EUR" = 457.80, "457.80 EUR" = 457.80)
-- DO NOT use today's date as event_date
-- The event_date appears near venue/location info in the email
-- Search through ALL forwarded content for these values
-- Return ONLY the JSON, nothing else`
+- event_date = CONCERT date (e.g. "Sábado, 23 de Mayo de 2026" = "2026-05-23"), NOT purchase date
+- buy_price = GRAND TOTAL (one number, e.g. 700 not 1400) - the final total paid
+- sector = section + row + seat info combined (e.g. "Lateral Inferior / Sector 120 / Row 25 / Seat 15")
+- venue = only the venue name, NOT city
+- quantity = count of tickets (e.g. "2 entrada(s)" = 2)
+- Return ONLY valid JSON, no markdown`
         }]
       })
     });
