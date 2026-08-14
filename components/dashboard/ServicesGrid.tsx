@@ -39,7 +39,15 @@ function UpgradeLink() {
   );
 }
 
-export default function ServicesGrid({ isPro }: { isPro: boolean }) {
+export default function ServicesGrid({
+  isPro,
+  isAdmin = false,
+  user,
+}: {
+  isPro: boolean;
+  isAdmin?: boolean;
+  user?: { id: string } | null;
+}) {
   const router = useRouter();
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
 
@@ -48,6 +56,7 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
     "Sales Tracker": "https://www.youtube.com/embed/M5XX5B0Wz30",
     "Chrome Launcher": "https://www.youtube.com/embed/ugbHFLb5Wcs",
     "Pre-sale Bot": "https://www.youtube.com/embed/tLOV3Jn4hzU",
+    "Email Import": "https://www.youtube.com/embed/zZDGoWBib9s",
   };
 
   const services = [
@@ -58,6 +67,13 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
       icon: "🎟️",
       href: "/nakupy",
       free: true,
+    },
+    {
+      id: "email-import",
+      title: "Email Import",
+      description: "Přeposílejte potvrzovací emaily z Ticketmaster a nákupy se automaticky přidají do Evidence.",
+      icon: "📧",
+      free: false,
     },
     {
       id: "refresh-bot",
@@ -130,21 +146,22 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
       )}
       <div className="services-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
         {services.map(service => {
-          const locked = !service.free && !isPro;
+          const locked = !service.free && !isPro && !isAdmin;
+          const isEmailImport = service.id === "email-import";
           return (
             <div
               key={service.id}
-              onClick={() => { if (!locked) router.push(service.href); }}
+              onClick={() => { if (!locked && service.href) router.push(service.href); }}
               style={{
                 background: "#111111",
                 border: `1px solid ${locked ? "#1a1a1a" : "#ededed"}`,
                 borderRadius: 16, padding: "1.5rem",
-                cursor: locked ? "default" : "pointer",
+                cursor: (!locked && service.href) ? "pointer" : "default",
                 position: "relative", overflow: "hidden",
                 transition: "border-color 0.2s, transform 0.2s",
               }}
               onMouseEnter={e => {
-                if (!locked) {
+                if (!locked && service.href) {
                   (e.currentTarget as HTMLDivElement).style.borderColor = "#ffffff";
                   (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)";
                 }
@@ -154,21 +171,18 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
                 (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
               }}
             >
-              {/* Pro badge */}
               {!service.free && (
                 <div style={{
                   position: "absolute", top: 12, right: 12,
                   padding: "3px 10px", borderRadius: 6, fontSize: 11, fontWeight: 700,
-                  background: isPro ? "linear-gradient(135deg, #7c3aed, #5b21b6)" : "#1a1a1a",
-                  color: isPro ? "#fff" : "#ededed",
-                  border: isPro ? "none" : "1px solid #2a2a2a",
+                  background: (isPro || isAdmin) ? "linear-gradient(135deg, #7c3aed, #5b21b6)" : "#1a1a1a",
+                  color: (isPro || isAdmin) ? "#fff" : "#ededed",
+                  border: (isPro || isAdmin) ? "none" : "1px solid #2a2a2a",
                   opacity: locked ? 0.6 : 1,
                 }}>
-                  {isPro ? "PRO" : "🔒 PRO"}
+                  {(isPro || isAdmin) ? "PRO" : "🔒 PRO"}
                 </div>
               )}
-
-
 
               <div style={{
                 width: 52, height: 52, borderRadius: 14,
@@ -188,46 +202,118 @@ export default function ServicesGrid({ isPro }: { isPro: boolean }) {
                 {service.description}
               </p>
 
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
-                <div style={{ opacity: locked ? 0.6 : 1, flex: 1 }}>
-                  {locked ? (
-                    <div style={{ fontSize: 13, color: "#f5f5f5", display: "flex", alignItems: "center", gap: 6 }}>
-                      🔒 Dostupné v Pro plánu
-                      <div style={{ marginLeft: "auto" }}>
-                        <UpgradeLink />
+              {isEmailImport ? (
+                <div>
+                  {(isPro || isAdmin) ? (
+                    <div>
+                      <div style={{ fontSize: 11, color: "#ededed", marginBottom: 6 }}>VÁŠ IMPORT EMAIL</div>
+                      <div
+                        onClick={() => navigator.clipboard.writeText(`${user?.id?.substring(0, 8)}@mail.ticketclub.vip`)}
+                        style={{
+                          padding: "0.6rem 1rem",
+                          background: "#0a0a0a",
+                          border: "1px solid #2a2a2a",
+                          borderRadius: 8,
+                          color: "#4ade80",
+                          fontSize: 13,
+                          fontFamily: "monospace",
+                          cursor: "pointer",
+                          userSelect: "all" as const,
+                        }}
+                      >
+                        {user?.id?.substring(0, 8)}@mail.ticketclub.vip
                       </div>
+                      <div style={{ fontSize: 11, color: "#525252", marginTop: 4 }}>Klikněte pro zkopírování</div>
                     </div>
                   ) : (
-                    <a href={service.href} style={{ fontSize: 13, color: "#ffffff", textDecoration: "none" }}>
-                      Otevřít aplikaci →
-                    </a>
+                    <div style={{ textAlign: "center" as const, padding: "1rem 0" }}>
+                      <div style={{ fontSize: 13, color: "#ededed", marginBottom: "0.75rem" }}>
+                        Funkce dostupná pouze v PRO plánu
+                      </div>
+                      <button
+                        onClick={() => window.dispatchEvent(new CustomEvent("openUpgradeModal"))}
+                        style={{
+                          padding: "0.6rem 1.25rem",
+                          background: "linear-gradient(135deg, #a855f7, #7c3aed)",
+                          border: "none",
+                          borderRadius: 10,
+                          color: "#fff",
+                          fontWeight: 700,
+                          fontSize: 13,
+                          cursor: "pointer",
+                        }}
+                      >
+                        Upgradovat na PRO →
+                      </button>
+                    </div>
+                  )}
+                  {videoMap[service.title] && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        setVideoUrl(videoMap[service.title]);
+                      }}
+                      style={{
+                        background: "none",
+                        border: "1px solid #2a2a2a",
+                        borderRadius: 8,
+                        padding: "4px 10px",
+                        color: "#ffffff",
+                        fontSize: 12,
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 4,
+                        marginTop: 8,
+                      }}
+                    >
+                      ℹ️ Video ukázka
+                    </button>
                   )}
                 </div>
-                {videoMap[service.title] && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      setVideoUrl(videoMap[service.title]);
-                    }}
-                    style={{ 
-                      background: "none", 
-                      border: "1px solid #2a2a2a", 
-                      borderRadius: 8, 
-                      padding: "4px 10px", 
-                      color: "#ffffff", 
-                      fontSize: 12, 
-                      cursor: "pointer", 
-                      display: "flex", 
-                      alignItems: "center", 
-                      gap: 4, 
-                      marginLeft: locked ? "8px" : "0", 
-                    }}
-                  >
-                    ℹ️ Video ukázka
-                  </button>
-                )}
-              </div>
+              ) : (
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
+                  <div style={{ opacity: locked ? 0.6 : 1, flex: 1 }}>
+                    {locked ? (
+                      <div style={{ fontSize: 13, color: "#f5f5f5", display: "flex", alignItems: "center", gap: 6 }}>
+                        🔒 Dostupné v Pro plánu
+                        <div style={{ marginLeft: "auto" }}>
+                          <UpgradeLink />
+                        </div>
+                      </div>
+                    ) : (
+                      <a href={service.href} style={{ fontSize: 13, color: "#ffffff", textDecoration: "none" }}>
+                        Otevřít aplikaci →
+                      </a>
+                    )}
+                  </div>
+                  {videoMap[service.title] && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        setVideoUrl(videoMap[service.title]);
+                      }}
+                      style={{
+                        background: "none",
+                        border: "1px solid #2a2a2a",
+                        borderRadius: 8,
+                        padding: "4px 10px",
+                        color: "#ffffff",
+                        fontSize: 12,
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 4,
+                        marginLeft: locked ? "8px" : "0",
+                      }}
+                    >
+                      ℹ️ Video ukázka
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           );
         })}
