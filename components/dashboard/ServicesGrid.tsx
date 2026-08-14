@@ -203,50 +203,38 @@ export default function ServicesGrid({
               </p>
 
               {isEmailImport ? (
-                <div>
-                  {(isPro || isAdmin) ? (
-                    <div>
-                      <div style={{ fontSize: 11, color: "#ededed", marginBottom: 6 }}>VÁŠ IMPORT EMAIL</div>
-                      <div
-                        onClick={() => navigator.clipboard.writeText(`${user?.id?.substring(0, 8)}@mail.ticketclub.vip`)}
-                        style={{
-                          padding: "0.6rem 1rem",
-                          background: "#0a0a0a",
-                          border: "1px solid #2a2a2a",
-                          borderRadius: 8,
-                          color: "#4ade80",
-                          fontSize: 13,
-                          fontFamily: "monospace",
-                          cursor: "pointer",
-                          userSelect: "all" as const,
-                        }}
-                      >
-                        {user?.id?.substring(0, 8)}@mail.ticketclub.vip
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
+                  <div style={{ opacity: locked ? 0.6 : 1, flex: 1 }}>
+                    {locked ? (
+                      <div style={{ fontSize: 13, color: "#f5f5f5", display: "flex", alignItems: "center", gap: 6 }}>
+                        🔒 Dostupné v Pro plánu
+                        <div style={{ marginLeft: "auto" }}>
+                          <UpgradeLink />
+                        </div>
                       </div>
-                      <div style={{ fontSize: 11, color: "#525252", marginTop: 4 }}>Klikněte pro zkopírování</div>
-                    </div>
-                  ) : (
-                    <div style={{ textAlign: "center" as const, padding: "1rem 0" }}>
-                      <div style={{ fontSize: 13, color: "#ededed", marginBottom: "0.75rem" }}>
-                        Funkce dostupná pouze v PRO plánu
+                    ) : (
+                      <div>
+                        <div style={{ fontSize: 11, color: "#ededed", marginBottom: 6 }}>VÁŠ IMPORT EMAIL</div>
+                        <div
+                          onClick={() => navigator.clipboard.writeText(`${user?.id?.substring(0, 8)}@mail.ticketclub.vip`)}
+                          style={{
+                            padding: "0.6rem 1rem",
+                            background: "#0a0a0a",
+                            border: "1px solid #2a2a2a",
+                            borderRadius: 8,
+                            color: "#4ade80",
+                            fontSize: 13,
+                            fontFamily: "monospace",
+                            cursor: "pointer",
+                            userSelect: "all" as const,
+                          }}
+                        >
+                          {user?.id?.substring(0, 8)}@mail.ticketclub.vip
+                        </div>
+                        <div style={{ fontSize: 11, color: "#525252", marginTop: 4 }}>Klikněte pro zkopírování</div>
                       </div>
-                      <button
-                        onClick={() => window.dispatchEvent(new CustomEvent("openUpgradeModal"))}
-                        style={{
-                          padding: "0.6rem 1.25rem",
-                          background: "linear-gradient(135deg, #a855f7, #7c3aed)",
-                          border: "none",
-                          borderRadius: 10,
-                          color: "#fff",
-                          fontWeight: 700,
-                          fontSize: 13,
-                          cursor: "pointer",
-                        }}
-                      >
-                        Upgradovat na PRO →
-                      </button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                   {videoMap[service.title] && (
                     <button
                       onClick={(e) => {
@@ -265,7 +253,7 @@ export default function ServicesGrid({
                         display: "flex",
                         alignItems: "center",
                         gap: 4,
-                        marginTop: 8,
+                        marginLeft: locked ? "8px" : "8px",
                       }}
                     >
                       ℹ️ Video ukázka
