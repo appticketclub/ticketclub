@@ -116,7 +116,7 @@ CRITICAL RULES:
       city: parsed.city,
       quantity: parsed.quantity,
       quantity_remaining: parsed.quantity,
-      buy_price: parsed.buy_price ?? 0,
+      buy_price: parsed.quantity > 1 ? Math.round((parsed.buy_price / parsed.quantity) * 100) / 100 : (parsed.buy_price ?? 0),
       currency: parsed.currency ?? "EUR",
       ticket_type: parsed.ticket_type,
       exchange: parsed.exchange ?? "Ticketmaster",
