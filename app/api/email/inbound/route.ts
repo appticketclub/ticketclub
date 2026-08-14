@@ -86,7 +86,7 @@ CRITICAL RULES:
     });
 
     const raw = await aiRes.text();
-    console.log("[email/inbound] Novita response:", raw.substring(0, 300));
+    console.log("[email/inbound] Novita response:", raw.substring(0, 2000));
 
     if (!aiRes.ok) {
       return NextResponse.json({ ok: false, error: raw }, { status: 500 });
