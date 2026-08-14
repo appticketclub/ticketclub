@@ -73,6 +73,7 @@ export default function ServicesGrid({
       title: "Email Import",
       description: "Přeposílejte potvrzovací emaily z Ticketmaster a nákupy se automaticky přidají do Evidence.",
       icon: "📧",
+      href: "/ucet",
       free: false,
     },
     {
