@@ -148,7 +148,6 @@ export default function ServicesGrid({
       <div className="services-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
         {services.map(service => {
           const locked = !service.free && !isPro && !isAdmin;
-          const isEmailImport = service.id === "email-import";
           return (
             <div
               key={service.id}
@@ -203,106 +202,46 @@ export default function ServicesGrid({
                 {service.description}
               </p>
 
-              {isEmailImport ? (
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
-                  <div style={{ opacity: locked ? 0.6 : 1, flex: 1 }}>
-                    {locked ? (
-                      <div style={{ fontSize: 13, color: "#f5f5f5", display: "flex", alignItems: "center", gap: 6 }}>
-                        🔒 Dostupné v Pro plánu
-                        <div style={{ marginLeft: "auto" }}>
-                          <UpgradeLink />
-                        </div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
+                <div style={{ opacity: locked ? 0.6 : 1, flex: 1 }}>
+                  {locked ? (
+                    <div style={{ fontSize: 13, color: "#f5f5f5", display: "flex", alignItems: "center", gap: 6 }}>
+                      🔒 Dostupné v Pro plánu
+                      <div style={{ marginLeft: "auto" }}>
+                        <UpgradeLink />
                       </div>
-                    ) : (
-                      <div>
-                        <div style={{ fontSize: 11, color: "#ededed", marginBottom: 6 }}>VÁŠ IMPORT EMAIL</div>
-                        <div
-                          onClick={() => navigator.clipboard.writeText(`${user?.id?.substring(0, 8)}@mail.ticketclub.vip`)}
-                          style={{
-                            padding: "0.6rem 1rem",
-                            background: "#0a0a0a",
-                            border: "1px solid #2a2a2a",
-                            borderRadius: 8,
-                            color: "#4ade80",
-                            fontSize: 13,
-                            fontFamily: "monospace",
-                            cursor: "pointer",
-                            userSelect: "all" as const,
-                          }}
-                        >
-                          {user?.id?.substring(0, 8)}@mail.ticketclub.vip
-                        </div>
-                        <div style={{ fontSize: 11, color: "#525252", marginTop: 4 }}>Klikněte pro zkopírování</div>
-                      </div>
-                    )}
-                  </div>
-                  {videoMap[service.title] && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        setVideoUrl(videoMap[service.title]);
-                      }}
-                      style={{
-                        background: "none",
-                        border: "1px solid #2a2a2a",
-                        borderRadius: 8,
-                        padding: "4px 10px",
-                        color: "#ffffff",
-                        fontSize: 12,
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 4,
-                        marginLeft: locked ? "8px" : "8px",
-                      }}
-                    >
-                      ℹ️ Video ukázka
-                    </button>
+                    </div>
+                  ) : (
+                    <a href={service.href} style={{ fontSize: 13, color: "#ffffff", textDecoration: "none" }}>
+                      Otevřít aplikaci →
+                    </a>
                   )}
                 </div>
-              ) : (
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
-                  <div style={{ opacity: locked ? 0.6 : 1, flex: 1 }}>
-                    {locked ? (
-                      <div style={{ fontSize: 13, color: "#f5f5f5", display: "flex", alignItems: "center", gap: 6 }}>
-                        🔒 Dostupné v Pro plánu
-                        <div style={{ marginLeft: "auto" }}>
-                          <UpgradeLink />
-                        </div>
-                      </div>
-                    ) : (
-                      <a href={service.href} style={{ fontSize: 13, color: "#ffffff", textDecoration: "none" }}>
-                        Otevřít aplikaci →
-                      </a>
-                    )}
-                  </div>
-                  {videoMap[service.title] && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        setVideoUrl(videoMap[service.title]);
-                      }}
-                      style={{
-                        background: "none",
-                        border: "1px solid #2a2a2a",
-                        borderRadius: 8,
-                        padding: "4px 10px",
-                        color: "#ffffff",
-                        fontSize: 12,
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 4,
-                        marginLeft: locked ? "8px" : "0",
-                      }}
-                    >
-                      ℹ️ Video ukázka
-                    </button>
-                  )}
-                </div>
-              )}
+                {videoMap[service.title] && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      setVideoUrl(videoMap[service.title]);
+                    }}
+                    style={{
+                      background: "none",
+                      border: "1px solid #2a2a2a",
+                      borderRadius: 8,
+                      padding: "4px 10px",
+                      color: "#ffffff",
+                      fontSize: 12,
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 4,
+                      marginLeft: locked ? "8px" : "0",
+                    }}
+                  >
+                    ℹ️ Video ukázka
+                  </button>
+                )}
+              </div>
             </div>
           );
         })}
