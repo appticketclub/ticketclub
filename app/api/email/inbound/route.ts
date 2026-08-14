@@ -110,7 +110,7 @@ CRITICAL RULES:
     const { error } = await supabase.from("purchases").insert({
       user_id: profile.id,
       event_name: parsed.event_name,
-      event_date: parsed.event_date,
+      event_date: new Date().toISOString().split("T")[0],
       event_actual_date: parsed.event_date,
       venue: parsed.sector ?? parsed.venue,
       city: parsed.city,
