@@ -112,7 +112,7 @@ CRITICAL RULES:
       event_name: parsed.event_name,
       event_date: parsed.event_date,
       event_actual_date: parsed.event_date,
-      venue: parsed.venue,
+      venue: parsed.sector ?? parsed.venue,
       city: parsed.city,
       quantity: parsed.quantity,
       quantity_remaining: parsed.quantity,
