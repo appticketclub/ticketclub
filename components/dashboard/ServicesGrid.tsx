@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import UpgradeModal from "@/components/ucet/UpgradeModal";
 
 function UpgradeButton() {
@@ -41,15 +41,24 @@ function UpgradeLink() {
 
 export default function ServicesGrid({
   isPro,
+  isScale = false,
   isAdmin = false,
   user,
 }: {
   isPro: boolean;
+  isScale?: boolean;
   isAdmin?: boolean;
   user?: { id: string } | null;
 }) {
   const router = useRouter();
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setShowUpgradeModal(true);
+    window.addEventListener("openUpgradeModal", handler);
+    return () => window.removeEventListener("openUpgradeModal", handler);
+  }, []);
 
   const videoMap: Record<string, string> = {
     "Refresh Bot": "https://www.youtube.com/embed/LJyLx5W9NLU",
@@ -124,27 +133,51 @@ export default function ServicesGrid({
           }
         }
       `}</style>
-      {!isPro && (
+      {/* Dynamic upgrade banner */}
+      {!isScale && (
         <div style={{
-          background: "linear-gradient(135deg, #0f0a1f, #0a0a1a)",
-          border: "1px solid rgba(124,58,237,0.3)",
-          borderRadius: 16, padding: "1.25rem 1.5rem",
+          background: "linear-gradient(135deg, #1a1a2e, #16213e)",
+          border: `1px solid ${isPro ? "rgba(59,130,246,0.3)" : "rgba(168,85,247,0.3)"}`,
+          borderRadius: 16,
+          padding: "1.25rem 1.5rem",
           marginBottom: "1.5rem",
-          position: "relative", overflow: "hidden",
-          display: "flex", justifyContent: "space-between", alignItems: "center",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: "1rem",
+          flexWrap: "wrap" as const,
         }}>
-          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #7c3aed, transparent)" }} />
           <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 4 }}>
-              ⭐ Upgraduj na PRO
+            <div style={{ fontSize: 14, fontWeight: 700, color: isPro ? "#3b82f6" : "#a855f7", marginBottom: 4 }}>
+              {isPro ? "⭐ Upgraduj na Scale" : "⭐ Upgraduj na PRO"}
             </div>
-            <div style={{ fontSize: 12, color: "#f5f5f5" }}>
-              Získejte PRO funkce jako Refresh Bot, Sales Tracker a mnoho dalšího
+            <div style={{ fontSize: 12, color: "#ededed" }}>
+              {isPro
+                ? "Získejte Refresh Bot unlimited a Discord Watcher Bot."
+                : "Získejte PRO funkce jako Refresh Bot, Sales Tracker a mnoho dalšího."
+              }
             </div>
           </div>
-          <UpgradeButton />
+          <button
+            onClick={() => setShowUpgradeModal(true)}
+            style={{
+              padding: "0.6rem 1.25rem",
+              background: isPro ? "#3b82f6" : "linear-gradient(135deg, #a855f7, #7c3aed)",
+              border: "none",
+              borderRadius: 10,
+              color: "#fff",
+              fontWeight: 700,
+              fontSize: 13,
+              cursor: "pointer",
+              whiteSpace: "nowrap" as const,
+            }}
+          >
+            {isPro ? "Upgradovat na Scale →" : "Upgradovat na PRO →"}
+          </button>
         </div>
       )}
+
+      {showUpgradeModal && <UpgradeModal onClose={() => setShowUpgradeModal(false)} />}
       <div className="services-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
         {services.map(service => {
           const locked = !service.free && !isPro && !isAdmin;
