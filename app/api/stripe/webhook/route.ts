@@ -79,8 +79,10 @@ export async function POST(request: NextRequest) {
         const isScale = priceId === process.env.STRIPE_SCALE_PRICE_ID || 
                         priceId === process.env.STRIPE_SCALE_YEARLY_PRICE_ID;
         console.log("[webhook] priceId:", priceId);
-        console.log("[webhook] SCALE_ID:", process.env.STRIPE_SCALE_PRICE_ID);
+        console.log("[webhook] SCALE_MONTHLY:", process.env.STRIPE_SCALE_PRICE_ID);
+        console.log("[webhook] SCALE_YEARLY:", process.env.STRIPE_SCALE_YEARLY_PRICE_ID);
         console.log("[webhook] isScale:", isScale);
+        console.log("[webhook] plan:", isScale ? "scale" : "pro");
         const extensionPlan = isScale || isProMax ? "unlimited" : "single";
         
         await supabase.from("subscriptions").upsert({
@@ -157,8 +159,10 @@ export async function POST(request: NextRequest) {
         const isScale = priceId === process.env.STRIPE_SCALE_PRICE_ID || 
                         priceId === process.env.STRIPE_SCALE_YEARLY_PRICE_ID;
         console.log("[webhook] priceId:", priceId);
-        console.log("[webhook] SCALE_ID:", process.env.STRIPE_SCALE_PRICE_ID);
+        console.log("[webhook] SCALE_MONTHLY:", process.env.STRIPE_SCALE_PRICE_ID);
+        console.log("[webhook] SCALE_YEARLY:", process.env.STRIPE_SCALE_YEARLY_PRICE_ID);
         console.log("[webhook] isScale:", isScale);
+        console.log("[webhook] plan:", isScale ? "scale" : "pro");
         const extensionPlan = isScale || isProMax ? "unlimited" : "single";
         
         await supabase.from("subscriptions").upsert({
