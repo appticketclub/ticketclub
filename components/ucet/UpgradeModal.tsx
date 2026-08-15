@@ -31,18 +31,18 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
       <div style={{
         position: "fixed", top: "50%", left: "50%",
         transform: "translate(-50%, -50%)",
-        width: "calc(100% - 2rem)",
-        maxWidth: 720,
+        width: "calc(100vw - 2rem)",
+        maxWidth: 640,
         maxHeight: "90vh",
-        overflowY: "auto",
-        zIndex: 1000,
-        background: "#000000", border: "1px solid #1a1a1a",
+        overflowY: "auto" as const,
+        background: "#0d0d0d",
+        border: "1px solid #1a1a1a",
         borderRadius: 20,
-        overflow: "hidden",
-        display: "flex", flexDirection: "column" as const,
+        padding: "1.5rem",
+        zIndex: 1001,
       }}>
         {/* Header */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1.25rem 1.5rem 0.75rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
           <div>
             <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#fff", margin: 0, letterSpacing: "-0.02em" }}>
               Upgrade plán
@@ -53,9 +53,6 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
           </div>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#525252", cursor: "pointer", fontSize: 22 }}>×</button>
         </div>
-
-        {/* Scrollable content area */}
-        <div style={{ overflowY: "auto", flex: 1, padding: "1.25rem 1.5rem" }}>
 
           {/* Promo Code Input */}
           <div style={{ padding: "0 0 1rem" }}>
@@ -86,7 +83,7 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
           </div>
 
           {/* Cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "2rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
 
             {/* PRO */}
             <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem" }}>
@@ -155,33 +152,34 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
           </div>
 
           {/* Feature table */}
-          <div style={{ background: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: 12, overflow: "hidden" as const }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 80px 80px", borderBottom: "1px solid #1a1a1a" }}>
-              <div style={{ padding: "10px 16px", fontSize: 12, fontWeight: 600, color: "#525252" }}>Funkce</div>
-              <div style={{ padding: "10px 0", fontSize: 12, fontWeight: 600, color: "#525252", textAlign: "center" as const }}>PRO</div>
-              <div style={{ padding: "10px 0", fontSize: 12, fontWeight: 600, color: "#3b82f6", textAlign: "center" as const }}>SCALE</div>
-            </div>
-            {[
-              ["Email Import", true, true],
-              ["Refresh Bot (1 profil)", true, true],
-              ["Refresh Bot unlimited", false, true],
-              ["Sales Tracker", true, true],
-              ["Chrome Launcher", true, true],
-              ["Discord Watcher Bot", false, true],
-            ].map(([label, pro, scale], i, arr) => (
-              <div key={label as string} style={{ display: "grid", gridTemplateColumns: "1fr 80px 80px", borderBottom: i < arr.length - 1 ? "1px solid #0d0d0d" : "none" }}>
-                <div style={{ padding: "10px 16px", fontSize: 13, color: "#ededed" }}>{label as string}</div>
-                <div style={{ padding: "10px 0", textAlign: "center" as const, fontSize: 14 }}>{pro ? <span style={{ color: "#4ade80" }}>✓</span> : <span style={{ color: "#333" }}>—</span>}</div>
-                <div style={{ padding: "10px 0", textAlign: "center" as const, fontSize: 14 }}>{scale ? <span style={{ color: "#3b82f6" }}>✓</span> : <span style={{ color: "#333" }}>—</span>}</div>
+          <div style={{ fontSize: "clamp(11px, 3vw, 13px)" }}>
+            <div style={{ background: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: 12, overflow: "hidden" as const }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 80px 80px", borderBottom: "1px solid #1a1a1a" }}>
+                <div style={{ padding: "10px 16px", fontWeight: 600, color: "#525252" }}>Funkce</div>
+                <div style={{ padding: "10px 0", fontWeight: 600, color: "#525252", textAlign: "center" as const }}>PRO</div>
+                <div style={{ padding: "10px 0", fontWeight: 600, color: "#3b82f6", textAlign: "center" as const }}>SCALE</div>
               </div>
-            ))}
+              {[
+                ["Email Import", true, true],
+                ["Refresh Bot (1 profil)", true, true],
+                ["Refresh Bot unlimited", false, true],
+                ["Sales Tracker", true, true],
+                ["Chrome Launcher", true, true],
+                ["Discord Watcher Bot", false, true],
+              ].map(([label, pro, scale], i, arr) => (
+                <div key={label as string} style={{ display: "grid", gridTemplateColumns: "1fr 80px 80px", borderBottom: i < arr.length - 1 ? "1px solid #0d0d0d" : "none" }}>
+                  <div style={{ padding: "10px 16px", color: "#ededed" }}>{label as string}</div>
+                  <div style={{ padding: "10px 0", textAlign: "center" as const, fontSize: "clamp(12px, 3.5vw, 14px)" }}>{pro ? <span style={{ color: "#4ade80" }}>✓</span> : <span style={{ color: "#333" }}>—</span>}</div>
+                  <div style={{ padding: "10px 0", textAlign: "center" as const, fontSize: "clamp(12px, 3.5vw, 14px)" }}>{scale ? <span style={{ color: "#3b82f6" }}>✓</span> : <span style={{ color: "#333" }}>—</span>}</div>
+                </div>
+              ))}
+            </div>
           </div>
 
           <p style={{ fontSize: 11, color: "#525252", textAlign: "center" as const, marginTop: "1rem" }}>
             Zrušit lze kdykoliv · Bezpečná platba přes Stripe
           </p>
         </div>
-      </div>
     </>,
     document.body
   );
