@@ -42,10 +42,10 @@ export async function POST(request: NextRequest) {
     const isNewUser = !existingSub?.stripe_customer_id;
     const trialDays = (promoCode && isNewUser) ? (PROMO_CODES[promoCode.toUpperCase()] ?? 0) : 0;
 
-    const priceId = 
+    const priceId =
       plan === "yearly" ? process.env.STRIPE_PRO_YEARLY_PRICE_ID! :
-      plan === "pro_max_monthly" ? process.env.STRIPE_PRO_MAX_PRICE_ID! :
-      plan === "pro_max_yearly" ? process.env.STRIPE_PRO_MAX_YEARLY_PRICE_ID! :
+      plan === "scale_monthly" ? process.env.STRIPE_SCALE_PRICE_ID! :
+      plan === "scale_yearly" ? process.env.STRIPE_SCALE_YEARLY_PRICE_ID! :
       process.env.STRIPE_PRO_PRICE_ID!;
 
     // Create checkout session
