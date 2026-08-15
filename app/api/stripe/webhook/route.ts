@@ -76,11 +76,13 @@ export async function POST(request: NextRequest) {
         const priceId = sub.items?.data?.[0]?.price?.id;
         const isProMax = priceId === process.env.STRIPE_PRO_MAX_PRICE_ID || 
                           priceId === process.env.STRIPE_PRO_MAX_YEARLY_PRICE_ID;
-        const extensionPlan = isProMax ? "unlimited" : "single";
+        const isScale = priceId === process.env.STRIPE_SCALE_PRICE_ID || 
+                        priceId === process.env.STRIPE_SCALE_YEARLY_PRICE_ID;
+        const extensionPlan = isScale || isProMax ? "unlimited" : "single";
         
         await supabase.from("subscriptions").upsert({
           user_id: userId,
-          plan: isProMax ? "pro_max" : "pro",
+          plan: isScale ? "scale" : isProMax ? "pro_max" : "pro",
           plan_interval: planInterval,
           status: "active",
           stripe_customer_id: customerId,
@@ -88,6 +90,11 @@ export async function POST(request: NextRequest) {
           current_period_end: periodEnd,
           updated_at: new Date().toISOString(),
         }, { onConflict: "user_id" });
+        if (isScale) {
+          await supabase.from("extension_licenses").update({ plan: "unlimited" }).eq("user_id", userId);
+        } else {
+          await supabase.from("extension_licenses").update({ plan: "single" }).eq("user_id", userId);
+        }
         // Reactivate launcher token if exists, otherwise skip
         const { data: existingToken } = await supabase
           .from("launcher_tokens")
@@ -144,11 +151,13 @@ export async function POST(request: NextRequest) {
         const priceId = sub.items?.data?.[0]?.price?.id;
         const isProMax = priceId === process.env.STRIPE_PRO_MAX_PRICE_ID || 
                           priceId === process.env.STRIPE_PRO_MAX_YEARLY_PRICE_ID;
-        const extensionPlan = isProMax ? "unlimited" : "single";
+        const isScale = priceId === process.env.STRIPE_SCALE_PRICE_ID || 
+                        priceId === process.env.STRIPE_SCALE_YEARLY_PRICE_ID;
+        const extensionPlan = isScale || isProMax ? "unlimited" : "single";
         
         await supabase.from("subscriptions").upsert({
           user_id: userId,
-          plan: isProMax ? "pro_max" : "pro",
+          plan: isScale ? "scale" : isProMax ? "pro_max" : "pro",
           plan_interval: planInterval,
           status: "active",
           stripe_customer_id: invoice.customer as string,
@@ -156,6 +165,11 @@ export async function POST(request: NextRequest) {
           current_period_end: periodEnd,
           updated_at: new Date().toISOString(),
         }, { onConflict: "user_id" });
+        if (isScale) {
+          await supabase.from("extension_licenses").update({ plan: "unlimited" }).eq("user_id", userId);
+        } else {
+          await supabase.from("extension_licenses").update({ plan: "single" }).eq("user_id", userId);
+        }
         // Reactivate launcher token if exists, otherwise skip
         const { data: existingToken } = await supabase
           .from("launcher_tokens")

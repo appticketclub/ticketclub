@@ -1,12 +1,36 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { createClient } from "@/lib/supabase/client";
 
 export default function UpgradeModal({ onClose }: { onClose: () => void }) {
   const [loading, setLoading] = useState<"monthly" | "yearly" | "scale_monthly" | "scale_yearly" | null>(null);
   const [promoCode, setPromoCode] = useState("");
   const [promoValid, setPromoValid] = useState(false);
   const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
+  const [currentPlan, setCurrentPlan] = useState<string>("free");
+  const [currentBilling, setCurrentBilling] = useState<"monthly" | "yearly">("monthly");
+
+  useEffect(() => {
+    async function loadSub() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: sub } = await supabase
+        .from("subscriptions")
+        .select("plan, plan_interval")
+        .eq("user_id", user.id)
+        .single();
+      if (sub) {
+        setCurrentPlan(sub.plan ?? "free");
+        setCurrentBilling(sub.plan_interval === "yearly" ? "yearly" : "monthly");
+        if (sub.plan === "pro" && sub.plan_interval === "yearly") {
+          setBilling("yearly");
+        }
+      }
+    }
+    loadSub();
+  }, []);
 
   async function handleCheckout(plan: string) {
     setLoading(plan as any);
@@ -75,7 +99,22 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
           {/* Toggle */}
           <div style={{ display: "flex", justifyContent: "center", marginBottom: "2rem" }}>
             <div style={{ display: "flex", background: "#111", border: "1px solid #1a1a1a", borderRadius: 99, padding: 4, gap: 4 }}>
-              <button onClick={() => setBilling("monthly")} style={{ padding: "6px 20px", borderRadius: 99, fontSize: 13, fontWeight: 500, border: "none", cursor: "pointer", background: billing === "monthly" ? "#1a1a1a" : "transparent", color: billing === "monthly" ? "#fff" : "#525252", transition: "all 0.15s" }}>Měsíčně</button>
+              <button
+                onClick={() => { if (currentPlan === "pro" && currentBilling === "yearly") return; setBilling("monthly"); }}
+                disabled={currentPlan === "pro" && currentBilling === "yearly"}
+                style={{
+                  padding: "6px 20px",
+                  borderRadius: 99,
+                  fontSize: 13,
+                  fontWeight: 500,
+                  border: "none",
+                  cursor: currentPlan === "pro" && currentBilling === "yearly" ? "not-allowed" : "pointer",
+                  background: billing === "monthly" ? "#1a1a1a" : "transparent",
+                  color: billing === "monthly" ? "#fff" : "#525252",
+                  transition: "all 0.15s",
+                  opacity: currentPlan === "pro" && currentBilling === "yearly" ? 0.4 : 1,
+                }}
+              >Měsíčně</button>
               <button onClick={() => setBilling("yearly")} style={{ padding: "6px 20px", borderRadius: 99, fontSize: 13, fontWeight: 500, border: "none", cursor: "pointer", background: billing === "yearly" ? "#1a1a1a" : "transparent", color: billing === "yearly" ? "#fff" : "#525252", transition: "all 0.15s" }}>
                 Ročně <span style={{ fontSize: 11, background: "rgba(34,197,94,0.15)", color: "#4ade80", padding: "2px 6px", borderRadius: 99, marginLeft: 4 }}>3 mesiace zadarmo</span>
               </button>
@@ -86,6 +125,7 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
 
             {/* PRO */}
+            {currentPlan !== "pro" && currentPlan !== "scale" && (
             <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem" }}>
               <div style={{ fontSize: 11, color: "#525252", letterSpacing: "0.1em", marginBottom: 8 }}>PRO</div>
               <div style={{ fontSize: 28, fontWeight: 800, color: "#fff", marginBottom: 4 }}>
@@ -116,6 +156,7 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
                 {loading === (billing === "monthly" ? "monthly" : "yearly") ? "Načítám..." : "Upgradovat na PRO"}
               </button>
             </div>
+            )}
 
             {/* SCALE */}
             <div style={{ background: "#111", border: "2px solid #3b82f6", borderRadius: 16, padding: "1.5rem", position: "relative" as const }}>
