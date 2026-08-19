@@ -8,6 +8,31 @@ const intlMiddleware = createMiddleware(routing);
 const protectedRoutes = ["/dashboard", "/nakupy", "/dostupne-sluzby", "/ucet", "/chrome-launcher"];
 
 export function middleware(request: NextRequest) {
+  // Maintenance mode
+  if (process.env.MAINTENANCE_MODE === "true") {
+    const url = request.nextUrl.clone();
+
+    // Allow maintenance page and API routes
+    if (url.pathname.includes("/maintenance") || url.pathname.includes("/api")) {
+      return NextResponse.next();
+    }
+
+    // Admin bypass via cookie or query param
+    const bypassCookie = request.cookies.get("maintenance_bypass")?.value;
+    const bypassParam = url.searchParams.get("bypass");
+    const bypassSecret = process.env.MAINTENANCE_BYPASS_SECRET ?? "admin123";
+
+    if (bypassCookie === bypassSecret || bypassParam === bypassSecret) {
+      const response = NextResponse.next();
+      response.cookies.set("maintenance_bypass", bypassSecret, { maxAge: 3600 });
+      return response;
+    }
+
+    // Rewrite to maintenance page
+    url.pathname = "/maintenance";
+    return NextResponse.rewrite(url);
+  }
+
   const { pathname } = request.nextUrl;
 
   // Bypass everything for auth callback, confirm, or admin impersonate
