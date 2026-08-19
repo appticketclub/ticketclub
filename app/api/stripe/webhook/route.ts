@@ -327,12 +327,28 @@ export async function POST(request: NextRequest) {
           console.log("✅ Reactivated:", userId);
 
         } else {
-          // Normal update
+          // Normal update — check if plan changed (e.g. PRO → Scale)
+          const priceId = sub.items?.data?.[0]?.price?.id;
+          const isScale = priceId === process.env.STRIPE_SCALE_PRICE_ID || 
+                          priceId === process.env.STRIPE_SCALE_YEARLY_PRICE_ID;
+          const isProMax = priceId === process.env.STRIPE_PRO_MAX_PRICE_ID || 
+                           priceId === process.env.STRIPE_PRO_MAX_YEARLY_PRICE_ID;
+          const newPlan = isScale ? "scale" : isProMax ? "pro_max" : "pro";
+
           await supabase.from("subscriptions").update({
+            plan: newPlan,
             status: sub.status,
             current_period_end: periodEnd,
             updated_at: new Date().toISOString(),
           }).eq("user_id", userId);
+
+          // Update extension licenses based on new plan
+          if (isScale) {
+            await supabase.from("extension_licenses")
+              .update({ plan: "unlimited" })
+              .eq("user_id", userId);
+            console.log("✅ Scale upgrade - extension set to unlimited:", userId);
+          }
         }
 
         break;
