@@ -8,20 +8,26 @@ const intlMiddleware = createMiddleware(routing);
 const protectedRoutes = ["/dashboard", "/nakupy", "/dostupne-sluzby", "/ucet", "/chrome-launcher"];
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  // ALWAYS allow API routes - must be before maintenance check
-  if (pathname.startsWith("/api/") || pathname.startsWith("/_next/") || pathname.includes(".")) {
-    return intlMiddleware(request);
-  }
-
   if (process.env.MAINTENANCE_MODE === "true") {
-    if (pathname.startsWith("/maintenance")) {
-      return intlMiddleware(request);
+    const url = request.nextUrl;
+    
+    // Allow API routes, static files - use next() not intlMiddleware
+    if (
+      url.pathname.startsWith("/api") ||
+      url.pathname.startsWith("/_next") ||
+      url.pathname.includes(".")
+    ) {
+      return NextResponse.next();
     }
 
+    // Allow maintenance page
+    if (url.pathname.startsWith("/maintenance")) {
+      return NextResponse.next();
+    }
+
+    // Check bypass
     const bypassCookie = request.cookies.get("maintenance_bypass")?.value;
-    const bypassParam = request.nextUrl.searchParams.get("bypass");
+    const bypassParam = url.searchParams.get("bypass");
     const bypassSecret = process.env.MAINTENANCE_BYPASS_SECRET ?? "admin123";
 
     if (bypassCookie === bypassSecret || bypassParam === bypassSecret) {
@@ -32,6 +38,8 @@ export function middleware(request: NextRequest) {
 
     return NextResponse.rewrite(new URL("/maintenance", request.url));
   }
+
+  const { pathname } = request.nextUrl;
 
   // Bypass everything for auth callback, confirm, or admin impersonate
   if (pathname === "/auth/callback" || 
