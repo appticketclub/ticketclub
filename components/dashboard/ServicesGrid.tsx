@@ -100,6 +100,7 @@ export default function ServicesGrid({
       description: "Automatické sledování Discord alertů a nakupování vstupenek na Ticketmaster.",
       badge: "SCALE",
       href: "/discord-watcher",
+      icon: "🤖",
       pro: false,
       scale: true,
     },
