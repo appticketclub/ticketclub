@@ -28,9 +28,8 @@ export function middleware(request: NextRequest) {
       return response;
     }
 
-    // Rewrite to maintenance page
-    url.pathname = "/maintenance";
-    return NextResponse.rewrite(url);
+    url.pathname = "/en/maintenance";
+    return NextResponse.redirect(url);
   }
 
   const { pathname } = request.nextUrl;
