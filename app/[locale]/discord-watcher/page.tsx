@@ -52,10 +52,18 @@ export default function DiscordWatcherPage() {
         </div>
       </div>
 
-      {/* Video tutorial placeholder */}
+      {/* Video tutorial */}
       <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem" }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>VIDEO NÁVOD</div>
-        <div style={{ fontSize: 13, color: "#525252" }}>Video návod bude brzy dostupný.</div>
+        <div style={{ fontSize: 13, color: "#525252", marginBottom: "1rem" }}>Sledujte video návod jak nainstalovat a používat Discord Watcher Bot.</div>
+        <a
+          href="https://youtu.be/cMOqe1PVGTU"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "0.75rem 1.5rem", background: "#1a1a1a", border: "1px solid #2a2a2a", borderRadius: 10, color: "#fff", fontWeight: 600, fontSize: 14, textDecoration: "none" }}
+        >
+          ▶ Sledovat video návod
+        </a>
       </div>
     </div>
   );
