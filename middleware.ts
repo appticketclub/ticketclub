@@ -11,14 +11,18 @@ export function middleware(request: NextRequest) {
   if (process.env.MAINTENANCE_MODE === "true") {
     const url = request.nextUrl;
     
-    // Allow API, maintenance page itself, and static files
+    // Allow API routes, static files - use next() not intlMiddleware
     if (
       url.pathname.startsWith("/api") ||
-      url.pathname.startsWith("/maintenance") ||
       url.pathname.startsWith("/_next") ||
       url.pathname.includes(".")
     ) {
-      return intlMiddleware(request);
+      return NextResponse.next();
+    }
+
+    // Allow maintenance page
+    if (url.pathname.startsWith("/maintenance")) {
+      return NextResponse.next();
     }
 
     // Check bypass
