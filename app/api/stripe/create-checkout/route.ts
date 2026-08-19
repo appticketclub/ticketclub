@@ -72,10 +72,25 @@ export async function POST(request: NextRequest) {
             price: priceId,
           }],
           proration_behavior: "create_prorations",
+          payment_behavior: "pending_if_incomplete",
           metadata: {
             supabase_user_id: user.id,
           },
         });
+
+        // Immediately pay the proration invoice
+        const invoices = await stripe.invoices.list({
+          subscription: activeSub.stripe_subscription_id,
+          limit: 1,
+        });
+
+        const prorationInvoice = invoices.data.find(inv => inv.status === "draft" || inv.status === "open");
+        if (prorationInvoice) {
+          if (prorationInvoice.status === "draft") {
+            await stripe.invoices.finalizeInvoice(prorationInvoice.id);
+          }
+          await stripe.invoices.pay(prorationInvoice.id);
+        }
 
         // Update DB immediately
         const { createClient: createServiceClient } = await import("@supabase/supabase-js");
