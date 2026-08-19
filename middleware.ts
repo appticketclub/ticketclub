@@ -28,7 +28,7 @@ export function middleware(request: NextRequest) {
       return response;
     }
 
-    url.pathname = "/en/maintenance";
+    url.pathname = "/maintenance";
     return NextResponse.redirect(url);
   }
 
