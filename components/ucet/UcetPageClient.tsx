@@ -351,7 +351,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
           </div>
           <span style={{ fontSize: 13, color: "#ffffff" }}>
             {(subscription?.plan === "pro" || subscription?.plan === "scale")
-              ? `Aktivní do ${subscription.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString("cs-CZ") : "—"}`
+              ? "Předplatné aktivní"
               : "Základní plán"}
           </span>
         </div>
