@@ -37,6 +37,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
 
   const isAdmin = profile?.role === "admin";
   const isPro = subscription?.plan === "pro" || subscription?.plan === "scale" || subscription?.status === "trialing";
+  const isScale = subscription?.plan === "scale";
   const [sheetsVideoOpen, setSheetsVideoOpen] = useState(false);
 
   async function handleUpgrade() {
@@ -334,22 +335,28 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: "1.25rem" }}>
           <div style={{
             padding: "6px 16px", borderRadius: 8, fontSize: 13, fontWeight: 700,
-            background: subscription?.plan === "pro" ? "linear-gradient(135deg, #7c3aed, #5b21b6)" : "#1a1a1a",
-            color: subscription?.plan === "pro" ? "#fff" : "#ededed",
-            border: subscription?.plan === "pro" ? "none" : "1px solid #2a2a2a",
+            background: (subscription?.plan === "pro" || subscription?.plan === "scale")
+              ? subscription?.plan === "scale"
+                ? "linear-gradient(135deg, #a855f7, #7c3aed)"
+                : "linear-gradient(135deg, #7c3aed, #5b21b6)"
+              : "#1a1a1a",
+            color: (subscription?.plan === "pro" || subscription?.plan === "scale") ? "#fff" : "#ededed",
+            border: (subscription?.plan === "pro" || subscription?.plan === "scale") ? "none" : "1px solid #2a2a2a",
           }}>
-            {subscription?.plan === "pro"
-              ? subscription?.plan_interval === "yearly" ? "⭐ PRO Roční" : "⭐ PRO Měsíční"
-              : "FREE"}
+            {subscription?.plan === "scale"
+              ? subscription?.plan_interval === "yearly" ? "⭐ SCALE Roční" : "⭐ SCALE Měsíční"
+              : subscription?.plan === "pro"
+                ? subscription?.plan_interval === "yearly" ? "⭐ PRO Roční" : "⭐ PRO Měsíční"
+                : "FREE"}
           </div>
           <span style={{ fontSize: 13, color: "#ffffff" }}>
-            {subscription?.plan === "pro"
+            {(subscription?.plan === "pro" || subscription?.plan === "scale")
               ? `Aktivní do ${subscription.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString("cs-CZ") : "—"}`
               : "Základní plán"}
           </span>
         </div>
 
-        {subscription?.plan === "pro" ? (
+        {(subscription?.plan === "pro" || subscription?.plan === "scale") ? (
           <button
             onClick={handleManageSubscription}
             disabled={loadingPortal}
@@ -387,7 +394,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
       </div>
 
       {/* Extension License */}
-      {subscription?.plan === "pro" ? (
+      {(subscription?.plan === "pro" || subscription?.plan === "scale") ? (
         <div style={cardStyle}>
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #7c3aed, transparent)" }} />
           <h2 style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>Extension licence</h2>
