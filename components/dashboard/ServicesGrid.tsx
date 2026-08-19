@@ -246,7 +246,9 @@ export default function ServicesGrid({
                   border: (isPro || isAdmin) ? "none" : "1px solid #2a2a2a",
                   opacity: locked ? 0.6 : 1,
                 }}>
-                  {(isPro || isAdmin) ? "PRO" : "🔒 PRO"}
+                  {(isPro || isAdmin)
+                    ? (service.id === "refresh-bot" ? "PRO / SCALE" : "PRO")
+                    : (service.id === "refresh-bot" ? "🔒 PRO / SCALE" : "🔒 PRO")}
                 </div>
               )}
 
