@@ -45,6 +45,11 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
     try {
       const res = await fetch("/api/stripe/create-checkout", { method: "POST" });
       const data = await res.json();
+      if (data.upgraded) {
+        alert("✓ Předplatné bylo aktualizováno!");
+        window.location.reload();
+        return;
+      }
       if (data.url) window.location.href = data.url;
       else alert("Chyba: " + data.error);
     } catch (e) {

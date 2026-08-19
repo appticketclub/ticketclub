@@ -41,6 +41,11 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
         body: JSON.stringify({ plan, promoCode }),
       });
       const data = await res.json();
+      if (data.upgraded) {
+        alert("✓ Předplatné bylo aktualizováno!");
+        window.location.reload();
+        return;
+      }
       if (data.url) window.location.href = data.url;
       else alert("Chyba: " + data.error);
     } catch {
