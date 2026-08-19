@@ -129,7 +129,10 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
             <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.5rem" }}>
               <div style={{ fontSize: 11, color: "#525252", letterSpacing: "0.1em", marginBottom: 8 }}>PRO</div>
               <div style={{ fontSize: 28, fontWeight: 800, color: "#fff", marginBottom: 4 }}>
-                {billing === "monthly" ? "€19.99" : "€179.99"}<span style={{ fontSize: 13, color: "#525252" }}>/mes</span>
+                {billing === "monthly" ? "€19.99" : "€179.99"}
+                <span style={{ fontSize: 13, color: "#525252" }}>
+                  {billing === "monthly" ? "/mes" : "/rok"}
+                </span>
               </div>
               <div style={{ fontSize: 12, color: "#525252", marginBottom: "1.25rem" }}>
                 {billing === "monthly" ? "fakturováno měsíčně" : "fakturováno ročně"}
@@ -163,7 +166,10 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
               <div style={{ position: "absolute" as const, top: -12, left: "50%", transform: "translateX(-50%)", background: "#3b82f6", color: "#fff", fontSize: 11, fontWeight: 700, padding: "4px 14px", borderRadius: 99, whiteSpace: "nowrap" as const }}>Nejoblíbenější</div>
               <div style={{ fontSize: 11, color: "#3b82f6", letterSpacing: "0.1em", marginBottom: 8 }}>SCALE</div>
               <div style={{ fontSize: 28, fontWeight: 800, color: "#fff", marginBottom: 4 }}>
-                {billing === "monthly" ? "€44.95" : "€399.95"}<span style={{ fontSize: 13, color: "#525252" }}>/mes</span>
+                {billing === "monthly" ? "€44.95" : "€399.95"}
+                <span style={{ fontSize: 13, color: "#525252" }}>
+                  {billing === "monthly" ? "/mes" : "/rok"}
+                </span>
               </div>
               <div style={{ fontSize: 12, color: "#525252", marginBottom: "1.25rem" }}>
                 {billing === "monthly" ? "fakturováno měsíčně" : "fakturováno ročně"}
@@ -216,6 +222,12 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
               ))}
             </div>
           </div>
+
+          {billing === "yearly" && (
+            <div style={{ fontSize: 12, color: "#525252", textAlign: "center" as const, marginTop: "1rem", padding: "0 1rem" }}>
+              💡 Pokud již máte aktivní PRO předplatné, Stripe automaticky vypočítá rozdíl a doplatíte pouze zbývající částku.
+            </div>
+          )}
 
           <p style={{ fontSize: 11, color: "#525252", textAlign: "center" as const, marginTop: "1rem" }}>
             Zrušit lze kdykoliv · Bezpečná platba přes Stripe
