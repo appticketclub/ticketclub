@@ -269,18 +269,61 @@ export default function ServicesGrid({
               </p>
 
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
-                <div style={{ opacity: locked ? 0.6 : 1, flex: 1 }}>
+                <div style={{ flex: 1 }}>
                   {locked ? (
-                    <div style={{ fontSize: 13, color: "#f5f5f5", display: "flex", alignItems: "center", gap: 6 }}>
-                      🔒 Dostupné v Pro plánu
-                      <div style={{ marginLeft: "auto" }}>
-                        <UpgradeLink />
+                    <div style={{ position: "relative" }}>
+                      <div style={{
+                        padding: "0.6rem 1rem",
+                        background: "#0a0a0a",
+                        border: "1px solid #1a1a1a",
+                        borderRadius: 8,
+                        color: service.scale ? "#a855f7" : "#4ade80",
+                        fontSize: 13,
+                        filter: "blur(4px)",
+                        userSelect: "none" as const,
+                        textAlign: "center" as const,
+                      }}>
+                        Otevřít aplikaci →
+                      </div>
+                      <div style={{
+                        position: "absolute", inset: 0,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                      }}>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.dispatchEvent(new CustomEvent("openUpgradeModal"));
+                          }}
+                          style={{
+                            padding: "0.5rem 1.25rem",
+                            background: service.scale
+                              ? "linear-gradient(135deg, #a855f7, #7c3aed)"
+                              : "linear-gradient(135deg, #ffffff, #a0a0a0)",
+                            border: "none",
+                            borderRadius: 8,
+                            color: service.scale ? "#fff" : "#000",
+                            fontWeight: 700,
+                            fontSize: 12,
+                            cursor: "pointer",
+                          }}
+                        >
+                          {service.scale ? "Upgradovat na Scale →" : "Upgradovat na PRO →"}
+                        </button>
                       </div>
                     </div>
                   ) : (
-                    <a href={service.href} style={{ fontSize: 13, color: "#ffffff", textDecoration: "none" }}>
+                    <div style={{
+                      padding: "0.6rem 1rem",
+                      background: "#1a1a1a",
+                      border: "1px solid #2a2a2a",
+                      borderRadius: 8,
+                      color: "#fff",
+                      fontSize: 13,
+                      textAlign: "center" as const,
+                      fontWeight: 600,
+                    }}>
                       Otevřít aplikaci →
-                    </a>
+                    </div>
                   )}
                 </div>
                 {videoMap[service.title] && (
