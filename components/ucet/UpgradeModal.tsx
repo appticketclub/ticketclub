@@ -204,11 +204,9 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
           </div>
 
           {/* Proration note */}
-          {billing === "yearly" && (
-            <div style={{ fontSize: 12, color: "#525252", textAlign: "center" as const, marginBottom: "1rem" }}>
-              💡 Pokud již máte aktivní PRO předplatné, Stripe automaticky vypočítá rozdíl a doplatíte pouze zbývající částku.
-            </div>
-          )}
+          <div style={{ fontSize: 12, color: "#525252", textAlign: "center" as const, marginBottom: "1rem", padding: "0 1rem" }}>
+            💡 Pokud již máte aktivní PRO předplatné, Stripe automaticky vypočítá rozdíl a doplatíte pouze zbývající částku.
+          </div>
 
           {/* Feature table */}
           <div style={{ fontSize: "clamp(11px, 3vw, 13px)" }}>
