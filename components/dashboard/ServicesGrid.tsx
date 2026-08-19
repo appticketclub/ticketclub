@@ -62,6 +62,7 @@ export default function ServicesGrid({
 
   const videoMap: Record<string, string> = {
     "Refresh Bot": "https://www.youtube.com/embed/LJyLx5W9NLU",
+    "Discord Watcher Bot": "",
     "Sales Tracker": "https://www.youtube.com/embed/M5XX5B0Wz30",
     "Chrome Launcher": "https://www.youtube.com/embed/ugbHFLb5Wcs",
     "Pre-sale Bot": "https://www.youtube.com/embed/tLOV3Jn4hzU",
@@ -92,6 +93,15 @@ export default function ServicesGrid({
       icon: "🔄",
       href: "/refresh-bot",
       free: false,
+    },
+    {
+      id: "discord-watcher",
+      title: "Discord Watcher Bot",
+      description: "Automatické sledování Discord alertů a nakupování vstupenek na Ticketmaster.",
+      badge: "SCALE",
+      href: "/discord-watcher",
+      pro: false,
+      scale: true,
     },
     {
       id: "sales-tracker",
@@ -180,7 +190,7 @@ export default function ServicesGrid({
       {showUpgradeModal && <UpgradeModal onClose={() => setShowUpgradeModal(false)} />}
       <div className="services-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
         {services.map(service => {
-          const locked = !service.free && !isPro && !isAdmin;
+          const locked = (service.scale ? (!isScale && !isAdmin) : (!service.free && !isPro && !isAdmin));
           return (
             <div
               key={service.id}
@@ -192,19 +202,41 @@ export default function ServicesGrid({
                 cursor: (!locked && service.href) ? "pointer" : "default",
                 position: "relative", overflow: "hidden",
                 transition: "border-color 0.2s, transform 0.2s",
+                ...(service.scale ? {
+                  border: "1px solid rgba(168,85,247,0.4)",
+                  boxShadow: "0 0 20px rgba(168,85,247,0.1)",
+                  background: "linear-gradient(135deg, #111111, #130d1a)",
+                } : {})
               }}
               onMouseEnter={e => {
                 if (!locked && service.href) {
-                  (e.currentTarget as HTMLDivElement).style.borderColor = "#ffffff";
+                  (e.currentTarget as HTMLDivElement).style.borderColor = service.scale ? "#a855f7" : "#ffffff";
                   (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)";
                 }
               }}
               onMouseLeave={e => {
-                (e.currentTarget as HTMLDivElement).style.borderColor = locked ? "#1a1a1a" : "#ededed";
+                if (service.scale) {
+                  (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(168,85,247,0.4)";
+                } else {
+                  (e.currentTarget as HTMLDivElement).style.borderColor = locked ? "#1a1a1a" : "#ededed";
+                }
                 (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
               }}
             >
-              {!service.free && (
+              {service.scale && (
+                <span style={{
+                  position: "absolute", top: 12, right: 12,
+                  background: "rgba(168,85,247,0.15)",
+                  color: "#a855f7",
+                  border: "1px solid rgba(168,85,247,0.3)",
+                  fontSize: 10,
+                  fontWeight: 700,
+                  padding: "2px 8px",
+                  borderRadius: 99,
+                  letterSpacing: "0.08em",
+                }}>SCALE</span>
+              )}
+              {!service.scale && !service.free && (
                 <div style={{
                   position: "absolute", top: 12, right: 12,
                   padding: "3px 10px", borderRadius: 6, fontSize: 11, fontWeight: 700,
