@@ -13,7 +13,7 @@ export default async function RefreshBotPage() {
     .eq("user_id", user.id)
     .single();
 
-  const isPro = subscription?.plan === "pro" && subscription?.status === "active";
+  const isPro = (subscription?.plan === "pro" || subscription?.plan === "scale") && subscription?.status === "active";
   if (!isPro) redirect("/ucet?upgrade=true");
 
   return <RefreshBotClient />;
