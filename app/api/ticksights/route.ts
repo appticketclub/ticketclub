@@ -41,7 +41,8 @@ export async function POST(request: NextRequest) {
     const { data: profile } = await supabaseService
       .from("profiles").select("role").eq("id", user.id).single();
 
-    const isPro = sub?.plan === "pro" || sub?.plan === "yearly";
+    const isPro = sub?.plan === "pro" || sub?.plan === "yearly" || sub?.plan === "scale" || sub?.plan === "pro_max" || sub?.status === "trialing";
+    const isScale = sub?.plan === "scale" || sub?.plan === "pro_max";
     const isAdmin = profile?.role === "admin";
 
     console.log("[ticksights] user:", user?.id, user?.email);
