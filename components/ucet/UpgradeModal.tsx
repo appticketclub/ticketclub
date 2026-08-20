@@ -7,7 +7,7 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
   const [loading, setLoading] = useState<"monthly" | "yearly" | "scale_monthly" | "scale_yearly" | null>(null);
   const [promoCode, setPromoCode] = useState("");
   const [promoValid, setPromoValid] = useState(false);
-  const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
+  const [billing, setBilling] = useState<"monthly" | "yearly">("yearly");
   const [currentPlan, setCurrentPlan] = useState<string>("free");
   const [currentBilling, setCurrentBilling] = useState<"monthly" | "yearly">("monthly");
 
