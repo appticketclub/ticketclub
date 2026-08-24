@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     const { data: profile } = await supabaseService
       .from("profiles").select("role").eq("id", user.id).single();
 
-    const isPro = sub?.plan === "pro" || sub?.plan === "yearly";
+    const isPro = sub?.plan === "pro" || sub?.plan === "scale" || sub?.plan === "yearly" || sub?.status === "trialing";
     const isAdmin = profile?.role === "admin";
 
     if (!isPro && !isAdmin) {
