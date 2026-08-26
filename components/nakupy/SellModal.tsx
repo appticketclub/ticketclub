@@ -46,7 +46,11 @@ function PnlBanner({ data, currency }: { data: any; currency: string }) {
     roi: data.roi,
     currency: currency,
   });
-  return <div id="pnl-banner" dangerouslySetInnerHTML={{ __html: svg }} />;
+  return (
+    <div id="pnl-banner" style={{ width: "100%", aspectRatio: "1280/600", overflow: "hidden" }}>
+      <div dangerouslySetInnerHTML={{ __html: svg }} style={{ width: "100%", height: "100%" }} />
+    </div>
+  );
 }
 
 export default function SellModal({ purchase, onClose, onSave }: {

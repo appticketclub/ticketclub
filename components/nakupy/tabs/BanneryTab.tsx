@@ -26,7 +26,7 @@ export function generateTicketSVG(data: any): string {
   const priceSize = buyStr.length > 10 ? 32 : 40;
 
   return `
-<svg width="1280" height="600" viewBox="0 0 1280 600" xmlns="http://www.w3.org/2000/svg">
+<svg width="100%" viewBox="0 0 1280 600" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
     <stop offset="0%" stop-color="#181A19"/>
