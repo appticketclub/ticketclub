@@ -62,7 +62,7 @@ export default function ServicesGrid({
 
   const videoMap: Record<string, string> = {
     "Refresh Bot": "https://www.youtube.com/embed/LJyLx5W9NLU",
-    "Discord Watcher Bot": "",
+    "Discord Watcher Bot": "https://www.youtube.com/embed/cMOqe1PVGTU",
     "Sales Tracker": "https://www.youtube.com/embed/M5XX5B0Wz30",
     "Chrome Launcher": "https://www.youtube.com/embed/ugbHFLb5Wcs",
     "Pre-sale Bot": "https://www.youtube.com/embed/tLOV3Jn4hzU",
@@ -160,12 +160,12 @@ export default function ServicesGrid({
         }}>
           <div>
             <div style={{ fontSize: 14, fontWeight: 700, color: isPro ? "#3b82f6" : "#a855f7", marginBottom: 4 }}>
-              {isPro ? "⭐ Upgraduj na Scale" : "⭐ Upgraduj na PRO"}
+              {isPro ? "🎁 Vyzkoušejte Scale zdarma na 12 dní" : "🎁 Vyzkoušejte PRO zdarma na 12 dní"}
             </div>
             <div style={{ fontSize: 12, color: "#ededed" }}>
-              {isPro
-                ? "Získejte Refresh Bot unlimited a Discord Watcher Bot."
-                : "Získejte PRO funkce jako Refresh Bot, Sales Tracker a mnoho dalšího."
+              {isPro 
+                ? "Odemkněte Refresh Bot unlimited a Discord Watcher Bot. Akce platí do 28. 8."
+                : "Získejte přístup k Refresh Botu, Sales Trackeru a dalším PRO funkcím. Akce platí do 28. 8."
               }
             </div>
           </div>
@@ -183,7 +183,7 @@ export default function ServicesGrid({
               whiteSpace: "nowrap" as const,
             }}
           >
-            {isPro ? "Upgradovat na Scale →" : "Upgradovat na PRO →"}
+            {isPro ? "Začít 12denní trial →" : "Začít 12denní trial →"}
           </button>
         </div>
       )}
@@ -203,6 +203,9 @@ export default function ServicesGrid({
                 cursor: (!locked && service.href) ? "pointer" : "default",
                 position: "relative", overflow: "hidden",
                 transition: "border-color 0.2s, transform 0.2s",
+                display: "flex",
+                flexDirection: "column" as const,
+                justifyContent: "space-between",
                 ...(service.scale ? {
                   border: "1px solid rgba(168,85,247,0.4)",
                   boxShadow: "0 0 20px rgba(168,85,247,0.1)",
@@ -252,106 +255,117 @@ export default function ServicesGrid({
                 </div>
               )}
 
-              <div style={{
-                width: 52, height: 52, borderRadius: 14,
-                background: "linear-gradient(135deg, #2a2a2a, #1a1a1a)",
-                border: "1px solid #ededed",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: "1.5rem", marginBottom: "1.25rem",
-                opacity: locked ? 0.6 : 1,
-              }}>
-                {service.icon}
+              <div style={{ flex: 1 }}>
+                <div style={{
+                  width: 52, height: 52, borderRadius: 14,
+                  background: "linear-gradient(135deg, #2a2a2a, #1a1a1a)",
+                  border: "1px solid #ededed",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: "1.5rem", marginBottom: "1.25rem",
+                  opacity: locked ? 0.6 : 1,
+                }}>
+                  {service.icon}
+                </div>
+
+                <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: locked ? "#ededed" : "#fff", marginBottom: "0.5rem", opacity: locked ? 0.6 : 1 }}>
+                  {service.title}
+                </h3>
+                <p style={{
+                  fontSize: 13,
+                  color: "#525252",
+                  marginBottom: "1rem",
+                  minHeight: "2.5rem",
+                  lineHeight: 1.5,
+                  opacity: locked ? 0.6 : 1,
+                }}>
+                  {service.description}
+                </p>
               </div>
 
-              <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: locked ? "#ededed" : "#fff", marginBottom: "0.5rem", opacity: locked ? 0.6 : 1 }}>
-                {service.title}
-              </h3>
-              <p style={{ fontSize: "0.875rem", color: "#f5f5f5", lineHeight: 1.6, marginBottom: "1.5rem", opacity: locked ? 0.6 : 1 }}>
-                {service.description}
-              </p>
-
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
-                <div style={{ flex: 1 }}>
-                  {locked ? (
-                    <div style={{ position: "relative" }}>
+              <div style={{ marginTop: "auto", paddingTop: "1rem" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div style={{ flex: 1 }}>
+                    {locked ? (
+                      <div style={{ position: "relative" }}>
+                        <div style={{
+                          padding: "0.6rem 1rem",
+                          background: "#0a0a0a",
+                          border: "1px solid #1a1a1a",
+                          borderRadius: 8,
+                          color: service.scale ? "#a855f7" : "#4ade80",
+                          fontSize: 13,
+                          filter: "blur(4px)",
+                          userSelect: "none" as const,
+                          textAlign: "center" as const,
+                        }}>
+                          Otevřít aplikaci →
+                        </div>
+                        <div style={{
+                          position: "absolute", inset: 0,
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                        }}>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.dispatchEvent(new CustomEvent("openUpgradeModal"));
+                            }}
+                            style={{
+                              padding: "0.5rem 1.25rem",
+                              background: service.scale
+                                ? "linear-gradient(135deg, #a855f7, #7c3aed)"
+                                : "linear-gradient(135deg, #ffffff, #a0a0a0)",
+                              border: "none",
+                              borderRadius: 8,
+                              color: service.scale ? "#fff" : "#000",
+                              fontWeight: 700,
+                              fontSize: 12,
+                              cursor: "pointer",
+                            }}
+                          >
+                            {service.scale ? "Upgradovat na Scale →" : "Upgradovat na PRO →"}
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
                       <div style={{
                         padding: "0.6rem 1rem",
-                        background: "#0a0a0a",
-                        border: "1px solid #1a1a1a",
+                        background: "#1a1a1a",
+                        border: "1px solid #2a2a2a",
                         borderRadius: 8,
-                        color: service.scale ? "#a855f7" : "#4ade80",
+                        color: "#fff",
                         fontSize: 13,
-                        filter: "blur(4px)",
-                        userSelect: "none" as const,
                         textAlign: "center" as const,
+                        fontWeight: 600,
                       }}>
                         Otevřít aplikaci →
                       </div>
-                      <div style={{
-                        position: "absolute", inset: 0,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                      }}>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            window.dispatchEvent(new CustomEvent("openUpgradeModal"));
-                          }}
-                          style={{
-                            padding: "0.5rem 1.25rem",
-                            background: service.scale
-                              ? "linear-gradient(135deg, #a855f7, #7c3aed)"
-                              : "linear-gradient(135deg, #ffffff, #a0a0a0)",
-                            border: "none",
-                            borderRadius: 8,
-                            color: service.scale ? "#fff" : "#000",
-                            fontWeight: 700,
-                            fontSize: 12,
-                            cursor: "pointer",
-                          }}
-                        >
-                          {service.scale ? "Upgradovat na Scale →" : "Upgradovat na PRO →"}
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div style={{
-                      padding: "0.6rem 1rem",
-                      background: "#1a1a1a",
-                      border: "1px solid #2a2a2a",
-                      borderRadius: 8,
-                      color: "#fff",
-                      fontSize: 13,
-                      textAlign: "center" as const,
-                      fontWeight: 600,
-                    }}>
-                      Otevřít aplikaci →
-                    </div>
+                    )}
+                  </div>
+                  {videoMap[service.title] && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        setVideoUrl(videoMap[service.title]);
+                      }}
+                      style={{
+                        background: "none",
+                        border: "1px solid #2a2a2a",
+                        borderRadius: 8,
+                        padding: "4px 10px",
+                        color: "#ffffff",
+                        fontSize: 12,
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 4,
+                        marginLeft: locked ? "8px" : "0",
+                      }}
+                    >
+                      ℹ️ Video ukázka
+                    </button>
                   )}
                 </div>
-                {videoMap[service.title] && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      setVideoUrl(videoMap[service.title]);
-                    }}
-                    style={{
-                      background: "none",
-                      border: "1px solid #2a2a2a",
-                      borderRadius: 8,
-                      padding: "4px 10px",
-                      color: "#ffffff",
-                      fontSize: 12,
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 4,
-                      marginLeft: locked ? "8px" : "0",
-                    }}
-                  >
-                    ℹ️ Video ukázka
-                  </button>
-                )}
               </div>
             </div>
           );

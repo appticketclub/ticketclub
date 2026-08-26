@@ -7,7 +7,7 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
   const [loading, setLoading] = useState<"monthly" | "yearly" | "scale_monthly" | "scale_yearly" | null>(null);
   const [promoCode, setPromoCode] = useState("");
   const [promoValid, setPromoValid] = useState(false);
-  const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
+  const [billing, setBilling] = useState<"monthly" | "yearly">("yearly");
   const [currentPlan, setCurrentPlan] = useState<string>("free");
   const [currentBilling, setCurrentBilling] = useState<"monthly" | "yearly">("monthly");
 
@@ -161,7 +161,7 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
                 disabled={loading === (billing === "monthly" ? "monthly" : "yearly")}
                 style={{ width: "100%", padding: "0.65rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#fff", fontSize: 14, fontWeight: 700, cursor: loading ? "default" : "pointer", opacity: loading ? 0.7 : 1 }}
               >
-                {loading === (billing === "monthly" ? "monthly" : "yearly") ? "Načítám..." : "Upgradovat na PRO"}
+                {loading === (billing === "monthly" ? "monthly" : "yearly") ? "Načítám..." : "Vyzkoušet PRO zdarma →"}
               </button>
             </div>
             )}
@@ -198,17 +198,15 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
                 disabled={loading === (billing === "monthly" ? "scale_monthly" : "scale_yearly")}
                 style={{ width: "100%", padding: "0.65rem", background: "#3b82f6", border: "none", borderRadius: 10, color: "#fff", fontSize: 14, fontWeight: 700, cursor: loading ? "default" : "pointer", opacity: loading ? 0.7 : 1 }}
               >
-                {loading === (billing === "monthly" ? "scale_monthly" : "scale_yearly") ? "Načítám..." : "Upgradovat na Scale"}
+                {loading === (billing === "monthly" ? "scale_monthly" : "scale_yearly") ? "Načítám..." : "Vyzkoušet Scale zdarma →"}
               </button>
             </div>
           </div>
 
           {/* Proration note */}
-          {billing === "yearly" && (
-            <div style={{ fontSize: 12, color: "#525252", textAlign: "center" as const, marginBottom: "1rem" }}>
-              💡 Pokud již máte aktivní PRO předplatné, Stripe automaticky vypočítá rozdíl a doplatíte pouze zbývající částku.
-            </div>
-          )}
+          <div style={{ fontSize: 12, color: "#525252", textAlign: "center" as const, marginBottom: "1rem", padding: "0 1rem" }}>
+            💡 Pokud již máte aktivní PRO předplatné, Stripe automaticky vypočítá rozdíl a doplatíte pouze zbývající částku.
+          </div>
 
           {/* Feature table */}
           <div style={{ fontSize: "clamp(11px, 3vw, 13px)" }}>

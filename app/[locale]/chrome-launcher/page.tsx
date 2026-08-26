@@ -14,7 +14,7 @@ export default async function ChromeLauncherPage() {
     .eq("user_id", user.id)
     .single();
 
-  const isPro = subscription?.plan === "pro" && subscription?.status === "active";
+  const isPro = (subscription?.plan === "pro" || subscription?.plan === "scale") && subscription?.status === "active";
   if (!isPro) redirect("/ucet?upgrade=true");
 
   const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();

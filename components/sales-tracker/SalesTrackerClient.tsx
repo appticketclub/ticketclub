@@ -21,10 +21,10 @@ export default function SalesTrackerClient() {
       if (!user) return;
       const { data: sub } = await supabase
         .from("subscriptions")
-        .select("plan")
+        .select("plan, status")
         .eq("user_id", user.id)
         .single();
-      setIsProUser(sub?.plan === "pro" || sub?.plan === "yearly");
+      setIsProUser(sub?.plan === "pro" || sub?.plan === "scale" || sub?.status === "trialing");
     }
     checkPro();
   }, []);
