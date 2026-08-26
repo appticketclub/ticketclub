@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
 
   const { data: subscription } = await supabase
     .from("subscriptions")
-    .select("plan")
+    .select("plan, status")
     .eq("user_id", license.user_id)
     .single();
 
@@ -54,6 +54,10 @@ export async function GET(request: NextRequest) {
 
   if (extensionType === "discord_watcher" && plan !== "scale") {
     return new NextResponse("SCALE_REQUIRED", { headers: corsHeaders });
+  }
+
+  if (extensionType === "refresh_bot" && plan !== "pro" && plan !== "scale" && plan !== "pro_max" && subscription?.status !== "trialing") {
+    return new NextResponse("PRO_REQUIRED", { headers: corsHeaders });
   }
 
   const licensePlan = license.plan ?? "single";
@@ -80,7 +84,7 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const validText = `VALID:${plan === "scale" ? "unlimited" : "single"}`;
+  const validText = `VALID:${(plan === "scale" || plan === "pro_max") ? "unlimited" : "single"}`;
 
   return new NextResponse(validText, {
     headers: {
