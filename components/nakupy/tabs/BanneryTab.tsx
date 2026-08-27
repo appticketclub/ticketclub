@@ -16,6 +16,8 @@ type Banner = {
   currency: string;
   platform: string | null;
   created_at: string;
+  city?: string | null;
+  event_actual_date?: string | null;
 };
 
 export function generateTicketSVG(data: any): string {
@@ -171,9 +173,9 @@ function BannerCard({ banner }: { banner: Banner }) {
     profit: banner.profit,
     roi: banner.roi,
     currency: banner.currency,
-    city: (banner as any).city,
-    eventDate: (banner as any).event_actual_date
-      ? new Date((banner as any).event_actual_date).toLocaleDateString("cs-CZ")
+    city: banner.city ?? "",
+    eventDate: banner.event_actual_date
+      ? new Date(banner.event_actual_date).toLocaleDateString("cs-CZ")
       : "",
   });
 
