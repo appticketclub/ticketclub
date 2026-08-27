@@ -33,6 +33,8 @@ type BannerData = {
   roi: number;
   platform: string | null;
   currency: string;
+  city?: string | null;
+  event_actual_date?: string | null;
 };
 
 function PnlBanner({ data, currency }: { data: any; currency: string }) {
@@ -45,6 +47,10 @@ function PnlBanner({ data, currency }: { data: any; currency: string }) {
     profit: data.profit,
     roi: data.roi,
     currency: currency,
+    city: data.city,
+    eventDate: data.event_actual_date
+      ? new Date(data.event_actual_date).toLocaleDateString("cs-CZ")
+      : "",
   });
   return (
     <div id="pnl-banner" style={{ width: "100%", aspectRatio: "1280/600", overflow: "hidden" }}>
@@ -167,6 +173,8 @@ export default function SellModal({ purchase, onClose, onSave }: {
           roi: Math.round(roi * 100) / 100,
           currency: purchase.currency,
           platform: platform === "Jiné" ? (customPlatform || "Jiné") : (platform || null),
+          city: purchase.city,
+          event_actual_date: purchase.event_actual_date,
         };
         await supabase.from("banners").insert(banner);
 
@@ -181,6 +189,8 @@ export default function SellModal({ purchase, onClose, onSave }: {
           roi: Math.round(roi * 100) / 100,
           platform: platform === "Jiné" ? (customPlatform || "Jiné") : (platform || null),
           currency: purchase.currency,
+          city: purchase.city,
+          event_actual_date: purchase.event_actual_date,
         });
 
     setSaving(false);

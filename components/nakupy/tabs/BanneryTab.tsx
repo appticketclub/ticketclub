@@ -171,6 +171,10 @@ function BannerCard({ banner }: { banner: Banner }) {
     profit: banner.profit,
     roi: banner.roi,
     currency: banner.currency,
+    city: (banner as any).city,
+    eventDate: (banner as any).event_actual_date
+      ? new Date((banner as any).event_actual_date).toLocaleDateString("cs-CZ")
+      : "",
   });
 
   async function downloadBanner() {
