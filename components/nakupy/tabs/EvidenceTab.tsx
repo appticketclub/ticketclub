@@ -1376,6 +1376,10 @@ Zisk: ${bannerRow.profit ? Number(bannerRow.profit).toLocaleString("cs-CZ", { mi
                   profit: bannerRow.profit,
                   roi: bannerRow.roi,
                   currency: bannerRow.currency,
+                  city: bannerRow.city ?? "",
+                  eventDate: bannerRow.event_actual_date
+                    ? new Date(bannerRow.event_actual_date).toLocaleDateString("cs-CZ")
+                    : "",
                 }) }} style={{ width: "100%", height: "100%", lineHeight: 0 }} />
               </div>
             </div>
