@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       cancel_url: `https://app.ticketclub.vip/dostupne-sluzby?cancelled=true`,
       metadata: { supabase_user_id: user.id },
       subscription_data: {
-        trial_period_days: trialDays,
+        ...(trialDays > 0 ? { trial_period_days: trialDays } : {}),
         metadata: { supabase_user_id: user.id },
       },
       billing_address_collection: "auto",
