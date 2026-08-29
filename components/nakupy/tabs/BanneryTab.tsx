@@ -3,6 +3,26 @@ import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useCurrency } from "@/lib/context/CurrencyContext";
 
+let logoBase64: string | null = null;
+
+export async function getLogoBase64(): Promise<string> {
+  if (logoBase64) return logoBase64;
+  try {
+    const res = await fetch("/logo.png");
+    const blob = await res.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        logoBase64 = reader.result as string;
+        resolve(logoBase64);
+      };
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return "";
+  }
+}
+
 type Banner = {
   id: string;
   event_name: string;
@@ -20,7 +40,7 @@ type Banner = {
   event_actual_date?: string | null;
 };
 
-export function generateTicketSVG(data: any): string {
+export function generateTicketSVG(data: any, logoSrc?: string): string {
   const isProfit = data.profit >= 0;
   const buyStr = `${data.buyPrice?.toLocaleString("cs-CZ")} ${data.currency ?? "€"}`;
   const sellStr = `${data.sellPrice?.toLocaleString("cs-CZ")} ${data.currency ?? "€"}`;
@@ -158,7 +178,7 @@ export function generateTicketSVG(data: any): string {
   <path d="M570 600 C700 600 800 595 900 582 C995 569 1080 559 1165 554 C1218 551 1255 560 1285 569" stroke-dasharray="1 8"/>
 </g>
 
-<image href="/logo.png" x="160" y="305" width="1080" height="340" preserveAspectRatio="xMaxYMax meet"/>
+  ${logoSrc ? `<image href="${logoSrc}" x="160" y="305" width="1080" height="340" preserveAspectRatio="xMaxYMax meet"/>` : ""}
 </svg>`;
 }
 
@@ -180,10 +200,21 @@ function BannerCard({ banner }: { banner: Banner }) {
   });
 
   async function downloadBanner() {
-    const svgElement = cardRef.current?.querySelector("svg");
-    if (!svgElement) return;
-
-    const svgData = new XMLSerializer().serializeToString(svgElement);
+    const logoSrc = await getLogoBase64();
+    const svgData = generateTicketSVG({
+      eventName: banner.event_name,
+      quantity: banner.quantity,
+      quantity_sold: banner.quantity_sold,
+      buyPrice: banner.buy_price * banner.quantity,
+      sellPrice: banner.sell_price,
+      profit: banner.profit,
+      roi: banner.roi,
+      currency: banner.currency,
+      city: banner.city ?? "",
+      eventDate: banner.event_actual_date
+        ? new Date(banner.event_actual_date).toLocaleDateString("cs-CZ")
+        : "",
+    }, logoSrc);
     const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
 
     const url = URL.createObjectURL(svgBlob);
@@ -211,10 +242,21 @@ function BannerCard({ banner }: { banner: Banner }) {
   }
 
   async function handleShare() {
-    const svgElement = cardRef.current?.querySelector("svg");
-    if (!svgElement) return;
-
-    const svgData = new XMLSerializer().serializeToString(svgElement);
+    const logoSrc = await getLogoBase64();
+    const svgData = generateTicketSVG({
+      eventName: banner.event_name,
+      quantity: banner.quantity,
+      quantity_sold: banner.quantity_sold,
+      buyPrice: banner.buy_price * banner.quantity,
+      sellPrice: banner.sell_price,
+      profit: banner.profit,
+      roi: banner.roi,
+      currency: banner.currency,
+      city: banner.city ?? "",
+      eventDate: banner.event_actual_date
+        ? new Date(banner.event_actual_date).toLocaleDateString("cs-CZ")
+        : "",
+    }, logoSrc);
     const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
 
     const url = URL.createObjectURL(svgBlob);

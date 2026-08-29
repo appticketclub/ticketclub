@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/client";
 import { EXCHANGES } from "@/lib/constants/exchanges";
 import { useCurrency } from "@/lib/context/CurrencyContext";
 import { AddPurchaseModal } from "./NakupyTab";
-import { generateTicketSVG } from "./BanneryTab";
+import { generateTicketSVG, getLogoBase64 } from "./BanneryTab";
 import { clearCache } from "@/lib/hooks/useDataCache";
 
 function isThisMonth(dateStr: string | null): boolean {
@@ -1390,10 +1390,21 @@ Zisk: ${bannerRow.profit ? Number(bannerRow.profit).toLocaleString("cs-CZ", { mi
                 onClick={async () => {
                   setDownloadingBanner(true);
                   try {
-                    const svgElement = bannerRef.current?.querySelector("svg");
-                    if (!svgElement) return;
-
-                    const svgData = new XMLSerializer().serializeToString(svgElement);
+                    const logoSrc = await getLogoBase64();
+                    const svgData = generateTicketSVG({
+                      eventName: bannerRow.event_name,
+                      quantity: bannerRow.quantity,
+                      quantity_sold: bannerRow.quantity_sold,
+                      buyPrice: bannerRow.buy_price * bannerRow.quantity,
+                      sellPrice: bannerRow.sell_price_total,
+                      profit: bannerRow.profit,
+                      roi: bannerRow.roi,
+                      currency: bannerRow.currency,
+                      city: bannerRow.city ?? "",
+                      eventDate: bannerRow.event_actual_date
+                        ? new Date(bannerRow.event_actual_date).toLocaleDateString("cs-CZ")
+                        : "",
+                    }, logoSrc);
                     const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
 
                     const url = URL.createObjectURL(svgBlob);
@@ -1429,10 +1440,21 @@ Zisk: ${bannerRow.profit ? Number(bannerRow.profit).toLocaleString("cs-CZ", { mi
               <button
                 onClick={async () => {
                   try {
-                    const svgElement = bannerRef.current?.querySelector("svg");
-                    if (!svgElement) return;
-
-                    const svgData = new XMLSerializer().serializeToString(svgElement);
+                    const logoSrc = await getLogoBase64();
+                    const svgData = generateTicketSVG({
+                      eventName: bannerRow.event_name,
+                      quantity: bannerRow.quantity,
+                      quantity_sold: bannerRow.quantity_sold,
+                      buyPrice: bannerRow.buy_price * bannerRow.quantity,
+                      sellPrice: bannerRow.sell_price_total,
+                      profit: bannerRow.profit,
+                      roi: bannerRow.roi,
+                      currency: bannerRow.currency,
+                      city: bannerRow.city ?? "",
+                      eventDate: bannerRow.event_actual_date
+                        ? new Date(bannerRow.event_actual_date).toLocaleDateString("cs-CZ")
+                        : "",
+                    }, logoSrc);
                     const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
 
                     const url = URL.createObjectURL(svgBlob);

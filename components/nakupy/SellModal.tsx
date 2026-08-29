@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useCurrency } from "@/lib/context/CurrencyContext";
 import { EXCHANGES } from "@/lib/constants/exchanges";
 import { clearCache } from "@/lib/hooks/useDataCache";
-import { generateTicketSVG } from "./tabs/BanneryTab";
+import { generateTicketSVG, getLogoBase64 } from "./tabs/BanneryTab";
 
 const PLATFORMS = EXCHANGES;
 
@@ -205,10 +205,25 @@ export default function SellModal({ purchase, onClose, onSave }: {
   }
 
   async function handleShare() {
-    const svgElement = document.getElementById("pnl-banner")?.querySelector("svg");
-    if (!svgElement) return;
+    if (!bannerData) return;
     try {
-      const svgData = new XMLSerializer().serializeToString(svgElement);
+      const logoSrc = await getLogoBase64();
+      const svgData = generateTicketSVG({
+        eventName: bannerData.event_name,
+        quantity: bannerData.quantity,
+        quantity_sold: bannerData.quantity_sold,
+        buyPrice: bannerData.buy_price * bannerData.quantity,
+        sellPrice: bannerData.sell_price,
+        profit: bannerData.profit,
+        roi: bannerData.roi,
+        currency: bannerData.currency,
+        city: bannerData.city ?? "",
+        eventDate: bannerData.eventDate
+          ? bannerData.eventDate
+          : bannerData.event_actual_date
+            ? new Date(bannerData.event_actual_date).toLocaleDateString("cs-CZ")
+            : "",
+      }, logoSrc);
       const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
 
       const url = URL.createObjectURL(svgBlob);
@@ -231,7 +246,6 @@ export default function SellModal({ purchase, onClose, onSave }: {
               title: "Můj flip na TicketClub",
             });
           } else {
-            // Fallback — download
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
