@@ -53,10 +53,13 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Always add 12-day trial for new Scale/PRO subscriptions
-    // Exception: if already has Scale, no trial
-    const alreadyHasScale = existingSub?.plan === "scale";
-    const trialDays = alreadyHasScale ? 0 : 12;
+    const PROMO_CODES: Record<string, number> = {
+      SKOUSKA: 12,
+    };
+
+    const trialDays = (promoCode && PROMO_CODES[promoCode.toUpperCase()])
+      ? PROMO_CODES[promoCode.toUpperCase()]
+      : 0;
 
     // Create checkout session with trial
     const session = await stripe.checkout.sessions.create({

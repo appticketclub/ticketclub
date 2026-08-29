@@ -160,12 +160,12 @@ export default function ServicesGrid({
         }}>
           <div>
             <div style={{ fontSize: 14, fontWeight: 700, color: isPro ? "#3b82f6" : "#a855f7", marginBottom: 4 }}>
-              {isPro ? "🎁 Vyzkoušejte Scale zdarma na 12 dní" : "🎁 Vyzkoušejte PRO zdarma na 12 dní"}
+              {isPro ? "⭐ Upgraduj na Scale" : "⭐ Upgraduj na PRO"}
             </div>
             <div style={{ fontSize: 12, color: "#ededed" }}>
               {isPro 
-                ? "Odemkněte Refresh Bot unlimited a Discord Watcher Bot. Akce platí do 28. 8."
-                : "Získejte přístup k Refresh Botu, Sales Trackeru a dalším PRO funkcím. Akce platí do 28. 8."
+                ? "Odemkněte Refresh Bot unlimited a Discord Watcher Bot."
+                : "Získejte přístup k Refresh Botu, Sales Trackeru, Email Importu a dalším PRO funkcím."
               }
             </div>
           </div>
@@ -183,7 +183,7 @@ export default function ServicesGrid({
               whiteSpace: "nowrap" as const,
             }}
           >
-            {isPro ? "Začít 12denní trial →" : "Začít 12denní trial →"}
+            {isPro ? "Upgradovat na Scale →" : "Upgradovat na PRO →"}
           </button>
         </div>
       )}

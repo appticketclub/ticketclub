@@ -161,7 +161,7 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
                 disabled={loading === (billing === "monthly" ? "monthly" : "yearly")}
                 style={{ width: "100%", padding: "0.65rem", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 10, color: "#fff", fontSize: 14, fontWeight: 700, cursor: loading ? "default" : "pointer", opacity: loading ? 0.7 : 1 }}
               >
-                {loading === (billing === "monthly" ? "monthly" : "yearly") ? "Načítám..." : "Vyzkoušet PRO zdarma →"}
+                {loading === (billing === "monthly" ? "monthly" : "yearly") ? "Načítám..." : "Upgradovat na PRO →"}
               </button>
             </div>
             )}
@@ -198,7 +198,7 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
                 disabled={loading === (billing === "monthly" ? "scale_monthly" : "scale_yearly")}
                 style={{ width: "100%", padding: "0.65rem", background: "#3b82f6", border: "none", borderRadius: 10, color: "#fff", fontSize: 14, fontWeight: 700, cursor: loading ? "default" : "pointer", opacity: loading ? 0.7 : 1 }}
               >
-                {loading === (billing === "monthly" ? "scale_monthly" : "scale_yearly") ? "Načítám..." : "Vyzkoušet Scale zdarma →"}
+                {loading === (billing === "monthly" ? "scale_monthly" : "scale_yearly") ? "Načítám..." : "Upgradovat na Scale →"}
               </button>
             </div>
           </div>
