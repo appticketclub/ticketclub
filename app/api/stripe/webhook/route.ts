@@ -259,8 +259,8 @@ export async function POST(request: NextRequest) {
           ? new Date(sub.current_period_end * 1000).toISOString()
           : null;
 
-        const isCanceled = sub.canceled_at !== null && sub.canceled_at !== undefined;
         const isFullyCanceled = sub.status === "canceled";
+        const isCanceled = sub.cancel_at_period_end === true && sub.status !== "active";
 
         // Check if this is a RENEWAL — previous had canceled_at but now it's null
         const previousCanceledAt = (event.data as any).previous_attributes?.canceled_at;
