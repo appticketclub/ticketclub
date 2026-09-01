@@ -49,11 +49,40 @@ export async function POST(request: NextRequest) {
     const hasActiveSub = existingSub?.stripe_subscription_id && existingSub?.status === "active";
     const isProUpgradingToScale = hasActiveSub && existingSub?.plan === "pro" && isScalePlan;
 
-    if (isProUpgradingToScale) {
-      // Cancel PRO at period end
-      await stripe.subscriptions.update(existingSub.stripe_subscription_id, {
-        cancel_at_period_end: true,
-      });
+    if (isProUpgradingToScale && existingSub.stripe_subscription_id) {
+      try {
+        const currentSub = await stripe.subscriptions.retrieve(existingSub.stripe_subscription_id);
+        const currentItemId = currentSub.items.data[0]?.id;
+
+        // Don't do proration upgrade if user is in trial
+        const isInTrial = currentSub.status === "trialing" ||
+          (currentSub.trial_end && currentSub.trial_end > Math.floor(Date.now() / 1000));
+
+        if (!isInTrial) {
+          await stripe.subscriptions.update(existingSub.stripe_subscription_id, {
+            items: [{ id: currentItemId, price: priceId }],
+            proration_behavior: "create_prorations",
+            metadata: { supabase_user_id: user.id },
+          });
+
+          // Immediately pay proration invoice
+          const invoices = await stripe.invoices.list({
+            subscription: existingSub.stripe_subscription_id,
+            status: "draft",
+            limit: 1,
+          });
+          if (invoices.data.length > 0) {
+            await stripe.invoices.finalizeInvoice(invoices.data[0].id);
+            await stripe.invoices.pay(invoices.data[0].id);
+          }
+
+          return NextResponse.json({ upgraded: true });
+        }
+        // If in trial — fall through to normal checkout
+      } catch (e: any) {
+        console.error("[checkout] upgrade error:", e.message);
+        // Fall through to normal checkout on error
+      }
     }
 
     const PROMO_CODES: Record<string, number> = {
