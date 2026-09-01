@@ -178,7 +178,7 @@ export function generateTicketSVG(data: any, logoSrc: string = ""): string {
   <path d="M570 600 C700 600 800 595 900 582 C995 569 1080 559 1165 554 C1218 551 1255 560 1285 569" stroke-dasharray="1 8"/>
 </g>
 
-  ${logoSrc ? `<image href="${logoSrc}" x="980" y="490" width="260" height="90" preserveAspectRatio="xMaxYMax meet"/>` : ""}
+  ${logoSrc ? `<image href="${logoSrc}" x="870" y="455" width="390" height="135" preserveAspectRatio="xMaxYMax meet"/>` : ""}
 </svg>`;
 }
 
