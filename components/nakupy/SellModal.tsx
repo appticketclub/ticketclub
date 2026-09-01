@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useCurrency } from "@/lib/context/CurrencyContext";
 import { EXCHANGES } from "@/lib/constants/exchanges";
 import { clearCache } from "@/lib/hooks/useDataCache";
-import { generateTicketSVG } from "./tabs/BanneryTab";
+import { generateTicketSVG, getLogoBase64 } from "./tabs/BanneryTab";
 
 const PLATFORMS = EXCHANGES;
 
@@ -33,6 +33,9 @@ type BannerData = {
   roi: number;
   platform: string | null;
   currency: string;
+  city?: string | null;
+  event_actual_date?: string | null;
+  eventDate?: string;
 };
 
 function PnlBanner({ data, currency }: { data: any; currency: string }) {
@@ -45,8 +48,18 @@ function PnlBanner({ data, currency }: { data: any; currency: string }) {
     profit: data.profit,
     roi: data.roi,
     currency: currency,
+    city: data.city ?? "",
+    eventDate: data.eventDate
+      ? data.eventDate
+      : data.event_actual_date
+        ? new Date(data.event_actual_date).toLocaleDateString("cs-CZ")
+        : "",
   });
-  return <div id="pnl-banner" dangerouslySetInnerHTML={{ __html: svg }} />;
+  return (
+    <div id="pnl-banner" style={{ width: "100%", aspectRatio: "1280/600", overflow: "hidden" }}>
+      <div dangerouslySetInnerHTML={{ __html: svg }} style={{ width: "100%", height: "100%" }} />
+    </div>
+  );
 }
 
 export default function SellModal({ purchase, onClose, onSave }: {
@@ -163,6 +176,8 @@ export default function SellModal({ purchase, onClose, onSave }: {
           roi: Math.round(roi * 100) / 100,
           currency: purchase.currency,
           platform: platform === "Jiné" ? (customPlatform || "Jiné") : (platform || null),
+          city: purchase.city,
+          event_actual_date: purchase.event_actual_date,
         };
         await supabase.from("banners").insert(banner);
 
@@ -177,6 +192,11 @@ export default function SellModal({ purchase, onClose, onSave }: {
           roi: Math.round(roi * 100) / 100,
           platform: platform === "Jiné" ? (customPlatform || "Jiné") : (platform || null),
           currency: purchase.currency,
+          city: purchase.city ?? "",
+          event_actual_date: purchase.event_actual_date,
+          eventDate: purchase.event_actual_date
+            ? new Date(purchase.event_actual_date).toLocaleDateString("cs-CZ")
+            : "",
         });
 
     setSaving(false);
@@ -185,10 +205,25 @@ export default function SellModal({ purchase, onClose, onSave }: {
   }
 
   async function handleShare() {
-    const svgElement = document.getElementById("pnl-banner")?.querySelector("svg");
-    if (!svgElement) return;
+    if (!bannerData) return;
     try {
-      const svgData = new XMLSerializer().serializeToString(svgElement);
+      const logoSrc = await getLogoBase64();
+      const svgData = generateTicketSVG({
+        eventName: bannerData.event_name,
+        quantity: bannerData.quantity,
+        quantity_sold: bannerData.quantity_sold,
+        buyPrice: bannerData.buy_price * bannerData.quantity,
+        sellPrice: bannerData.sell_price,
+        profit: bannerData.profit,
+        roi: bannerData.roi,
+        currency: bannerData.currency,
+        city: bannerData.city ?? "",
+        eventDate: bannerData.eventDate
+          ? bannerData.eventDate
+          : bannerData.event_actual_date
+            ? new Date(bannerData.event_actual_date).toLocaleDateString("cs-CZ")
+            : "",
+      }, logoSrc);
       const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
 
       const url = URL.createObjectURL(svgBlob);
@@ -211,7 +246,6 @@ export default function SellModal({ purchase, onClose, onSave }: {
               title: "Můj flip na TicketClub",
             });
           } else {
-            // Fallback — download
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
