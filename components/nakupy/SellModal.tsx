@@ -1,10 +1,24 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useCurrency } from "@/lib/context/CurrencyContext";
 import { EXCHANGES } from "@/lib/constants/exchanges";
 import { clearCache } from "@/lib/hooks/useDataCache";
-import { generateTicketSVG, getLogoBase64 } from "./tabs/BanneryTab";
+import { generateTicketSVG } from "./tabs/BanneryTab";
+
+async function getLogoBase64(): Promise<string> {
+  try {
+    const res = await fetch("/logo.png");
+    const blob = await res.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return "/logo.png";
+  }
+}
 
 const PLATFORMS = EXCHANGES;
 
@@ -38,7 +52,7 @@ type BannerData = {
   eventDate?: string;
 };
 
-function PnlBanner({ data, currency }: { data: any; currency: string }) {
+function PnlBanner({ data, currency, logoSrc = "" }: { data: any; currency: string; logoSrc?: string }) {
   const svg = generateTicketSVG({
     eventName: data.event_name,
     quantity: data.quantity,
@@ -54,7 +68,7 @@ function PnlBanner({ data, currency }: { data: any; currency: string }) {
       : data.event_actual_date
         ? new Date(data.event_actual_date).toLocaleDateString("cs-CZ")
         : "",
-  });
+  }, logoSrc);
   return (
     <div id="pnl-banner" style={{ width: "100%", aspectRatio: "1280/600", overflow: "hidden" }}>
       <div dangerouslySetInnerHTML={{ __html: svg }} style={{ width: "100%", height: "100%" }} />
@@ -76,7 +90,12 @@ export default function SellModal({ purchase, onClose, onSave }: {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [bannerData, setBannerData] = useState<BannerData | null>(null);
+  const [logoSrc, setLogoSrc] = useState<string>("");
   const { format } = useCurrency();
+
+  useEffect(() => {
+    getLogoBase64().then(setLogoSrc);
+  }, []);
 
   const qtyNum = parseInt(qty) || 0;
   const sellNum = priceMode === "per_ticket"
@@ -289,7 +308,7 @@ export default function SellModal({ purchase, onClose, onSave }: {
           </div>
 
           {/* Banner */}
-          <PnlBanner data={bannerData} currency={purchase.currency} />
+          <PnlBanner data={bannerData} currency={purchase.currency} logoSrc={logoSrc} />
 
           {/* Share button */}
           <button

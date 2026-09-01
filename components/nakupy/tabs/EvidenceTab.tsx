@@ -4,8 +4,22 @@ import { createClient } from "@/lib/supabase/client";
 import { EXCHANGES } from "@/lib/constants/exchanges";
 import { useCurrency } from "@/lib/context/CurrencyContext";
 import { AddPurchaseModal } from "./NakupyTab";
-import { generateTicketSVG, getLogoBase64 } from "./BanneryTab";
+import { generateTicketSVG } from "./BanneryTab";
 import { clearCache } from "@/lib/hooks/useDataCache";
+
+async function getLogoBase64(): Promise<string> {
+  try {
+    const res = await fetch("/logo.png");
+    const blob = await res.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return "/logo.png";
+  }
+}
 
 function isThisMonth(dateStr: string | null): boolean {
   if (!dateStr) return false;
@@ -90,7 +104,12 @@ export default function EvidenceTab() {
   const [editValue, setEditValue] = useState("");
   const [bannerRow, setBannerRow] = useState<EvidenceRow | null>(null);
   const [downloadingBanner, setDownloadingBanner] = useState(false);
+  const [logoSrc, setLogoSrc] = useState<string>("");
   const bannerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    getLogoBase64().then(setLogoSrc);
+  }, []);
 
   const [deleteConfirmRow, setDeleteConfirmRow] = useState<EvidenceRow | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -1380,7 +1399,7 @@ Zisk: ${bannerRow.profit ? Number(bannerRow.profit).toLocaleString("cs-CZ", { mi
                   eventDate: bannerRow.event_actual_date
                     ? new Date(bannerRow.event_actual_date).toLocaleDateString("cs-CZ")
                     : "",
-                }) }} style={{ width: "100%", height: "100%", lineHeight: 0 }} />
+                }, logoSrc) }} style={{ width: "100%", height: "100%", lineHeight: 0 }} />
               </div>
             </div>
 
