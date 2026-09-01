@@ -65,15 +65,23 @@ export async function POST(request: NextRequest) {
             metadata: { supabase_user_id: user.id },
           });
 
-          // Immediately pay proration invoice
-          const invoices = await stripe.invoices.list({
-            subscription: existingSub.stripe_subscription_id,
-            status: "draft",
-            limit: 1,
-          });
-          if (invoices.data.length > 0) {
-            await stripe.invoices.finalizeInvoice(invoices.data[0].id);
-            await stripe.invoices.pay(invoices.data[0].id);
+          // Create and pay proration invoice immediately
+          try {
+            const invoice = await stripe.invoices.create({
+              customer: customerId!,
+              subscription: existingSub.stripe_subscription_id,
+              auto_advance: false,
+            });
+
+            if (invoice.amount_due > 0) {
+              await stripe.invoices.finalizeInvoice(invoice.id);
+              await stripe.invoices.pay(invoice.id);
+              console.log("[checkout] Proration invoice paid:", invoice.id, invoice.amount_due);
+            } else {
+              console.log("[checkout] No amount due, skipping payment");
+            }
+          } catch (invoiceErr: any) {
+            console.log("[checkout] Invoice error:", invoiceErr.message);
           }
 
           return NextResponse.json({ upgraded: true });
