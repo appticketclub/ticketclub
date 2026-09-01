@@ -35,6 +35,9 @@ export async function POST(request: NextRequest) {
 
     const { plan, promoCode } = await request.json().catch(() => ({ plan: "monthly", promoCode: "" }));
 
+    console.log("[checkout] existingSub:", existingSub?.plan, existingSub?.status, existingSub?.stripe_subscription_id);
+    console.log("[checkout] plan requested:", plan);
+
     const priceId =
       plan === "yearly" ? process.env.STRIPE_PRO_YEARLY_PRICE_ID! :
       plan === "scale_monthly" ? process.env.STRIPE_SCALE_PRICE_ID! :
