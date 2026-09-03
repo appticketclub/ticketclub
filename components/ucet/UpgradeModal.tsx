@@ -40,14 +40,18 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plan, promoCode }),
       });
-      const data = await res.json();
-      if (data.upgraded) {
+      const d = await res.json();
+      if (d.error) {
+        alert(d.error);
+        setLoading(null);
+        return;
+      }
+      if (d.upgraded) {
         alert("✓ Předplatné bylo aktualizováno!");
         window.location.reload();
         return;
       }
-      if (data.url) window.location.href = data.url;
-      else alert("Chyba: " + data.error);
+      if (d.url) window.location.href = d.url;
     } catch {
       alert("Chyba pripojenia");
     }

@@ -95,11 +95,21 @@ export async function POST(request: NextRequest) {
 
     const PROMO_CODES: Record<string, number> = {
       SKOUSKA: 12,
+      MENTORING1V1: 180,
     };
 
-    const trialDays = (promoCode && PROMO_CODES[promoCode.toUpperCase()])
-      ? PROMO_CODES[promoCode.toUpperCase()]
-      : 0;
+    const PROMO_CODE_PLAN_RESTRICTION: Record<string, string> = {
+      MENTORING1V1: "scale_yearly",
+    };
+
+    const promoUpper = promoCode?.toUpperCase();
+    const trialDays = (promoUpper && PROMO_CODES[promoUpper]) ? PROMO_CODES[promoUpper] : 0;
+
+    if (promoUpper && PROMO_CODE_PLAN_RESTRICTION[promoUpper]) {
+      if (plan !== PROMO_CODE_PLAN_RESTRICTION[promoUpper]) {
+        return NextResponse.json({ error: "Tento promo kód je platný len pre Scale ročný plán." }, { status: 400 });
+      }
+    }
 
     // Create checkout session with trial
     const session = await stripe.checkout.sessions.create({
