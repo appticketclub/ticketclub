@@ -131,7 +131,7 @@ export default function EvidenceTab() {
   const [cityFilter, setCityFilter] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [sortBy, setSortBy] = useState<"event_date" | "created_at" | "sold_at">("event_date");
+  const [sortBy, setSortBy] = useState<"event_date" | "created_at" | "event_actual_date" | "sold_at">("event_date");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [showFilters, setShowFilters] = useState(false);
 
@@ -220,7 +220,8 @@ export default function EvidenceTab() {
     .sort((a, b) => {
       let aVal = "", bVal = "";
       if (sortBy === "event_date") { aVal = a.event_date ?? ""; bVal = b.event_date ?? ""; }
-      else if (sortBy === "created_at") { aVal = a.event_date ?? ""; bVal = b.event_date ?? ""; }
+      else if (sortBy === "created_at") { aVal = a.created_at ?? ""; bVal = b.created_at ?? ""; }
+      else if (sortBy === "event_actual_date") { aVal = a.event_actual_date ?? ""; bVal = b.event_actual_date ?? ""; }
       else if (sortBy === "sold_at") { aVal = a.sold_at ?? ""; bVal = b.sold_at ?? ""; }
       return sortDir === "asc" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
     });
@@ -653,8 +654,8 @@ export default function EvidenceTab() {
         </select>
         <select value={sortBy} onChange={e => setSortBy(e.target.value as any)}
           style={{ padding: "0.6rem 0.75rem", background: "#111111", border: "1px solid #1f1f1f", borderRadius: 10, color: "#fff", fontSize: 13, outline: "none", cursor: "pointer" }}>
-          <option value="created_at">Datum nákupu</option>
-          <option value="event_date">Datum akce</option>
+          <option value="event_date">Datum nákupu</option>
+          <option value="event_actual_date">Datum akce</option>
           <option value="sold_at">Datum prodeje</option>
         </select>
         <button onClick={() => setSortDir(d => d === "asc" ? "desc" : "asc")}
