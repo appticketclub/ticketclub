@@ -274,7 +274,7 @@ export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) 
             Stiahni Python aplikáciu ktorá automaticky nájde a otvorí všetky Chrome profily s Refresh Botom.
           </p>
           <a
-            href="https://mega.nz/fm/LBVRgRDR"
+            href="https://mega.nz/folder/GJVVDCTA#10BX6POImLbx89D-evwR1w"
             target="_blank"
             style={{
               display: "inline-block",
@@ -305,6 +305,26 @@ export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) 
                 <span>{step}</span>
               </div>
             ))}
+          </div>
+          <div style={{ marginTop: 20 }}>
+            <div style={{ fontWeight: 700, color: "#fff", marginBottom: 12, letterSpacing: "0.08em", fontSize: 13 }}>VIDEO NÁVOD</div>
+            <a
+              href="#"
+              target="_blank"
+              style={{
+                display: "inline-block",
+                padding: "10px 20px",
+                background: "transparent",
+                border: "1px solid #2a2a2a",
+                borderRadius: 10,
+                color: "#ededed",
+                fontWeight: 600,
+                fontSize: 14,
+                textDecoration: "none",
+              }}
+            >
+              ▶ Pozrieť video návod
+            </a>
           </div>
         </div>
       )}
