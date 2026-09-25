@@ -309,7 +309,7 @@ export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) 
           <div style={{ marginTop: 20 }}>
             <div style={{ fontWeight: 700, color: "#fff", marginBottom: 12, letterSpacing: "0.08em", fontSize: 13 }}>VIDEO NÁVOD</div>
             <a
-              href="#"
+              href="https://youtu.be/MU2Odl8Ypbc"
               target="_blank"
               style={{
                 display: "inline-block",
