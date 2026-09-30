@@ -22,6 +22,19 @@ export async function POST(request: NextRequest) {
 
     let customerId = existingSub?.stripe_customer_id;
 
+    // If no customer ID saved, check if customer already exists in Stripe by email
+    if (!customerId) {
+      const existing = await stripe.customers.list({ email: user.email, limit: 1 });
+      if (existing.data.length > 0) {
+        customerId = existing.data[0].id;
+        // Save to DB
+        await supabase.from("subscriptions").upsert({
+          user_id: user.id,
+          stripe_customer_id: customerId,
+        }, { onConflict: "user_id" });
+      }
+    }
+
     if (!customerId) {
       const customer = await stripe.customers.create({
         email: user.email,
