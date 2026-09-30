@@ -187,6 +187,7 @@ export default function ServicesGrid({
       <div className="services-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
         {services.map(service => {
           const locked = !service.free && !isPro && !isAdmin;
+          if (service.id === "discord-watcher") return null;
           return (
             <div
               key={service.id}
@@ -245,8 +246,8 @@ export default function ServicesGrid({
                   opacity: locked ? 0.6 : 1,
                 }}>
                   {(isPro || isAdmin)
-                    ? (service.id === "refresh-bot" ? "PRO / SCALE" : "PRO")
-                    : (service.id === "refresh-bot" ? "🔒 PRO / SCALE" : "🔒 PRO")}
+                    ? "PRO"
+                    : "🔒 PRO"}
                 </div>
               )}
 
