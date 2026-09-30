@@ -49,45 +49,33 @@ export async function POST(request: NextRequest) {
         let subscriptionId = session.subscription as string;
         if (!userId) { console.log("No userId in metadata"); break; }
 
-        // Check if SKOUSKA coupon was used
         const discounts = session.total_details?.breakdown?.discounts ?? [];
-        const usedSkouska = discounts.some((d: any) => 
-          d.discount?.coupon?.id === "SKOUSKA" || 
+        const usedSkouska = discounts.some((d: any) =>
+          d.discount?.coupon?.id === "SKOUSKA" ||
           d.discount?.coupon?.name === "SKOUSKA" ||
           d.discount?.promotion_code?.code === "SKOUSKA"
         );
-        
+
         if (usedSkouska && subscriptionId) {
-          // Apply 12-day trial to subscription
           await stripe.subscriptions.update(subscriptionId, {
-            trial_end: Math.floor(Date.now() / 1000) + (12 * 24 * 60 * 60), // 12 days
+            trial_end: Math.floor(Date.now() / 1000) + (12 * 24 * 60 * 60),
           });
         }
 
         const sub = (await stripe.subscriptions.retrieve(subscriptionId)) as any;
-        console.log("sub.current_period_end:", sub.current_period_end, typeof sub.current_period_end);
         const periodEndRaw = sub.current_period_end;
-        const periodEnd =  periodEndRaw 
-          ? new Date(typeof periodEndRaw === 'number' ? periodEndRaw * 1000 : periodEndRaw).toISOString() 
+        const periodEnd =  periodEndRaw
+          ? new Date(typeof periodEndRaw === 'number' ? periodEndRaw * 1000 : periodEndRaw).toISOString()
           : null;
         const interval = sub.items?.data?.[0]?.plan?.interval ?? "month";
         const planInterval = interval === "year" ? "yearly" : "monthly";
-        
-        const priceId = sub.items?.data?.[0]?.price?.id;
-        const isProMax = priceId === process.env.STRIPE_PRO_MAX_PRICE_ID || 
-                          priceId === process.env.STRIPE_PRO_MAX_YEARLY_PRICE_ID;
-        const isScale = priceId === process.env.STRIPE_SCALE_PRICE_ID || 
-                        priceId === process.env.STRIPE_SCALE_YEARLY_PRICE_ID;
-        const extensionPlan = isScale || isProMax ? "unlimited" : "single";
-        console.log("[webhook] priceId:", priceId);
-        console.log("[webhook] STRIPE_SCALE_PRICE_ID:", process.env.STRIPE_SCALE_PRICE_ID);
-        console.log("[webhook] STRIPE_SCALE_YEARLY_PRICE_ID:", process.env.STRIPE_SCALE_YEARLY_PRICE_ID);
-        console.log("[webhook] isScale:", isScale);
-        console.log("[webhook] extensionPlan:", extensionPlan);
-        
+
+        const plan = "pro";
+        const extensionPlan = "unlimited";
+
         await supabase.from("subscriptions").upsert({
           user_id: userId,
-          plan: isScale ? "scale" : isProMax ? "pro_max" : "pro",
+          plan: plan,
           plan_interval: planInterval,
           status: "active",
           stripe_customer_id: customerId,
@@ -95,12 +83,7 @@ export async function POST(request: NextRequest) {
           current_period_end: periodEnd,
           updated_at: new Date().toISOString(),
         }, { onConflict: "user_id" });
-        if (isScale) {
-          await supabase.from("extension_licenses").update({ plan: "unlimited" }).eq("user_id", userId);
-        } else {
-          await supabase.from("extension_licenses").update({ plan: "single" }).eq("user_id", userId);
-        }
-        // Reactivate launcher token if exists, otherwise skip
+
         const { data: existingToken } = await supabase
           .from("launcher_tokens")
           .select("id, is_active")
@@ -111,10 +94,8 @@ export async function POST(request: NextRequest) {
           await supabase.from("launcher_tokens")
             .update({ is_active: true })
             .eq("user_id", userId);
-          console.log("✅ Launcher token reactivated for:", userId);
         }
 
-        // Reactivate or create extension license
         const { data: existingLicense } = await supabase
           .from("extension_licenses")
           .select("id")
@@ -147,27 +128,18 @@ export async function POST(request: NextRequest) {
         const userId = sub.metadata?.supabase_user_id;
         if (!userId) break;
         const periodEndRaw = sub.current_period_end;
-        const periodEnd =  periodEndRaw 
-          ? new Date(typeof periodEndRaw === 'number' ? periodEndRaw * 1000 : periodEndRaw).toISOString() 
+        const periodEnd =  periodEndRaw
+          ? new Date(typeof periodEndRaw === 'number' ? periodEndRaw * 1000 : periodEndRaw).toISOString()
           : null;
         const interval = sub.items?.data?.[0]?.plan?.interval ?? "month";
         const planInterval = interval === "year" ? "yearly" : "monthly";
-        
-        const priceId = sub.items?.data?.[0]?.price?.id;
-        const isProMax = priceId === process.env.STRIPE_PRO_MAX_PRICE_ID || 
-                          priceId === process.env.STRIPE_PRO_MAX_YEARLY_PRICE_ID;
-        const isScale = priceId === process.env.STRIPE_SCALE_PRICE_ID || 
-                        priceId === process.env.STRIPE_SCALE_YEARLY_PRICE_ID;
-        console.log("[webhook] priceId:", priceId);
-        console.log("[webhook] SCALE_MONTHLY:", process.env.STRIPE_SCALE_PRICE_ID);
-        console.log("[webhook] SCALE_YEARLY:", process.env.STRIPE_SCALE_YEARLY_PRICE_ID);
-        console.log("[webhook] isScale:", isScale);
-        console.log("[webhook] plan:", isScale ? "scale" : "pro");
-        const extensionPlan = isScale || isProMax ? "unlimited" : "single";
-        
+
+        const plan = "pro";
+        const extensionPlan = "unlimited";
+
         await supabase.from("subscriptions").upsert({
           user_id: userId,
-          plan: isScale ? "scale" : isProMax ? "pro_max" : "pro",
+          plan: plan,
           plan_interval: planInterval,
           status: "active",
           stripe_customer_id: invoice.customer as string,
@@ -175,12 +147,7 @@ export async function POST(request: NextRequest) {
           current_period_end: periodEnd,
           updated_at: new Date().toISOString(),
         }, { onConflict: "user_id" });
-        if (isScale) {
-          await supabase.from("extension_licenses").update({ plan: "unlimited" }).eq("user_id", userId);
-        } else {
-          await supabase.from("extension_licenses").update({ plan: "single" }).eq("user_id", userId);
-        }
-        // Reactivate launcher token if exists, otherwise skip
+
         const { data: existingToken } = await supabase
           .from("launcher_tokens")
           .select("id, is_active")
@@ -191,10 +158,8 @@ export async function POST(request: NextRequest) {
           await supabase.from("launcher_tokens")
             .update({ is_active: true })
             .eq("user_id", userId);
-          console.log("✅ Launcher token reactivated for:", userId);
         }
 
-        // Reactivate or create extension license
         const { data: existingLicense } = await supabase
           .from("extension_licenses")
           .select("id")
@@ -262,12 +227,10 @@ export async function POST(request: NextRequest) {
         const isFullyCanceled = sub.status === "canceled";
         const isCanceled = sub.cancel_at_period_end === true && sub.status !== "active";
 
-        // Check if this is a RENEWAL — previous had canceled_at but now it's null
         const previousCanceledAt = (event.data as any).previous_attributes?.canceled_at;
         const isRenewal = previousCanceledAt !== undefined && sub.canceled_at === null && sub.status === "active";
 
         if (isFullyCanceled || isCanceled) {
-          // Deactivate
           await supabase.from("subscriptions").update({
             plan: "free",
             status: "canceled",
@@ -281,7 +244,6 @@ export async function POST(request: NextRequest) {
           console.log("❌ Canceled:", userId);
 
         } else if (isRenewal) {
-          // Reactivate
           await supabase.from("subscriptions").update({
             plan: "pro",
             status: "active",
@@ -289,7 +251,6 @@ export async function POST(request: NextRequest) {
             updated_at: new Date().toISOString(),
           }).eq("user_id", userId);
 
-          // Reactivate launcher token if exists, otherwise skip
           const { data: existingToken } = await supabase
             .from("launcher_tokens")
             .select("id, is_active")
@@ -300,10 +261,8 @@ export async function POST(request: NextRequest) {
             await supabase.from("launcher_tokens")
               .update({ is_active: true })
               .eq("user_id", userId);
-            console.log("✅ Launcher token reactivated for:", userId);
           }
 
-          // Reactivate or create extension license
           const { data: existingLicense } = await supabase
             .from("extension_licenses")
             .select("id")
@@ -312,7 +271,7 @@ export async function POST(request: NextRequest) {
 
           if (existingLicense) {
             await supabase.from("extension_licenses")
-              .update({ is_active: true })
+              .update({ is_active: true, plan: "unlimited" })
               .eq("user_id", userId);
           } else {
             const licenseKey = "TC-" + Array.from({length: 3}, () =>
@@ -322,18 +281,13 @@ export async function POST(request: NextRequest) {
               user_id: userId,
               license_key: licenseKey,
               is_active: true,
+              plan: "unlimited",
             });
           }
           console.log("✅ Reactivated:", userId);
 
         } else {
-          // Normal update — check if plan changed (e.g. PRO → Scale)
-          const priceId = sub.items?.data?.[0]?.price?.id;
-          const isScale = priceId === process.env.STRIPE_SCALE_PRICE_ID || 
-                          priceId === process.env.STRIPE_SCALE_YEARLY_PRICE_ID;
-          const isProMax = priceId === process.env.STRIPE_PRO_MAX_PRICE_ID || 
-                           priceId === process.env.STRIPE_PRO_MAX_YEARLY_PRICE_ID;
-          const newPlan = isScale ? "scale" : isProMax ? "pro_max" : "pro";
+          const newPlan = "pro";
 
           await supabase.from("subscriptions").update({
             plan: newPlan,
@@ -342,13 +296,10 @@ export async function POST(request: NextRequest) {
             updated_at: new Date().toISOString(),
           }).eq("user_id", userId);
 
-          // Update extension licenses based on new plan
-          if (isScale) {
-            await supabase.from("extension_licenses")
-              .update({ plan: "unlimited" })
-              .eq("user_id", userId);
-            console.log("✅ Scale upgrade - extension set to unlimited:", userId);
-          }
+          await supabase.from("extension_licenses")
+            .update({ plan: "unlimited" })
+            .eq("user_id", userId);
+          console.log("✅ Plan update - extension set to unlimited:", userId);
         }
 
         break;
