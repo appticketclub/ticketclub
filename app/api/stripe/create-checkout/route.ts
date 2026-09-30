@@ -46,6 +46,8 @@ export async function POST(request: NextRequest) {
 
     const PROMO_CODES: Record<string, number> = {
       SKOUSKA: 12,
+      MENTORING1V1: 180,
+      MESIAC: 30,
     };
 
     const promoUpper = promoCode?.toUpperCase();
