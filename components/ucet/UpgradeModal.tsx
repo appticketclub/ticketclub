@@ -100,7 +100,7 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
             <div style={{ fontSize: 28, fontWeight: 800, color: "#fff" }}>€39.95</div>
             <div style={{ fontSize: 12, color: "#525252", marginBottom: 16 }}>fakturováno měsíčně</div>
             <ul style={{ listStyle: "none", padding: 0, marginBottom: 20 }}>
-              {["Refresh Bot", "Sales Tracker", "Chrome Launcher", "Email Import", "Discord Watcher Bot"].map(f => (
+              {["Refresh Bot", "Sales Tracker Neomezený", "Chrome Launcher", "Email Import"].map(f => (
                 <li key={f} style={{ fontSize: 13, color: "#ededed", marginBottom: 6 }}>✓ {f}</li>
               ))}
             </ul>
@@ -121,7 +121,7 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
             <div style={{ fontSize: 12, color: "#525252", marginBottom: 4 }}>fakturováno ročně</div>
             <div style={{ fontSize: 11, color: "#34d399", marginBottom: 16 }}>3 měsíce zdarma</div>
             <ul style={{ listStyle: "none", padding: 0, marginBottom: 20 }}>
-              {["Refresh Bot", "Sales Tracker", "Chrome Launcher", "Email Import", "Discord Watcher Bot"].map(f => (
+              {["Refresh Bot", "Sales Tracker Neomezený", "Chrome Launcher", "Email Import"].map(f => (
                 <li key={f} style={{ fontSize: 13, color: "#ededed", marginBottom: 6 }}>✓ {f}</li>
               ))}
             </ul>
