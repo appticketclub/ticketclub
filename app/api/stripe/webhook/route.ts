@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
         const interval = sub.items?.data?.[0]?.plan?.interval ?? "month";
         const planInterval = interval === "year" ? "yearly" : "monthly";
 
-        const plan = "pro";
+        const plan = "scale";
         const extensionPlan = "unlimited";
 
         await supabase.from("subscriptions").upsert({
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
             plan: extensionPlan,
           });
         }
-        console.log("✅ Pro activated:", userId);
+        console.log("✅ Pro activated with scale permissions:", userId);
         break;
       }
       case "invoice.payment_succeeded": {
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
         const interval = sub.items?.data?.[0]?.plan?.interval ?? "month";
         const planInterval = interval === "year" ? "yearly" : "monthly";
 
-        const plan = "pro";
+        const plan = "scale";
         const extensionPlan = "unlimited";
 
         await supabase.from("subscriptions").upsert({
@@ -245,7 +245,7 @@ export async function POST(request: NextRequest) {
 
         } else if (isRenewal) {
           await supabase.from("subscriptions").update({
-            plan: "pro",
+            plan: "scale",
             status: "active",
             current_period_end: periodEnd,
             updated_at: new Date().toISOString(),
@@ -287,7 +287,7 @@ export async function POST(request: NextRequest) {
           console.log("✅ Reactivated:", userId);
 
         } else {
-          const newPlan = "pro";
+          const newPlan = "scale";
 
           await supabase.from("subscriptions").update({
             plan: newPlan,
