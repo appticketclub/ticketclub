@@ -21,7 +21,6 @@ export default async function DostupneSluzbyPage() {
     .eq("user_id", user.id)
     .single();
 
-  const isScale = subscription?.plan === "scale";
   const isPro = subscription?.plan === "pro" || subscription?.plan === "scale" || subscription?.status === "trialing";
   const isAdmin = profile?.role === "admin";
 
@@ -35,7 +34,7 @@ export default async function DostupneSluzbyPage() {
           </h1>
           <p style={{ color: "#f5f5f5" }}>Vyberte si nástroj, se kterým chcete pracovat.</p>
         </div>
-        <ServicesGrid isPro={isPro} isScale={isScale} isAdmin={isAdmin} user={user} />
+        <ServicesGrid isPro={isPro} isAdmin={isAdmin} user={user} />
       </main>
     </div>
   );

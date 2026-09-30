@@ -41,12 +41,10 @@ function UpgradeLink() {
 
 export default function ServicesGrid({
   isPro,
-  isScale = false,
   isAdmin = false,
   user,
 }: {
   isPro: boolean;
-  isScale?: boolean;
   isAdmin?: boolean;
   user?: { id: string } | null;
 }) {
@@ -144,11 +142,11 @@ export default function ServicesGrid({
           }
         }
       `}</style>
-      {/* Dynamic upgrade banner */}
-      {!isScale && (
+      {/* Upgrade banner for non-PRO users */}
+      {!isPro && (
         <div style={{
           background: "linear-gradient(135deg, #1a1a2e, #16213e)",
-          border: `1px solid ${isPro ? "rgba(59,130,246,0.3)" : "rgba(168,85,247,0.3)"}`,
+          border: "1px solid rgba(168,85,247,0.3)",
           borderRadius: 16,
           padding: "1.25rem 1.5rem",
           marginBottom: "1.5rem",
@@ -159,21 +157,18 @@ export default function ServicesGrid({
           flexWrap: "wrap" as const,
         }}>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: isPro ? "#3b82f6" : "#a855f7", marginBottom: 4 }}>
-              {isPro ? "⭐ Upgraduj na Scale" : "⭐ Upgraduj na PRO"}
+            <div style={{ fontSize: 14, fontWeight: 700, color: "#a855f7", marginBottom: 4 }}>
+              ⭐ Upgraduj na PRO
             </div>
             <div style={{ fontSize: 12, color: "#ededed" }}>
-              {isPro 
-                ? "Odemkněte Refresh Bot unlimited a Discord Watcher Bot."
-                : "Získejte přístup k Refresh Botu, Sales Trackeru, Email Importu a dalším PRO funkcím."
-              }
+              Získejte přístup k Refresh Botu, Sales Trackeru, Email Importu a dalším PRO funkcím.
             </div>
           </div>
           <button
             onClick={() => setShowUpgradeModal(true)}
             style={{
               padding: "0.6rem 1.25rem",
-              background: isPro ? "#3b82f6" : "linear-gradient(135deg, #a855f7, #7c3aed)",
+              background: "linear-gradient(135deg, #a855f7, #7c3aed)",
               border: "none",
               borderRadius: 10,
               color: "#fff",
@@ -183,7 +178,7 @@ export default function ServicesGrid({
               whiteSpace: "nowrap" as const,
             }}
           >
-            {isPro ? "Upgradovat na Scale →" : "Upgradovat na PRO →"}
+            Upgradovat na PRO →
           </button>
         </div>
       )}
@@ -191,7 +186,7 @@ export default function ServicesGrid({
       {showUpgradeModal && <UpgradeModal onClose={() => setShowUpgradeModal(false)} />}
       <div className="services-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
         {services.map(service => {
-          const locked = (service.scale ? (!isScale && !isAdmin) : (!service.free && !isPro && !isAdmin));
+          const locked = !service.free && !isPro && !isAdmin;
           return (
             <div
               key={service.id}
