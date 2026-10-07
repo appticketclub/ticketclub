@@ -155,9 +155,9 @@ export default function Sidebar({
             style={{ 
               background: "none", 
               border: "none", 
-              color: "#525252", 
+              color: "#ffffff", 
               cursor: "pointer", 
-              fontSize: 18, 
+              fontSize: 36, 
               padding: 4, 
               display: "flex", 
               alignItems: "center", 
