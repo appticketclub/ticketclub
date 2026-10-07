@@ -1055,6 +1055,16 @@ export default function EvidenceTab() {
                               setRows(prev => prev.map(r => r.id === row.id ? { ...r, ticket_type_custom: newVal } : r));
                               setEditingCell(null);
                             }}
+                            onFocus={async () => {
+                              if (row.ticket_type_custom === null && row.ticket_type) {
+                                const supabase = createClient();
+                                await supabase
+                                  .from("purchases")
+                                  .update({ ticket_type_custom: row.ticket_type })
+                                  .eq("id", row.id);
+                                setRows(prev => prev.map(r => r.id === row.id ? { ...r, ticket_type_custom: row.ticket_type } : r));
+                              }
+                            }}
                             onBlur={() => setEditingCell(null)}
                             style={{ width: "100%", padding: "0.5rem", background: "#0d0d2a", border: "2px solid #7c3aed", color: "#fff", fontSize: 12, outline: "none", boxSizing: "border-box" as const }}
                           >
