@@ -143,7 +143,7 @@ export default function SalesTrackerClient() {
           {/* Tracker switcher */}
           <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem" }}>
             {[
-              { key: "ticksights", label: "TickSights Sales Tracker" },
+              { key: "ticksights", label: "Sales tracker" },
               { key: "eventory", label: "Sales Tracker (Eventory)" },
             ].map(tab => (
               <button
