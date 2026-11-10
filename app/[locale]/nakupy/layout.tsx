@@ -13,7 +13,7 @@ export default async function NakupyLayout({ children }: { children: React.React
 
   return (
     <CurrencyProvider initialCurrency={displayCurrency}>
-      <div style={{ minHeight: "100vh", background: "#080808", display: "flex", flexDirection: "column" }}>
+      <div style={{ minHeight: "100vh", background: "#0f0f14", display: "flex", flexDirection: "column" }}>
         <TopNav user={user} profile={profile} />
         {children}
       </div>
