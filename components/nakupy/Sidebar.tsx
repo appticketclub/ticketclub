@@ -145,7 +145,7 @@ export default function Sidebar({
                 borderRadius: 10,
                 fontSize: 13.5,
                 fontWeight: isActive ? 600 : 400,
-                color: isActive ? "#c4baff" : "rgba(255,255,255,0.65)",
+                color: isActive ? "#c4baff" : "#ffffff",
                 background: isActive
                   ? "linear-gradient(135deg, rgba(123,108,246,0.22), rgba(89,52,196,0.12))"
                   : "transparent",
@@ -193,7 +193,7 @@ export default function Sidebar({
                 <span style={{
                   fontSize: 10,
                   fontWeight: 700,
-                  color: isActive ? "#c4baff" : "rgba(255,255,255,0.4)",
+                  color: isActive ? "#c4baff" : "#ffffff",
                   background: isActive ? "rgba(123,108,246,0.25)" : "rgba(255,255,255,0.07)",
                   border: isActive ? "1px solid rgba(123,108,246,0.3)" : "1px solid rgba(255,255,255,0.08)",
                   borderRadius: 6,
