@@ -3,6 +3,63 @@ import { useState, useEffect, useRef } from "react";
 import { signOut } from "@/lib/auth/actions";
 import { createClient } from "@/lib/supabase/client";
 
+function FullscreenButton() {
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    function onChange() {
+      setIsFullscreen(!!document.fullscreenElement);
+    }
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
+
+  function toggle() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  }
+
+  return (
+    <button
+      onClick={toggle}
+      title={isFullscreen ? "Ukončiť celú obrazovku" : "Celá obrazovka"}
+      style={{
+        width: 38, height: 38, borderRadius: 10,
+        background: "rgba(255,255,255,0.05)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+        transition: "all 0.15s",
+        flexShrink: 0,
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.background = "rgba(123,108,246,0.15)";
+        e.currentTarget.style.borderColor = "rgba(123,108,246,0.35)";
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.background = "rgba(255,255,255,0.05)";
+        e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+      }}
+    >
+      {isFullscreen ? (
+        /* Exit fullscreen icon */
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/>
+          <path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>
+        </svg>
+      ) : (
+        /* Enter fullscreen icon */
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/>
+          <path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
+        </svg>
+      )}
+    </button>
+  );
+}
+
 export default function TopNav({ user, profile }: { user: any; profile: any }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [bellOpen, setBellOpen] = useState(false);
@@ -79,6 +136,9 @@ export default function TopNav({ user, profile }: { user: any; profile: any }) {
 
       {/* RIGHT */}
       <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+
+        {/* Fullscreen toggle */}
+        <FullscreenButton />
 
         {/* Bell — members only */}
         {!isAdmin && (
