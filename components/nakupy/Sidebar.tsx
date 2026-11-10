@@ -37,19 +37,26 @@ export default function Sidebar({
 
   const [plan, setPlan] = useState<"free" | "scale" | null>(null);
   const [showUpgrade, setShowUpgrade] = useState(false);
+  const [evidenceCount, setEvidenceCount] = useState<number | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) return;
-      supabase
-        .from("subscriptions")
-        .select("plan")
-        .eq("user_id", user.id)
-        .single()
-        .then(({ data }) => {
-          setPlan(data?.plan === "scale" ? "scale" : "free");
-        });
+      Promise.all([
+        supabase
+          .from("subscriptions")
+          .select("plan")
+          .eq("user_id", user.id)
+          .single(),
+        supabase
+          .from("purchases")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id),
+      ]).then(([subRes, countRes]) => {
+        setPlan(subRes.data?.plan === "scale" ? "scale" : "free");
+        setEvidenceCount(countRes.count ?? 0);
+      });
     });
   }, []);
 
@@ -180,7 +187,26 @@ export default function Sidebar({
                 {item.icon}
               </span>
               <span style={{ flex: 1 }}>{item.label}</span>
-              {isActive && (
+
+              {item.id === "evidence" && evidenceCount !== null && evidenceCount > 0 && (
+                <span style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  color: isActive ? "#c4baff" : "rgba(255,255,255,0.4)",
+                  background: isActive ? "rgba(123,108,246,0.25)" : "rgba(255,255,255,0.07)",
+                  border: isActive ? "1px solid rgba(123,108,246,0.3)" : "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 6,
+                  padding: "1px 6px",
+                  flexShrink: 0,
+                  lineHeight: "16px",
+                  minWidth: 20,
+                  textAlign: "center",
+                }}>
+                  {evidenceCount}
+                </span>
+              )}
+
+              {isActive && !(item.id === "evidence" && evidenceCount !== null && evidenceCount > 0) && (
                 <span style={{
                   width: 7,
                   height: 7,
