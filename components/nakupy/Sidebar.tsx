@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function Sidebar({
   activeTab,
@@ -32,6 +33,23 @@ export default function Sidebar({
     ...(!isProduction ? [{ id: "bannery", label: "P&L bannery", icon: "▣" }] : []),
     ...(isAdmin ? [{ id: "tym-statistiky", label: "Štatistiky týmu", icon: "⊕" }] : []),
   ];
+
+  const [plan, setPlan] = useState<"free" | "scale" | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      supabase
+        .from("subscriptions")
+        .select("plan")
+        .eq("user_id", user.id)
+        .single()
+        .then(({ data }) => {
+          setPlan((data?.plan === "scale" ? "scale" : "free") as "free" | "scale");
+        });
+    });
+  }, []);
 
   return (
     <>
@@ -182,6 +200,84 @@ export default function Sidebar({
           flexDirection: "column",
           gap: "0.5rem",
         }}>
+          {!collapsed && plan !== null && (
+            <div style={{
+              marginBottom: "0.75rem",
+              borderRadius: 14,
+              overflow: "hidden",
+              position: "relative",
+              background: plan === "scale"
+                ? "linear-gradient(135deg, rgba(123,108,246,0.18), rgba(89,52,196,0.08))"
+                : "linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02))",
+              border: plan === "scale"
+                ? "1px solid rgba(123,108,246,0.35)"
+                : "1px solid rgba(255,255,255,0.08)",
+              padding: "0.85rem 1rem",
+              boxShadow: plan === "scale" ? "0 0 20px rgba(123,108,246,0.1)" : "none",
+            }}>
+              {/* Top glow line */}
+              <div style={{
+                position: "absolute", top: 0, left: 0, right: 0, height: 1,
+                background: plan === "scale"
+                  ? "linear-gradient(90deg, transparent, rgba(123,108,246,0.7), transparent)"
+                  : "linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)",
+              }} />
+
+              {/* Badge + plan name */}
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.4rem" }}>
+                <span style={{
+                  fontSize: 9, fontWeight: 800, letterSpacing: "0.1em",
+                  padding: "2px 7px", borderRadius: 5,
+                  background: plan === "scale"
+                    ? "linear-gradient(135deg, #7b6cf6, #9d8ff7)"
+                    : "rgba(255,255,255,0.08)",
+                  color: plan === "scale" ? "#fff" : "rgba(255,255,255,0.4)",
+                  boxShadow: plan === "scale" ? "0 0 8px rgba(123,108,246,0.4)" : "none",
+                }}>
+                  {plan === "scale" ? "PRO" : "FREE"}
+                </span>
+                <span style={{
+                  fontSize: 12, fontWeight: 600,
+                  color: plan === "scale" ? "#c4baff" : "rgba(255,255,255,0.35)",
+                }}>
+                  TicketClub {plan === "scale" ? "Pro" : "Free"}
+                </span>
+              </div>
+
+              {/* Description */}
+              <div style={{
+                fontSize: 10.5,
+                color: "rgba(255,255,255,0.3)",
+                lineHeight: 1.5,
+                marginBottom: plan === "free" ? "0.65rem" : 0,
+              }}>
+                {plan === "scale"
+                  ? "AI štatistiky · Kalkulačka · Bannery"
+                  : "Obmedzený prístup · 10 nákupov"}
+              </div>
+
+              {/* Upgrade button — FREE only */}
+              {plan === "free" && (
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent("openUpgradeModal"))}
+                  style={{
+                    display: "block", width: "100%", textAlign: "center",
+                    fontSize: 11, fontWeight: 700,
+                    padding: "6px 0", borderRadius: 8, border: "none",
+                    background: "linear-gradient(135deg, #7b6cf6, #9d8ff7)",
+                    color: "#fff", cursor: "pointer",
+                    boxShadow: "0 0 14px rgba(123,108,246,0.35)",
+                    letterSpacing: "0.04em",
+                    transition: "opacity 0.15s",
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+                >
+                  Upgradovať →
+                </button>
+              )}
+            </div>
+          )}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <Link
               href="/dostupne-sluzby"
