@@ -305,6 +305,9 @@ export default function EvidenceTab() {
   const ticketsActive = filtered.filter(r => r.status === "active" || r.status === "partial").reduce((s, r) => s + (r.quantity_remaining ?? r.quantity), 0);
   const moneyOnWay = filtered.filter(r => r.status === "sold" && !r.paid_out).reduce((s, r) => s + convert(r.sell_price_total, r.currency as "EUR" | "CZK"), 0);
 
+  const statMoney = (amount: number) =>
+    amount.toLocaleString("cs-CZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + (currency === "EUR" ? " €" : " Kč");
+
   const cellStyle = (width: number, isNum = false): React.CSSProperties => ({
     minWidth: width, maxWidth: width, width,
     padding: "0.9rem 1rem",
@@ -724,12 +727,12 @@ export default function EvidenceTab() {
         marginBottom: "1rem",
       }}>
         {[
-          { label: "NÁKUPŮ", value: `${filtered.length}` },
-          { label: "LÍSTKŮ CELKEM", value: `${filtered.reduce((s, r) => s + r.quantity, 0)}×` },
-          { label: "NÁKUP CELKEM", value: format(totalBuy, currency) },
-          { label: "PRODEJ CELKEM", value: format(totalSell, currency) },
-          { label: "LÍSTKY V PRODEJI", value: `${ticketsActive}×` },
-          { label: "PENÍZE NA CESTĚ", value: format(moneyOnWay, currency) },
+          { label: "NÁKUPŮ", value: `${filtered.length}`, color: "#ffffff" },
+          { label: "LÍSTKŮ CELKEM", value: `${filtered.reduce((s, r) => s + r.quantity, 0)}×`, color: "#ffffff" },
+          { label: "NÁKUP CELKEM", value: statMoney(totalBuy), color: "#ffffff" },
+          { label: "PRODEJ CELKEM", value: statMoney(totalSell), color: "#5de8a0" },
+          { label: "LÍSTKY V PRODEJI", value: `${ticketsActive}×`, color: "#a89df7" },
+          { label: "PENÍZE NA CESTĚ", value: statMoney(moneyOnWay), color: "#5de8a0" },
         ].map(s => (
           <div key={s.label} style={{
             background: "linear-gradient(145deg, rgba(30,30,38,0.75), rgba(22,22,28,0.8))",
@@ -749,7 +752,10 @@ export default function EvidenceTab() {
             }}>
               {s.label}
             </div>
-            <div style={{ fontSize: 20, fontWeight: 800, fontFamily: "'Space Grotesk', sans-serif", color: "#fff" }}>
+            <div style={{
+              fontSize: 20, fontWeight: 800, fontFamily: "'Space Grotesk', sans-serif",
+              color: s.color, fontVariantNumeric: "tabular-nums",
+            }}>
               {s.value}
             </div>
           </div>
@@ -813,7 +819,7 @@ export default function EvidenceTab() {
                 const hasSales = row.sell_price_total > 0;
                 const isComplete = row.status === "sold";
                 const isPartial = !isComplete && row.quantity_sold > 0;
-                const rowBg = isComplete ? "transparent" : "rgba(251,191,36,0.04)";
+                const rowBg = isComplete ? "transparent" : "rgba(251,191,36,0.07)";
                 const rowAccent = isComplete
                   ? "inset 3px 0 0 #5de8a0"
                   : isPartial
