@@ -14,6 +14,7 @@ import DoporuceneAkceTab from "@/components/nakupy/tabs/DoporuceneAkceTab";
 import TymStatistikyTab from "@/components/nakupy/tabs/TymStatistikyTab";
 import EvidenceTab from "@/components/nakupy/tabs/EvidenceTab";
 import DetailyTab from "@/components/nakupy/tabs/DetailyTab";
+import UpozorneniaTab from "@/components/nakupy/tabs/UpozorneniaTab";
 import SurveyModal from "@/components/survey/SurveyModal";
 
 export default function NakupyPage() {
@@ -64,6 +65,7 @@ export default function NakupyPage() {
     "doporucene-akce": <DoporuceneAkceTab />,
     kalkulacka: <KalkulackaTab />,
     bannery: <BanneryTab />,
+    ...(isAdmin ? { upozornenia: <UpozorneniaTab /> } : {}),
     ...(isAdmin ? { "tym-statistiky": <TymStatistikyTab /> } : {}),
   };
 

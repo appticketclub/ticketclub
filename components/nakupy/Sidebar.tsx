@@ -32,6 +32,7 @@ export default function Sidebar({
     { id: "doporucene-akce", label: "Nadcházející akce", icon: "◇" },
     { id: "kalkulacka", label: "Kalkulačka", icon: "⊟" },
     ...(!isProduction ? [{ id: "bannery", label: "P&L bannery", icon: "▣" }] : []),
+    ...(isAdmin ? [{ id: "upozornenia", label: "Upozornenia", icon: "🔔" }] : []),
     ...(isAdmin ? [{ id: "tym-statistiky", label: "Štatistiky týmu", icon: "⊕" }] : []),
   ];
 
