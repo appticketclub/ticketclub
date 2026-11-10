@@ -287,8 +287,12 @@ export default function UvodTab() {
       <style>{`
         .time-range-btn:hover { background: rgba(123,108,246,0.1) !important; color: #c4baff !important; }
         .chart-tab-btn:hover { background: rgba(123,108,246,0.08) !important; color: #c4baff !important; }
-        .stat-card { transition: border-color 0.2s, box-shadow 0.2s; }
-        .stat-card:hover { border-color: rgba(123,108,246,0.35) !important; box-shadow: 0 4px 24px rgba(123,108,246,0.08) !important; }
+        .stat-card { transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; }
+        .stat-card:hover {
+          border-color: rgba(123,108,246,0.5) !important;
+          box-shadow: 0 8px 40px rgba(123,108,246,0.15), 0 0 0 1px rgba(123,108,246,0.1), 0 1px 0 rgba(255,255,255,0.05) inset !important;
+          transform: translateY(-2px) translateZ(0) !important;
+        }
         input[type="date"].purple-input { color-scheme: dark; }
         input[type="date"].purple-input:focus { outline: none; border-color: rgba(123,108,246,0.5) !important; box-shadow: 0 0 0 3px rgba(123,108,246,0.08); }
       `}</style>
@@ -322,7 +326,7 @@ export default function UvodTab() {
               color: timeRange === r.id ? "#fff" : "rgba(255,255,255,0.5)",
               cursor: "pointer",
               transition: "all 0.15s",
-              boxShadow: timeRange === r.id ? "0 2px 12px rgba(123,108,246,0.3)" : "none",
+              boxShadow: timeRange === r.id ? "0 2px 16px rgba(123,108,246,0.4), 0 0 0 1px rgba(255,255,255,0.05) inset" : "none",
             }}
           >
             {r.label}
@@ -343,14 +347,20 @@ export default function UvodTab() {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: "1rem", marginBottom: "1.75rem" }}>
         {statCards.map((card) => (
           <div key={card.label} className="stat-card" style={{
-            background: "linear-gradient(145deg, #1e1e26, #19191f)",
-            border: "1px solid rgba(123,108,246,0.15)",
-            borderRadius: 16, padding: "1.25rem 1.25rem 1.1rem",
-            position: "relative", overflow: "hidden",
+            background: "linear-gradient(145deg, rgba(30,30,38,0.9), rgba(22,22,28,0.95))",
+            border: "1px solid rgba(123,108,246,0.18)",
+            borderRadius: 18,
+            padding: "1.25rem 1.25rem 1.1rem",
+            position: "relative",
+            overflow: "hidden",
+            backdropFilter: "blur(8px)",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.03) inset",
+            transform: "translateZ(0)",
+            transition: "border-color 0.2s, box-shadow 0.2s, transform 0.2s",
           }}>
-            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, rgba(123,108,246,0.3), transparent)" }} />
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, background: "linear-gradient(90deg, transparent, rgba(123,108,246,0.5), rgba(168,109,247,0.3), transparent)", height: 1 }} />
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.9rem" }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: card.iconBg, display: "flex", alignItems: "center", justifyContent: "center", color: card.iconColor }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: card.iconBg, display: "flex", alignItems: "center", justifyContent: "center", color: card.iconColor, boxShadow: `0 0 16px ${card.iconBg}, 0 0 4px ${card.iconColor}40` }}>
                 {card.icon}
               </div>
               {card.badge && (
@@ -369,8 +379,17 @@ export default function UvodTab() {
         ))}
       </div>
 
-      <div style={{ background: "linear-gradient(145deg, #1e1e26, #19191f)", border: "1px solid rgba(123,108,246,0.15)", borderRadius: 20, padding: "1.75rem", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, rgba(123,108,246,0.4), transparent)" }} />
+      <div style={{
+        background: "linear-gradient(145deg, rgba(28,28,36,0.95), rgba(18,18,24,0.98))",
+        border: "1px solid rgba(123,108,246,0.18)",
+        borderRadius: 22,
+        padding: "1.75rem",
+        position: "relative",
+        overflow: "hidden",
+        backdropFilter: "blur(8px)",
+        boxShadow: "0 8px 48px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.03) inset",
+      }}>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, background: "linear-gradient(90deg, transparent, rgba(123,108,246,0.6), rgba(168,109,247,0.4), transparent)", height: 1 }} />
 
         <div style={{ display: "flex", gap: "0.4rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
           {([
@@ -387,6 +406,7 @@ export default function UvodTab() {
                 borderColor: activeChart === tab.key ? "rgba(123,108,246,0.5)" : "rgba(255,255,255,0.08)",
                 color: activeChart === tab.key ? "#c4baff" : "rgba(255,255,255,0.4)",
                 transition: "all 0.15s",
+                boxShadow: activeChart === tab.key ? "0 0 12px rgba(123,108,246,0.25)" : "none",
               }}
             >
               {tab.label}
@@ -403,6 +423,7 @@ export default function UvodTab() {
           <div style={{
             fontSize: "1.75rem", fontWeight: 700, letterSpacing: "-0.03em",
             color: activeChart === "roi" ? (avgRoi >= 0 ? "#7fe0ab" : "#f87171") : (soldProfit >= 0 ? "#7fe0ab" : "#f87171"),
+            textShadow: soldProfit >= 0 ? "0 0 20px rgba(127,224,171,0.4)" : "0 0 20px rgba(248,113,113,0.4)",
           }}>
             {activeChart === "zisk" && `${soldProfit >= 0 ? "+" : ""}${format(Math.abs(soldProfit), baseCurrency)}`}
             {activeChart === "investovano" && format(totalBuy, baseCurrency)}
@@ -415,9 +436,9 @@ export default function UvodTab() {
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="purpleGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#7b6cf6" stopOpacity={0.3} />
-                  <stop offset="60%" stopColor="#7b6cf6" stopOpacity={0.08} />
-                  <stop offset="100%" stopColor="#7b6cf6" stopOpacity={0} />
+                  <stop offset="0%" stopColor="#9d8ff7" stopOpacity={0.4} />
+                  <stop offset="40%" stopColor="#7b6cf6" stopOpacity={0.15} />
+                  <stop offset="100%" stopColor="#5934c4" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <XAxis dataKey="date" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 11 }} axisLine={false} tickLine={false} />
@@ -429,8 +450,8 @@ export default function UvodTab() {
                 itemStyle={{ color: "#c4baff" }}
                 formatter={(v: any) => activeChart === "roi" ? [`${v}%`, ""] : [`${v} ${baseCurrency}`, ""]}
               />
-              <Area type="monotone" dataKey={activeChart} stroke="#7b6cf6" strokeWidth={2} fill="url(#purpleGrad)" dot={false}
-                activeDot={{ r: 5, fill: "#7b6cf6", stroke: "#1e1e26", strokeWidth: 2 }} />
+              <Area type="monotone" dataKey={activeChart} stroke="#a78bfa" strokeWidth={2} fill="url(#purpleGrad)" dot={false}
+                activeDot={{ r: 5, fill: "#a78bfa", stroke: "#1e1e26", strokeWidth: 2 }} />
             </AreaChart>
           </ResponsiveContainer>
         ) : (

@@ -76,8 +76,9 @@ export default function Sidebar({
         style={{
           width: collapsed ? 0 : 240,
           minWidth: collapsed ? 0 : 240,
-          background: "#16161b",
-          borderRight: "1px solid rgba(123,108,246,0.12)",
+          background: "rgba(14, 14, 20, 0.95)",
+          borderRight: "1px solid rgba(123,108,246,0.18)",
+          backdropFilter: "blur(12px)",
           padding: collapsed ? "1.5rem 0" : "1.5rem 0.875rem",
           display: "flex",
           flexDirection: "column",
@@ -118,11 +119,14 @@ export default function Sidebar({
                 fontWeight: isActive ? 600 : 400,
                 color: isActive ? "#c4baff" : "rgba(255,255,255,0.65)",
                 background: isActive
-                  ? "linear-gradient(135deg, rgba(123,108,246,0.18), rgba(123,108,246,0.08))"
+                  ? "linear-gradient(135deg, rgba(123,108,246,0.22), rgba(89,52,196,0.12))"
                   : "transparent",
                 border: isActive
-                  ? "1px solid rgba(123,108,246,0.3)"
+                  ? "1px solid rgba(123,108,246,0.45)"
                   : "1px solid transparent",
+                boxShadow: isActive
+                  ? "0 0 12px rgba(123,108,246,0.15), inset 0 1px 0 rgba(255,255,255,0.05)"
+                  : "none",
                 cursor: "pointer",
                 textAlign: "left",
                 width: "100%",
@@ -140,7 +144,8 @@ export default function Sidebar({
                   transform: "translateY(-50%)",
                   width: 3,
                   height: "60%",
-                  background: "linear-gradient(180deg, #7b6cf6, #a89df7)",
+                  background: "linear-gradient(180deg, #a78bfa, #7b6cf6, #5934c4)",
+                  boxShadow: "0 0 8px rgba(123,108,246,0.8)",
                   borderRadius: "0 2px 2px 0",
                 }} />
               )}
@@ -157,12 +162,12 @@ export default function Sidebar({
               <span style={{ flex: 1 }}>{item.label}</span>
               {isActive && (
                 <span style={{
-                  width: 6,
-                  height: 6,
+                  width: 7,
+                  height: 7,
                   borderRadius: "50%",
                   background: "#7b6cf6",
                   flexShrink: 0,
-                  boxShadow: "0 0 6px rgba(123,108,246,0.6)",
+                  boxShadow: "0 0 10px 2px rgba(123,108,246,0.8)",
                 }} />
               )}
             </button>
@@ -205,6 +210,7 @@ export default function Sidebar({
                 display: "flex",
                 alignItems: "center",
                 transition: "background 0.15s",
+                boxShadow: "0 0 12px rgba(123,108,246,0.2)",
               }}
               title={collapsed ? "Otvoriť menu" : "Skryť menu"}
             >
