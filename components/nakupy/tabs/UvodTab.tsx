@@ -64,6 +64,7 @@ function IconPercent() {
 
 export default function UvodTab() {
   const { format } = useCurrency();
+  const [fullName, setFullName] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ invested: 0, profit: 0, balance: 0 });
   const [soldProfit, setSoldProfit] = useState(0);
@@ -219,7 +220,15 @@ export default function UvodTab() {
     });
   }
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => {
+    loadData();
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      supabase.from("profiles").select("full_name").eq("id", user.id).single()
+        .then(({ data }) => setFullName(data?.full_name ?? ""));
+    });
+  }, []);
   useEffect(() => { loadData(true); }, [timeRange, customFrom, customTo]);
 
   if (loading) {
@@ -299,6 +308,11 @@ export default function UvodTab() {
 
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "1.75rem" }}>
         <div>
+          {fullName && (
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", marginBottom: "0.3rem", fontWeight: 500 }}>
+              Ahoj, {fullName} 👋
+            </p>
+          )}
           <h1 style={{ fontSize: "1.4rem", fontWeight: 700, color: "#fff", marginBottom: "0.3rem", letterSpacing: "-0.02em" }}>
             Přehled portfolia
           </h1>
