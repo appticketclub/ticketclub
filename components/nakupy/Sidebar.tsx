@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import UpgradeModal from "@/components/ucet/UpgradeModal";
 
 export default function Sidebar({
   activeTab,
@@ -35,6 +36,7 @@ export default function Sidebar({
   ];
 
   const [plan, setPlan] = useState<"free" | "scale" | null>(null);
+  const [showUpgrade, setShowUpgrade] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -46,7 +48,7 @@ export default function Sidebar({
         .eq("user_id", user.id)
         .single()
         .then(({ data }) => {
-          setPlan((data?.plan === "scale" ? "scale" : "free") as "free" | "scale");
+          setPlan(data?.plan === "scale" ? "scale" : "free");
         });
     });
   }, []);
@@ -224,7 +226,7 @@ export default function Sidebar({
               }} />
 
               {/* Badge + plan name */}
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.4rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: plan === "scale" ? "0.4rem" : "0.65rem" }}>
                 <span style={{
                   fontSize: 9, fontWeight: 800, letterSpacing: "0.1em",
                   padding: "2px 7px", borderRadius: 5,
@@ -245,20 +247,14 @@ export default function Sidebar({
               </div>
 
               {plan === "scale" && (
-                <div style={{
-                  fontSize: 10.5,
-                  color: "rgba(255,255,255,0.3)",
-                  lineHeight: 1.5,
-                  marginBottom: 0,
-                }}>
+                <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.3)", lineHeight: 1.5 }}>
                   AI štatistiky · Kalkulačka · Bannery
                 </div>
               )}
 
-              {/* Upgrade button — FREE only */}
               {plan === "free" && (
                 <button
-                  onClick={() => window.dispatchEvent(new CustomEvent("openUpgradeModal"))}
+                  onClick={() => setShowUpgrade(true)}
                   style={{
                     display: "block", width: "100%", textAlign: "center",
                     fontSize: 11, fontWeight: 700,
@@ -277,6 +273,8 @@ export default function Sidebar({
               )}
             </div>
           )}
+
+          {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} />}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <Link
               href="/dostupne-sluzby"
