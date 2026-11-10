@@ -16,13 +16,31 @@ import EvidenceTab from "@/components/nakupy/tabs/EvidenceTab";
 import DetailyTab from "@/components/nakupy/tabs/DetailyTab";
 import UpozorneniaTab from "@/components/nakupy/tabs/UpozorneniaTab";
 import SurveyModal from "@/components/survey/SurveyModal";
+import UpgradeModal from "@/components/ucet/UpgradeModal";
+import UpgradePopup from "@/components/nakupy/UpgradePopup";
 
 export default function NakupyPage() {
   const [activeTab, setActiveTab] = useState("uvod");
   const [isAdmin, setIsAdmin] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [showSurvey, setShowSurvey] = useState(false);
+  const [plan, setPlan] = useState<"free" | "scale" | null>(null);
+  const [showUpgrade, setShowUpgrade] = useState(false);
   const supabase = createClient();
+
+  useEffect(() => {
+    async function fetchPlan() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase
+        .from("subscriptions")
+        .select("plan")
+        .eq("user_id", user.id)
+        .single();
+      setPlan((data?.plan === "scale" ? "scale" : "free") as "free" | "scale");
+    }
+    fetchPlan();
+  }, [supabase]);
 
   useEffect(() => {
     async function fetchProfile() {
@@ -96,6 +114,10 @@ export default function NakupyPage() {
         </button>
       )}
       {showSurvey && <SurveyModal onClose={() => setShowSurvey(false)} />}
+      {plan === "free" && (
+        <UpgradePopup onUpgrade={() => setShowUpgrade(true)} />
+      )}
+      {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} />}
     </div>
   );
 }
