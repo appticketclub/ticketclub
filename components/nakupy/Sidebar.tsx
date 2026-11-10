@@ -244,17 +244,16 @@ export default function Sidebar({
                 </span>
               </div>
 
-              {/* Description */}
-              <div style={{
-                fontSize: 10.5,
-                color: "rgba(255,255,255,0.3)",
-                lineHeight: 1.5,
-                marginBottom: plan === "free" ? "0.65rem" : 0,
-              }}>
-                {plan === "scale"
-                  ? "AI štatistiky · Kalkulačka · Bannery"
-                  : "Obmedzený prístup · 10 nákupov"}
-              </div>
+              {plan === "scale" && (
+                <div style={{
+                  fontSize: 10.5,
+                  color: "rgba(255,255,255,0.3)",
+                  lineHeight: 1.5,
+                  marginBottom: 0,
+                }}>
+                  AI štatistiky · Kalkulačka · Bannery
+                </div>
+              )}
 
               {/* Upgrade button — FREE only */}
               {plan === "free" && (
