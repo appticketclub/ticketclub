@@ -246,12 +246,6 @@ export default function Sidebar({
                 </span>
               </div>
 
-              {plan === "scale" && (
-                <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.3)", lineHeight: 1.5 }}>
-                  AI štatistiky · Kalkulačka · Bannery
-                </div>
-              )}
-
               {plan === "free" && (
                 <button
                   onClick={() => setShowUpgrade(true)}
