@@ -113,8 +113,10 @@ export default function Sidebar({
           padding: collapsed ? "1.5rem 0" : "1.5rem 0.875rem",
           display: "flex",
           flexDirection: "column",
-          gap: "0.2rem",
-          minHeight: "calc(100vh - 65px)",
+          gap: 0,
+          position: "sticky",
+          top: 73,
+          height: "calc(100vh - 73px)",
           overflow: "hidden",
           transition: "width 0.25s ease, min-width 0.25s ease, padding 0.25s ease",
         }}
@@ -129,9 +131,21 @@ export default function Sidebar({
           opacity: collapsed ? 0 : 1,
           transition: "opacity 0.15s ease",
           textTransform: "uppercase",
+          flexShrink: 0,
         }}>
           Navigácia
         </p>
+
+        {/* NAV ITEMS — scrollovateľná oblasť */}
+        <div style={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: "auto",
+          overflowX: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.2rem",
+        }}>
 
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
@@ -223,9 +237,11 @@ export default function Sidebar({
             </button>
           );
         })}
+        </div>
 
+        {/* FOOTER — vždy na spodku */}
         <div style={{
-          marginTop: "auto",
+          flexShrink: 0,
           paddingTop: "1rem",
           borderTop: "1px solid rgba(123,108,246,0.1)",
           display: "flex",
