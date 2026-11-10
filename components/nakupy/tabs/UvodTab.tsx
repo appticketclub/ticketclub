@@ -361,13 +361,14 @@ export default function UvodTab() {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: "1rem", marginBottom: "1.75rem" }}>
         {statCards.map((card) => (
           <div key={card.label} className="stat-card" style={{
-            background: "linear-gradient(145deg, rgba(30,30,38,0.9), rgba(22,22,28,0.95))",
+            background: "linear-gradient(145deg, rgba(30,30,38,0.75), rgba(22,22,28,0.8))",
             border: "1px solid rgba(123,108,246,0.18)",
             borderRadius: 18,
             padding: "1.25rem 1.25rem 1.1rem",
             position: "relative",
             overflow: "hidden",
-            backdropFilter: "blur(8px)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
             boxShadow: "0 4px 24px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.03) inset",
             transform: "translateZ(0)",
             transition: "border-color 0.2s, box-shadow 0.2s, transform 0.2s",
@@ -394,13 +395,14 @@ export default function UvodTab() {
       </div>
 
       <div style={{
-        background: "linear-gradient(145deg, rgba(28,28,36,0.95), rgba(18,18,24,0.98))",
+        background: "linear-gradient(145deg, rgba(28,28,36,0.75), rgba(18,18,24,0.8))",
         border: "1px solid rgba(123,108,246,0.18)",
         borderRadius: 22,
         padding: "1.75rem",
         position: "relative",
         overflow: "hidden",
-        backdropFilter: "blur(8px)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
         boxShadow: "0 8px 48px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.03) inset",
       }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, background: "linear-gradient(90deg, transparent, rgba(123,108,246,0.6), rgba(168,109,247,0.4), transparent)", height: 1 }} />

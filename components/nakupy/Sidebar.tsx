@@ -84,7 +84,9 @@ export default function Sidebar({
         style={{
           display: "none",
           position: "fixed", top: 16, left: 16, zIndex: 200,
-          background: "#16161b", border: "1px solid rgba(123,108,246,0.2)",
+          background: "rgba(16,16,22,0.8)", border: "1px solid rgba(123,108,246,0.2)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
           borderRadius: 8, padding: "8px 10px", cursor: "pointer", color: "#fff",
           alignItems: "center",
         }}
@@ -104,9 +106,10 @@ export default function Sidebar({
         style={{
           width: collapsed ? 0 : 240,
           minWidth: collapsed ? 0 : 240,
-          background: "rgba(14, 14, 20, 0.95)",
+          background: "rgba(16,16,22,0.8)",
           borderRight: "1px solid rgba(123,108,246,0.18)",
-          backdropFilter: "blur(12px)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
           padding: collapsed ? "1.5rem 0" : "1.5rem 0.875rem",
           display: "flex",
           flexDirection: "column",
