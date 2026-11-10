@@ -56,7 +56,7 @@ export default function NakupyPage() {
   }, [supabase]);
 
   const tabs: Record<string, React.ReactNode> = {
-    uvod: <UvodTab />,
+    uvod: <UvodTab onTabChange={setActiveTab} />,
     ucty: <UctyTab />,
     evidence: <EvidenceTab />,
     detaily: <DetailyTab />,

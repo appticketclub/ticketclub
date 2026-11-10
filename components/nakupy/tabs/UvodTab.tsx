@@ -62,9 +62,10 @@ function IconPercent() {
   );
 }
 
-export default function UvodTab() {
+export default function UvodTab({ onTabChange }: { onTabChange?: (tab: string) => void }) {
   const { format } = useCurrency();
   const [fullName, setFullName] = useState<string>("");
+  const [recentPurchases, setRecentPurchases] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ invested: 0, profit: 0, balance: 0 });
   const [soldProfit, setSoldProfit] = useState(0);
@@ -199,6 +200,30 @@ export default function UvodTab() {
           const fees = sale.fees ?? 0;
           return sum + (revenue - buyCost - fees);
         }, 0) ?? 0;
+      } catch {}
+
+      // Load recent 3 purchases
+      try {
+        const { data: recent } = await supabase
+          .from("purchases")
+          .select("id, event_name, event_date, city, sector, quantity, buy_price, currency, status, created_at")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(3);
+
+        const recentWithSales = await Promise.all((recent ?? []).map(async (p) => {
+          const { data: sales } = await supabase
+            .from("sales")
+            .select("sell_price, quantity_sold, fees")
+            .eq("purchase_id", p.id);
+          const sellTotal = (sales ?? []).reduce((s: number, x: any) => s + x.sell_price * x.quantity_sold, 0);
+          const feesTotal = (sales ?? []).reduce((s: number, x: any) => s + (x.fees ?? 0), 0);
+          const buyTotal = p.buy_price * p.quantity;
+          const profit = sellTotal - feesTotal - buyTotal;
+          const roi = buyTotal > 0 ? (profit / buyTotal) * 100 : 0;
+          return { ...p, sellTotal, profit, roi };
+        }));
+        setRecentPurchases(recentWithSales);
       } catch {}
 
       const statsVal = { invested, profit, balance: currentBal };
@@ -476,6 +501,123 @@ export default function UvodTab() {
             Zatím žádná uzavřená data
           </div>
         )}
+      </div>
+
+      {/* Nejnovější vstupenky */}
+      <div style={{ marginTop: "1.5rem" }}>
+        <div style={{
+          background: "linear-gradient(145deg, rgba(30,30,38,0.75), rgba(22,22,28,0.8))",
+          border: "1px solid rgba(123,108,246,0.15)",
+          borderRadius: 20,
+          overflow: "hidden",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          position: "relative",
+        }}>
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, rgba(123,108,246,0.4), transparent)" }} />
+
+          {/* Header */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 1.5rem 0" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7b6cf6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/>
+                <line x1="12" y1="7" x2="12" y2="17"/>
+              </svg>
+              <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>Nejnovější vstupenky</span>
+            </div>
+            <button
+              onClick={() => onTabChange?.("evidence")}
+              style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, fontWeight: 600, color: "rgba(123,108,246,0.8)", padding: "4px 8px", borderRadius: 6 }}
+              onMouseEnter={e => (e.currentTarget.style.color = "#a89df7")}
+              onMouseLeave={e => (e.currentTarget.style.color = "rgba(123,108,246,0.8)")}
+            >
+              Zobrazit všechny →
+            </button>
+          </div>
+
+          {/* Tabuľka */}
+          {recentPurchases.length === 0 ? (
+            <div style={{ padding: "2rem", textAlign: "center", color: "rgba(255,255,255,0.2)", fontSize: 13 }}>
+              Žádné nákupy
+            </div>
+          ) : (
+            <div style={{ overflowX: "auto" as const }}>
+              {/* Hlavička */}
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "110px 1fr 110px 60px 110px 110px 100px 140px",
+                gap: "0 0.5rem",
+                padding: "0.75rem 1.5rem 0.5rem",
+                borderBottom: "1px solid rgba(123,108,246,0.08)",
+              }}>
+                {["Datum nákupu", "Akce", "Místo", "Počet", "Nákupní cena", "Prodejní cena", "Zisk", "ROI / Status"].map(h => (
+                  <div key={h} style={{ fontSize: 10.5, fontWeight: 600, color: "rgba(255,255,255,0.3)", letterSpacing: "0.04em", textTransform: "uppercase" as const, whiteSpace: "nowrap" as const }}>
+                    {h}
+                  </div>
+                ))}
+              </div>
+
+              {/* Riadky */}
+              {recentPurchases.map((p, i) => {
+                const isProfit = p.profit >= 0;
+                const statusColor = p.status === "sold" ? "#7fe0ab" : p.status === "partial" ? "#fbbf24" : "rgba(255,255,255,0.4)";
+                const statusLabel = p.status === "sold" ? "Prodáno" : p.status === "partial" ? "Částečně" : "Aktivní";
+                return (
+                  <div
+                    key={p.id}
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "110px 1fr 110px 60px 110px 110px 100px 140px",
+                      gap: "0 0.5rem",
+                      padding: "0.9rem 1.5rem",
+                      borderBottom: i < recentPurchases.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
+                      alignItems: "center",
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.background = "rgba(123,108,246,0.05)")}
+                    onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                  >
+                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
+                      {p.event_date ? new Date(p.event_date).toLocaleDateString("cs-CZ") : "—"}
+                    </div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }}>
+                      {p.event_name}
+                    </div>
+                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }}>
+                      {p.city ?? "—"}
+                    </div>
+                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>{p.quantity}×</div>
+                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.7)" }}>
+                      {format(p.buy_price * p.quantity, p.currency ?? baseCurrency)}
+                    </div>
+                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.7)" }}>
+                      {p.sellTotal > 0 ? format(p.sellTotal, p.currency ?? baseCurrency) : "—"}
+                    </div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: p.sellTotal > 0 ? (isProfit ? "#7fe0ab" : "#f87171") : "rgba(255,255,255,0.3)" }}>
+                      {p.sellTotal > 0 ? `${isProfit ? "+" : ""}${format(Math.abs(p.profit), p.currency ?? baseCurrency)}` : "—"}
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                      {p.sellTotal > 0 && (
+                        <span style={{ fontSize: 11, fontWeight: 700, color: isProfit ? "#7fe0ab" : "#f87171" }}>
+                          {isProfit ? "+" : ""}{p.roi.toFixed(1)}%
+                        </span>
+                      )}
+                      <span style={{
+                        fontSize: 10, fontWeight: 700,
+                        color: statusColor,
+                        background: `${statusColor}18`,
+                        border: `1px solid ${statusColor}30`,
+                        borderRadius: 6, padding: "2px 7px",
+                        whiteSpace: "nowrap" as const,
+                      }}>
+                        {statusLabel}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
