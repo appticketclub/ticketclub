@@ -37,7 +37,7 @@ export default function LoginPage() {
         // Session will expire when browser closes naturally
       }
 
-      window.location.href = "/dostupne-sluzby";
+      window.location.href = "/nakupy";
     } catch (e: any) {
       setError("Chyba přihlášení. Zkuste to znovu.");
     }
