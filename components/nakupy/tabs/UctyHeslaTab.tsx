@@ -1,6 +1,7 @@
-"use client"; 
-import { useState, useEffect } from "react"; 
-import { createClient } from "@/lib/supabase/client"; 
+"use client";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import * as XLSX from "xlsx";
 
 type VaultAccount = { 
   id: string; 
@@ -32,11 +33,70 @@ function AddVaultModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
   const [password, setPassword] = useState(""); 
   const [notes, setNotes] = useState(""); 
   const [showPassword, setShowPassword] = useState(false); 
-  const [saving, setSaving] = useState(false); 
-  const [error, setError] = useState(""); 
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [importError, setImportError] = useState("");
+  const [importSuccess, setImportSuccess] = useState(0);
 
-  async function handleSave() { 
-    if (!name.trim()) return setError("Název je povinný."); 
+  function handleDownloadTemplate() {
+    const ws = XLSX.utils.aoa_to_sheet([
+      ["NÁZEV", "URL", "E-MAIL / UŽIVATELSKÉ JMÉNO", "HESLO", "POZNÁMKA"],
+      ["Viagogo", "https://viagogo.cz/", "muj@email.cz", "heslo123", "poznámka"],
+    ]);
+    ws["!cols"] = [{ wch: 20 }, { wch: 30 }, { wch: 30 }, { wch: 20 }, { wch: 30 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Záznamy");
+    XLSX.writeFile(wb, "sablona-ostatni-ucty.xlsx");
+  }
+
+  async function handleImportFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImportError("");
+    setImportSuccess(0);
+
+    const data = await file.arrayBuffer();
+    const wb = XLSX.read(data);
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json<Record<string, string>>(ws);
+
+    if (rows.length === 0) {
+      setImportError("Soubor je prázdný nebo nemá správný formát.");
+      return;
+    }
+
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const inserts = rows.map(row => ({
+      user_id: user.id,
+      name: String(row["NÁZEV"] ?? "").trim(),
+      url: String(row["URL"] ?? "").trim() || null,
+      email: String(row["E-MAIL / UŽIVATELSKÉ JMÉNO"] ?? "").trim() || null,
+      password_encrypted: String(row["HESLO"] ?? "").trim() || null,
+      notes: String(row["POZNÁMKA"] ?? "").trim() || null,
+      type: "vault",
+    })).filter(r => r.name);
+
+    if (inserts.length === 0) {
+      setImportError("Žádný řádek nemá vyplněný NÁZEV.");
+      return;
+    }
+
+    const { error: insertError } = await supabase.from("accounts").insert(inserts);
+    if (insertError) {
+      setImportError(insertError.message);
+    } else {
+      setImportSuccess(inserts.length);
+      onSave();
+      setTimeout(() => onClose(), 1200);
+    }
+    e.target.value = "";
+  }
+
+  async function handleSave() {
+    if (!name.trim()) return setError("Název je povinný.");
     setSaving(true); 
     setError(""); 
     const supabase = createClient(); 
@@ -71,15 +131,72 @@ function AddVaultModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #ffffff, transparent)" }} /> 
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.75rem" }}> 
-          <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Přidat záznam</h2> 
-          <button onClick={onClose} style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 22 }}>×</button> 
-        </div> 
+          <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Přidat záznam</h2>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 22 }}>×</button>
+        </div>
 
-        {error && ( 
-          <div style={{ marginBottom: "1rem", padding: "10px 14px", borderRadius: 8, background: "#2a0a0a", border: "1px solid #7f1d1d", color: "#fca5a5", fontSize: 13 }}> 
-            {error} 
-          </div> 
-        )} 
+        {/* Import banner */}
+        <div style={{
+          background: "linear-gradient(135deg, rgba(123,108,246,0.08), rgba(80,60,200,0.06))",
+          border: "1px solid rgba(123,108,246,0.2)",
+          borderRadius: 14,
+          padding: "0.9rem 1rem",
+          display: "flex",
+          alignItems: "center",
+          gap: "0.75rem",
+          marginBottom: "1.25rem",
+        }}>
+          <div style={{ fontSize: 22, flexShrink: 0 }}>📊</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#e0dcff", marginBottom: 2 }}>
+              Hromadný import záznamů
+            </div>
+            <div style={{ fontSize: 12, color: "rgba(240,238,255,0.4)" }}>
+              Stáhni šablonu · vyplň · nahraj zpět
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+            <button
+              onClick={handleDownloadTemplate}
+              style={{
+                display: "flex", alignItems: "center", gap: 4,
+                padding: "0.4rem 0.75rem",
+                background: "rgba(93,232,160,0.1)", border: "1px solid rgba(93,232,160,0.25)",
+                color: "#5de8a0", borderRadius: 8,
+                fontSize: 12, fontWeight: 600, cursor: "pointer",
+              }}
+            >
+              ↓ Šablona
+            </button>
+            <label style={{
+              display: "flex", alignItems: "center", gap: 4,
+              padding: "0.4rem 0.75rem",
+              background: "rgba(123,108,246,0.12)", border: "1px solid rgba(123,108,246,0.3)",
+              color: "#a89df7", borderRadius: 8,
+              fontSize: 12, fontWeight: 600, cursor: "pointer",
+            }}>
+              ↑ Nahrát
+              <input type="file" accept=".xlsx,.csv" onChange={handleImportFile} style={{ display: "none" }} />
+            </label>
+          </div>
+        </div>
+
+        {importError && (
+          <div style={{ marginBottom: "1rem", padding: "10px 14px", borderRadius: 8, background: "#2a0a0a", border: "1px solid #7f1d1d", color: "#fca5a5", fontSize: 13 }}>
+            {importError}
+          </div>
+        )}
+        {importSuccess > 0 && (
+          <div style={{ marginBottom: "1rem", padding: "10px 14px", borderRadius: 8, background: "rgba(93,232,160,0.08)", border: "1px solid rgba(93,232,160,0.3)", color: "#5de8a0", fontSize: 13 }}>
+            ✓ Importováno {importSuccess} záznamů
+          </div>
+        )}
+
+        {error && (
+          <div style={{ marginBottom: "1rem", padding: "10px 14px", borderRadius: 8, background: "#2a0a0a", border: "1px solid #7f1d1d", color: "#fca5a5", fontSize: 13 }}>
+            {error}
+          </div>
+        )}
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}> 
           <div> 
