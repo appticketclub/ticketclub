@@ -90,10 +90,10 @@ export default function UpgradePopup({ onUpgrade }: { onUpgrade: () => void }) {
           </div>
 
           <div style={{ fontSize: 18, fontWeight: 800, color: "#fff", lineHeight: 1.3, marginBottom: "0.35rem" }}>
-            Zarob viac z každého lístka
+            Vydělej víc na každém lístku
           </div>
           <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", lineHeight: 1.5 }}>
-            PRO členovia zarábajú v priemere <span style={{ color: "#a89df7", fontWeight: 700 }}>3× viac</span> vďaka pokročilým nástrojom.
+            PRO členové vydělávají v průměru <span style={{ color: "#a89df7", fontWeight: 700 }}>3× víc</span> díky pokročilým nástrojům.
           </div>
         </div>
 
@@ -133,10 +133,10 @@ export default function UpgradePopup({ onUpgrade }: { onUpgrade: () => void }) {
               animation: "shimmer 3s linear infinite, pulse-glow 2.5s ease-in-out infinite",
             }}
           >
-            🚀 Upgradovať na PRO →
+            🚀 Upgradovat na PRO →
           </button>
           <div style={{ textAlign: "center", marginTop: "0.6rem", fontSize: 11, color: "rgba(255,255,255,0.25)" }}>
-            Zruš kedykoľvek · Bez záväzkov
+            Zruš kdykoliv · Bez závazků
           </div>
         </div>
       </div>
