@@ -257,8 +257,8 @@ export default function Sidebar({
           )}
 
           {[
-            { id: "refresh-bot", label: "Refresh Bot", icon: "🔄" },
             { id: "sales-tracker", label: "Sales Tracker", icon: "📈" },
+            { id: "refresh-bot", label: "Refresh Bot", icon: "🔄" },
             { id: "chrome-launcher", label: "Chrome Launcher", icon: "🚀" },
           ].map(item => {
             const isActive = activeTab === item.id;
