@@ -135,11 +135,7 @@ export default function NakupyPage() {
         <RefreshBotClient />
       </ProGate>
     ),
-    "sales-tracker": (
-      <ProGate isPro={isPro} toolName="Sales Tracker">
-        <SalesTrackerClient />
-      </ProGate>
-    ),
+    "sales-tracker": <SalesTrackerClient />,
     "chrome-launcher": (
       <ProGate isPro={isPro} toolName="Chrome Launcher">
         <ChromeLauncherClient />
