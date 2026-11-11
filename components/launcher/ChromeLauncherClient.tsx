@@ -1,8 +1,24 @@
 "use client";
 import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 
-export default function ChromeLauncherClient({ tokenData }: { tokenData: any }) {
+export default function ChromeLauncherClient({ tokenData: externalTokenData }: { tokenData?: any }) {
   const [os, setOs] = useState<"windows" | "mac">("windows");
+  const [tokenData, setTokenData] = useState(externalTokenData ?? null);
+
+  useEffect(() => {
+    if (externalTokenData) return;
+    const supabase = createClient();
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("launcher_tokens")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
+      setTokenData(data);
+    });
+  }, [externalTokenData]);
 
   useEffect(() => {
     if (navigator.userAgent.includes("Mac")) setOs("mac");

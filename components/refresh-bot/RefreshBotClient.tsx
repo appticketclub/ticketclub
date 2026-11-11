@@ -3,8 +3,6 @@
 export default function RefreshBotClient() {
   return (
     <div style={{ maxWidth: 720, margin: "0 auto", padding: "2rem 1rem", background: "#0a0a10", position: "relative" }}>
-      <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none", background: "radial-gradient(ellipse 80% 50% at 20% 10%, rgba(123,108,246,0.1) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 80%, rgba(89,52,196,0.07) 0%, transparent 60%)" }} />
-      <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none", backgroundImage: "linear-gradient(rgba(123,108,246,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(123,108,246,0.03) 1px, transparent 1px)", backgroundSize: "48px 48px" }} />
       {/* Header */}
       <div style={{ marginBottom: "2rem" }}>
         <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "4px 12px", background: "rgba(123,108,246,0.1)", border: "1px solid rgba(123,108,246,0.3)", borderRadius: 100, marginBottom: "0.75rem" }}>

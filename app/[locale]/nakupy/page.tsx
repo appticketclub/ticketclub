@@ -18,6 +18,51 @@ import UpozorneniaTab from "@/components/nakupy/tabs/UpozorneniaTab";
 import SurveyModal from "@/components/survey/SurveyModal";
 import UpgradeModal from "@/components/ucet/UpgradeModal";
 import UpgradePopup from "@/components/nakupy/UpgradePopup";
+import RefreshBotClient from "@/components/refresh-bot/RefreshBotClient";
+import SalesTrackerClient from "@/components/sales-tracker/SalesTrackerClient";
+import ChromeLauncherClient from "@/components/launcher/ChromeLauncherClient";
+
+function ProGate({ isPro, children, toolName }: {
+  isPro: boolean;
+  children: React.ReactNode;
+  toolName: string;
+}) {
+  const [showUpgrade, setShowUpgrade] = useState(false);
+  if (isPro) return <>{children}</>;
+  return (
+    <div style={{
+      display: "flex", flexDirection: "column",
+      alignItems: "center", justifyContent: "center",
+      minHeight: 400, gap: "1.5rem",
+    }}>
+      <div style={{ textAlign: "center" }}>
+        <div style={{ fontSize: 48, marginBottom: "1rem" }}>🔒</div>
+        <div style={{
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontSize: 22, fontWeight: 700, color: "#fff", marginBottom: "0.5rem",
+        }}>
+          {toolName}
+        </div>
+        <div style={{ fontSize: 14, color: "rgba(255,255,255,0.4)", marginBottom: "1.5rem" }}>
+          Tento nástroj je dostupný len pre PRO členov.
+        </div>
+        <button
+          onClick={() => setShowUpgrade(true)}
+          style={{
+            background: "linear-gradient(135deg, #7b6cf6, #9d8ff5)",
+            border: "none", borderRadius: 12,
+            padding: "0.75rem 2rem",
+            color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer",
+            boxShadow: "0 4px 20px rgba(123,108,246,0.4)",
+          }}
+        >
+          Upgradovať na PRO →
+        </button>
+      </div>
+      {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} />}
+    </div>
+  );
+}
 
 export default function NakupyPage() {
   const [activeTab, setActiveTab] = useState("uvod");
@@ -73,6 +118,8 @@ export default function NakupyPage() {
     checkSurvey();
   }, [supabase]);
 
+  const isPro = plan === "scale";
+
   const tabs: Record<string, React.ReactNode> = {
     uvod: <UvodTab onTabChange={setActiveTab} />,
     ucty: <UctyTab />,
@@ -83,6 +130,21 @@ export default function NakupyPage() {
     "doporucene-akce": <DoporuceneAkceTab />,
     kalkulacka: <KalkulackaTab />,
     bannery: <BanneryTab />,
+    "refresh-bot": (
+      <ProGate isPro={isPro} toolName="Refresh Bot">
+        <RefreshBotClient />
+      </ProGate>
+    ),
+    "sales-tracker": (
+      <ProGate isPro={isPro} toolName="Sales Tracker">
+        <SalesTrackerClient />
+      </ProGate>
+    ),
+    "chrome-launcher": (
+      <ProGate isPro={isPro} toolName="Chrome Launcher">
+        <ChromeLauncherClient />
+      </ProGate>
+    ),
     ...(isAdmin ? { upozornenia: <UpozorneniaTab /> } : {}),
     ...(isAdmin ? { "tym-statistiky": <TymStatistikyTab /> } : {}),
   };

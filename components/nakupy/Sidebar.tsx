@@ -237,6 +237,86 @@ export default function Sidebar({
             </button>
           );
         })}
+
+        {/* Sekcia PRO funkce */}
+        <div style={{
+          marginTop: "1rem",
+          paddingTop: "1rem",
+          borderTop: "1px solid rgba(123,108,246,0.1)",
+        }}>
+          {!collapsed && (
+            <div style={{
+              fontSize: 9, fontWeight: 700, letterSpacing: "0.12em",
+              textTransform: "uppercase" as const,
+              color: "rgba(255,255,255,0.2)",
+              padding: "0 0.75rem",
+              marginBottom: "0.4rem",
+            }}>
+              PRO funkce
+            </div>
+          )}
+
+          {[
+            { id: "refresh-bot", label: "Refresh Bot", icon: "🔄" },
+            { id: "sales-tracker", label: "Sales Tracker", icon: "📈" },
+            { id: "chrome-launcher", label: "Chrome Launcher", icon: "🚀" },
+          ].map(item => {
+            const isActive = activeTab === item.id;
+            const userIsPro = plan === "scale";
+            return (
+              <button
+                key={item.id}
+                onClick={() => onTabChange(item.id)}
+                title={item.label}
+                style={{
+                  width: "100%",
+                  display: "flex", alignItems: "center", gap: "0.6rem",
+                  padding: "0.6rem 0.75rem",
+                  borderRadius: 10,
+                  border: isActive
+                    ? "1px solid rgba(123,108,246,0.3)"
+                    : "1px solid transparent",
+                  background: isActive
+                    ? "linear-gradient(135deg, rgba(123,108,246,0.2), rgba(100,80,240,0.1))"
+                    : "transparent",
+                  cursor: "pointer",
+                  textAlign: "left" as const,
+                  transition: "all 0.15s",
+                  marginBottom: 2,
+                }}
+                onMouseEnter={e => {
+                  if (!isActive) e.currentTarget.style.background = "rgba(123,108,246,0.07)";
+                }}
+                onMouseLeave={e => {
+                  if (!isActive) e.currentTarget.style.background = "transparent";
+                }}
+              >
+                <span style={{ fontSize: 14, flexShrink: 0 }}>{item.icon}</span>
+                {!collapsed && (
+                  <>
+                    <span style={{
+                      fontSize: 13, fontWeight: 500, flex: 1,
+                      color: userIsPro ? "#ffffff" : "#a89df7",
+                    }}>
+                      {item.label}
+                    </span>
+                    {!userIsPro && (
+                      <span style={{
+                        fontSize: 9, fontWeight: 800,
+                        background: "linear-gradient(135deg, #7b6cf6, #9d8ff5)",
+                        color: "#fff",
+                        padding: "2px 6px", borderRadius: 4,
+                        letterSpacing: "0.05em", flexShrink: 0,
+                      }}>
+                        PRO
+                      </span>
+                    )}
+                  </>
+                )}
+              </button>
+            );
+          })}
+        </div>
         </div>
 
         {/* FOOTER — vždy na spodku */}
