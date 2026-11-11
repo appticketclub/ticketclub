@@ -129,7 +129,6 @@ export default function UpgradeModal({ onClose }: { onClose: () => void }) {
         border: "1px solid rgba(123,108,246,0.2)",
         borderRadius: 24,
         boxShadow: "0 32px 80px rgba(0,0,0,0.6)",
-        position: "relative",
         zIndex: 1001,
       }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, rgba(123,108,246,0.5), rgba(168,157,247,0.3), transparent)" }} />
