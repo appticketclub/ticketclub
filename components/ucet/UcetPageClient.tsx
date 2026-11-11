@@ -368,7 +368,7 @@ export default function UcetPageClient({ user, profile, subscription }: { user: 
 
       {/* Header */}
       <div style={{ marginBottom: "2rem" }}>
-        <a href="/dostupne-sluzby" style={{ fontSize: 13, color: "rgba(240,238,255,0.5)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: "1rem" }}>
+        <a href="/nakupy" style={{ fontSize: 13, color: "rgba(240,238,255,0.5)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: "1rem" }}>
           ← Zpět na přehled
         </a>
         <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "clamp(26px, 4vw, 34px)", fontWeight: 800, color: "#fff", marginBottom: "0.3rem" }}>Můj účet</h1>
