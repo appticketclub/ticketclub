@@ -365,8 +365,10 @@ export default function UctyHeslaTab() {
   const [detailAccount, setDetailAccount] = useState<VaultAccount | null>(null);
   const [revealedPasswords, setRevealedPasswords] = useState<Set<string>>(new Set()); 
   const [search, setSearch] = useState("");
+  const [selectMode, setSelectMode] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
-  async function loadAccounts() { 
+  async function loadAccounts() {
     const supabase = createClient(); 
     const { data } = await supabase 
       .from("accounts") 
@@ -394,11 +396,29 @@ export default function UctyHeslaTab() {
     }); 
   } 
 
-  function copyToClipboard(text: string) { 
-    navigator.clipboard.writeText(text); 
-  } 
+  function copyToClipboard(text: string) {
+    navigator.clipboard.writeText(text);
+  }
 
-  const filtered = accounts.filter(a => 
+  function toggleSelect(id: string) {
+    setSelected(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  }
+
+  async function deleteSelected() {
+    if (selected.size === 0) return;
+    if (!confirm(`Opravdu chcete smazat ${selected.size} záznamů?`)) return;
+    const supabase = createClient();
+    await supabase.from("accounts").delete().in("id", Array.from(selected));
+    setSelected(new Set());
+    setSelectMode(false);
+    loadAccounts();
+  }
+
+  const filtered = accounts.filter(a =>
     a.name.toLowerCase().includes(search.toLowerCase()) || 
     (a.email?.toLowerCase().includes(search.toLowerCase())) 
   ); 
@@ -408,25 +428,70 @@ export default function UctyHeslaTab() {
       {showModal && <AddVaultModal onClose={() => setShowModal(false)} onSave={loadAccounts} />} 
       {editAccount && <EditVaultModal account={editAccount} onClose={() => setEditAccount(null)} onSave={loadAccounts} />}
 
-      {/* Header */} 
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem" }}> 
-        <div> 
-          <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.25rem" }}>Účty a hesla</h1> 
-          <p style={{ fontSize: 13, color: "#ededed"  }}>{accounts.length} {accounts.length === 1 ? "záznam" : accounts.length < 5 ? "záznamy" : "záznamů"}</p> 
-        </div> 
-        <button 
-          onClick={() => setShowModal(true)} 
-          style={{ 
-            padding: "0.65rem 1.25rem", 
-            background: "linear-gradient(135deg, #ffffff, #a0a0a0)", 
-            border: "none", borderRadius: 10, 
-            color: "#000", fontWeight: 700, fontSize: 13, 
-            letterSpacing: "0.05em", cursor: "pointer", 
-          }} 
-        > 
-          + Přidat záznam 
-        </button> 
-      </div> 
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem" }}>
+        <div>
+          <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.25rem" }}>Účty a hesla</h1>
+          <p style={{ fontSize: 13, color: "#ededed"  }}>{accounts.length} {accounts.length === 1 ? "záznam" : accounts.length < 5 ? "záznamy" : "záznamů"}</p>
+        </div>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          {selectMode ? (
+            <>
+              <span style={{ fontSize: 13, color: "rgba(240,238,255,0.4)" }}>
+                {selected.size} vybraných
+              </span>
+              <button
+                onClick={deleteSelected}
+                disabled={selected.size === 0}
+                style={{
+                  padding: "0.65rem 1.1rem",
+                  background: selected.size > 0 ? "rgba(239,68,68,0.15)" : "rgba(255,255,255,0.04)",
+                  border: `1px solid ${selected.size > 0 ? "rgba(239,68,68,0.4)" : "rgba(255,255,255,0.08)"}`,
+                  borderRadius: 10, color: selected.size > 0 ? "#f87171" : "#666",
+                  fontWeight: 700, fontSize: 13, cursor: selected.size > 0 ? "pointer" : "default",
+                }}
+              >
+                🗑 Smazat ({selected.size})
+              </button>
+              <button
+                onClick={() => { setSelectMode(false); setSelected(new Set()); }}
+                style={{
+                  padding: "0.65rem 1.1rem",
+                  background: "transparent", border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: 10, color: "#ededed", fontSize: 13, cursor: "pointer",
+                }}
+              >
+                Zrušit
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => setSelectMode(true)}
+                style={{
+                  padding: "0.65rem 1.1rem",
+                  background: "transparent", border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: 10, color: "rgba(240,238,255,0.5)", fontSize: 13, cursor: "pointer",
+                }}
+              >
+                ☑ Označit
+              </button>
+              <button
+                onClick={() => setShowModal(true)}
+                style={{
+                  padding: "0.65rem 1.25rem",
+                  background: "linear-gradient(135deg, #ffffff, #a0a0a0)",
+                  border: "none", borderRadius: 10,
+                  color: "#000", fontWeight: 700, fontSize: 13,
+                  letterSpacing: "0.05em", cursor: "pointer",
+                }}
+              >
+                + Přidat záznam
+              </button>
+            </>
+          )}
+        </div>
+      </div>
 
       {/* Search */} 
       {accounts.length > 0 && ( 
@@ -557,18 +622,35 @@ export default function UctyHeslaTab() {
           {filtered.map((account) => ( 
             <div
               key={account.id}
-              onClick={() => setDetailAccount(account)}
+              onClick={() => {
+                if (selectMode) { toggleSelect(account.id); return; }
+                setDetailAccount(account);
+              }}
               style={{
-                background: "#111111",
-                border: "1px solid #1a1a1a",
+                background: selected.has(account.id) ? "rgba(123,108,246,0.1)" : "#111111",
+                border: `1px solid ${selected.has(account.id) ? "rgba(123,108,246,0.4)" : "#1a1a1a"}`,
                 borderRadius: 16,
                 padding: "1.25rem 1.5rem",
                 cursor: "pointer",
-                transition: "border-color 0.2s",
+                transition: "border-color 0.15s, background 0.15s",
+                position: "relative",
               }}
-              onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.borderColor = "#2a2a2a"}
-              onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.borderColor = "#1a1a1a"}
+              onMouseEnter={e => { if (!selected.has(account.id)) (e.currentTarget as HTMLDivElement).style.borderColor = "#2a2a2a"; }}
+              onMouseLeave={e => { if (!selected.has(account.id)) (e.currentTarget as HTMLDivElement).style.borderColor = "#1a1a1a"; }}
             >
+              {selectMode && (
+                <div style={{
+                  position: "absolute", top: 12, right: 12,
+                  width: 20, height: 20, borderRadius: 6,
+                  border: `2px solid ${selected.has(account.id) ? "#7b6cf6" : "rgba(255,255,255,0.2)"}`,
+                  background: selected.has(account.id) ? "#7b6cf6" : "transparent",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 11, color: "#fff", transition: "all 0.15s",
+                  zIndex: 1,
+                }}>
+                  {selected.has(account.id) ? "✓" : ""}
+                </div>
+              )}
               {/* Header row — name + action buttons only */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -582,6 +664,7 @@ export default function UctyHeslaTab() {
                     )}
                   </div>
                 </div>
+                {!selectMode && (
                 <div style={{ display: "flex", gap: 4 }} onClick={e => e.stopPropagation()}>
                   <button
                     onClick={() => setEditAccount(account)}
@@ -596,6 +679,7 @@ export default function UctyHeslaTab() {
                     onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = "#ededed"}
                   >×</button>
                 </div>
+                )}
               </div>
             </div>
           ))}
