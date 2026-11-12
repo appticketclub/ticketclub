@@ -15,7 +15,7 @@ import TymStatistikyTab from "@/components/nakupy/tabs/TymStatistikyTab";
 import EvidenceTab from "@/components/nakupy/tabs/EvidenceTab";
 import DetailyTab from "@/components/nakupy/tabs/DetailyTab";
 import UpozorneniaTab from "@/components/nakupy/tabs/UpozorneniaTab";
-import SurveyModal from "@/components/survey/SurveyModal";
+// import SurveyModal from "@/components/survey/SurveyModal";
 import UpgradeModal from "@/components/ucet/UpgradeModal";
 import UpgradePopup from "@/components/nakupy/UpgradePopup";
 import RefreshBotClient from "@/components/refresh-bot/RefreshBotClient";
@@ -102,22 +102,6 @@ export default function NakupyPage() {
     fetchProfile();
   }, [supabase]);
 
-  useEffect(() => {
-    async function checkSurvey() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("survey_completed")
-        .eq("id", user.id)
-        .single();
-      if (!profile?.survey_completed) {
-        setTimeout(() => setShowSurvey(true), 2000);
-      }
-    }
-    checkSurvey();
-  }, [supabase]);
-
   const isPro = plan === "scale";
 
   const tabs: Record<string, React.ReactNode> = {
@@ -171,7 +155,7 @@ export default function NakupyPage() {
           →
         </button>
       )}
-      {showSurvey && <SurveyModal onClose={() => setShowSurvey(false)} />}
+      {/* {false && showSurvey && <SurveyModal onClose={() => setShowSurvey(false)} />} */}
       {plan === "free" && (
         <UpgradePopup onUpgrade={() => setShowUpgrade(true)} />
       )}
