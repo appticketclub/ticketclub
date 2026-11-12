@@ -39,6 +39,15 @@ export default function Sidebar({
   const [plan, setPlan] = useState<"free" | "scale" | null>(null);
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [evidenceCount, setEvidenceCount] = useState<number | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const el = document.querySelector(".sidebar-scroll-area") as HTMLElement;
+    if (!el) return;
+    const handler = () => setScrolled(el.scrollTop > 10);
+    el.addEventListener("scroll", handler);
+    return () => el.removeEventListener("scroll", handler);
+  }, []);
 
   useEffect(() => {
     const supabase = createClient();
@@ -106,7 +115,7 @@ export default function Sidebar({
         style={{
           width: collapsed ? 0 : 240,
           minWidth: collapsed ? 0 : 240,
-          background: "rgba(16,16,22,0.8)",
+          background: scrolled ? "rgba(10,10,16,0.7)" : "rgba(10,10,16,0.8)",
           borderRight: "1px solid rgba(123,108,246,0.18)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
@@ -118,7 +127,7 @@ export default function Sidebar({
           top: 73,
           height: "calc(100vh - 73px)",
           overflow: "hidden",
-          transition: "width 0.25s ease, min-width 0.25s ease, padding 0.25s ease",
+          transition: "width 0.25s ease, min-width 0.25s ease, padding 0.25s ease, background 0.3s ease",
         }}
       >
         <p style={{
@@ -137,7 +146,7 @@ export default function Sidebar({
         </p>
 
         {/* NAV ITEMS — scrollovateľná oblasť */}
-        <div style={{
+        <div className="sidebar-scroll-area" style={{
           flex: 1,
           minHeight: 0,
           overflowY: "auto",

@@ -66,6 +66,7 @@ export default function TopNav({ user, profile }: { user: any; profile: any }) {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const bellRef = useRef<HTMLDivElement>(null);
+  const [scrolled, setScrolled] = useState(false);
 
   const isAdmin = profile?.role === "admin";
 
@@ -102,6 +103,12 @@ export default function TopNav({ user, profile }: { user: any; profile: any }) {
   }, []);
 
   useEffect(() => {
+    const handler = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handler);
+    return () => window.removeEventListener("scroll", handler);
+  }, []);
+
+  useEffect(() => {
     if (bellOpen && !isAdmin) markAllRead();
   }, [bellOpen]);
 
@@ -123,8 +130,9 @@ export default function TopNav({ user, profile }: { user: any; profile: any }) {
       justifyContent: "space-between",
       padding: "1rem clamp(1rem, 4vw, 3rem)",
       borderBottom: "1px solid rgba(123,108,246,0.1)",
-      background: "rgba(10,10,16,0.95)",
-      backdropFilter: "blur(12px)",
+      background: scrolled ? "rgba(10,10,16,0.7)" : "rgba(10,10,16,0.8)",
+      backdropFilter: scrolled ? "blur(20px)" : "blur(12px)",
+      transition: "background 0.3s ease, backdrop-filter 0.3s ease",
       position: "sticky",
       top: 0,
       zIndex: 50,
