@@ -84,11 +84,11 @@ const COLS = [
 ];
 
 const ticketTypeOptions = [
-  { value: "Mobile Transfer", label: "Mobile Transfer", color: "#f97316", bg: "rgba(249,115,22,0.15)" },
-  { value: "E-Ticket", label: "E-Ticket", color: "#3b82f6", bg: "rgba(59,130,246,0.15)" },
-  { value: "Transfer odeslán", label: "Transfer odeslán", color: "#eab308", bg: "rgba(234,179,8,0.15)" },
-  { value: "Transfer přijat", label: "Transfer přijat", color: "#22c55e", bg: "rgba(34,197,94,0.15)" },
-  { value: "E-Ticket nenahraný", label: "E-Ticket nenahraný", color: "#a855f7", bg: "rgba(168,85,247,0.15)" },
+  { value: "Mobile Transfer", label: "Mobile Transfer", color: "#5de8a0", bg: "rgba(93,232,160,0.1)" },
+  { value: "E-Ticket", label: "E-Ticket", color: "#60a5fa", bg: "rgba(96,165,250,0.1)" },
+  { value: "Transfer odeslán", label: "Transfer odeslán", color: "#a89df7", bg: "rgba(123,108,246,0.1)" },
+  { value: "Transfer přijat", label: "Transfer přijat", color: "#a89df7", bg: "rgba(123,108,246,0.1)" },
+  { value: "E-Ticket nenahraný", label: "E-Ticket nenahraný", color: "#fbbf24", bg: "rgba(251,191,36,0.1)" },
 ];
 
 export default function EvidenceTab() {
@@ -302,16 +302,17 @@ export default function EvidenceTab() {
   // Totals
   const totalBuy = filtered.reduce((s, r) => s + convert(r.buy_price * r.quantity, r.currency as "EUR" | "CZK"), 0);
   const totalSell = filtered.reduce((s, r) => s + convert(r.sell_price_total, r.currency as "EUR" | "CZK"), 0);
-  const totalProfit = filtered.reduce((s, r) => s + convert(r.profit, r.currency as "EUR" | "CZK"), 0);
-  const avgRoi = filtered.length > 0 ? filtered.reduce((s, r) => s + r.roi, 0) / filtered.length : 0;
   const ticketsActive = filtered.filter(r => r.status === "active" || r.status === "partial").reduce((s, r) => s + (r.quantity_remaining ?? r.quantity), 0);
   const moneyOnWay = filtered.filter(r => r.status === "sold" && !r.paid_out).reduce((s, r) => s + convert(r.sell_price_total, r.currency as "EUR" | "CZK"), 0);
 
+  const statMoney = (amount: number) =>
+    amount.toLocaleString("cs-CZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + (currency === "EUR" ? " €" : " Kč");
+
   const cellStyle = (width: number, isNum = false): React.CSSProperties => ({
     minWidth: width, maxWidth: width, width,
-    padding: "0.6rem 0.75rem",
-    fontSize: 12, color: "#ffffff",
-    borderRight: "1px solid #1a1a1a",
+    padding: "0.9rem 1rem",
+    fontSize: 13, color: "rgba(255,255,255,0.6)",
+    borderRight: "1px solid rgba(123,108,246,0.06)",
     textAlign: isNum ? "right" : "left",
     whiteSpace: "nowrap",
     overflow: "hidden",
@@ -718,30 +719,45 @@ export default function EvidenceTab() {
         </div>
       )}
 
-      {/* Summary bar */}
+      {/* Stats strip */}
       <div style={{
-        background: "#0a0a0a",
-        border: "1px solid #1a1a1a",
-        borderRadius: 12,
-        padding: "0.75rem 1.25rem",
-        marginBottom: "0.75rem",
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+        gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
         gap: "0.75rem",
+        marginBottom: "1rem",
       }}>
         {[
-          { label: "NÁKUPŮ", value: `${filtered.length}`, color: "#fff" },
-          { label: "LÍSTKŮ CELKEM", value: `${filtered.reduce((s, r) => s + r.quantity, 0)}×`, color: "#fff" },
-          { label: "NÁKUP CELKEM", value: format(totalBuy, currency), color: "#ffffff" },
-          { label: "PRODEJ CELKEM", value: format(totalSell, currency), color: "#34d399" },
-          { label: "ZISK CELKEM", value: `${totalProfit >= 0 ? "+" : ""}${format(totalProfit, currency)}`, color: totalProfit >= 0 ? "#34d399" : "#f87171" },
-          { label: "PRŮMĚRNÁ ZISKOVOST", value: `${avgRoi >= 0 ? "+" : ""}${avgRoi.toFixed(1)}%`, color: avgRoi >= 0 ? "#34d399" : "#f87171" },
-          { label: "LÍSTKY V PRODEJI", value: `${ticketsActive}×`, color: "#fbbf24" },
-          { label: "PENÍZE NA CESTĚ", value: format(moneyOnWay, currency), color: "#a78bfa" },
+          { label: "NÁKUPŮ", value: `${filtered.length}`, color: "#ffffff" },
+          { label: "LÍSTKŮ CELKEM", value: `${filtered.reduce((s, r) => s + r.quantity, 0)}×`, color: "#ffffff" },
+          { label: "NÁKUP CELKEM", value: statMoney(totalBuy), color: "#ffffff" },
+          { label: "PRODEJ CELKEM", value: statMoney(totalSell), color: "#5de8a0" },
+          { label: "LÍSTKY V PRODEJI", value: `${ticketsActive}×`, color: "#a89df7" },
+          { label: "PENÍZE NA CESTĚ", value: statMoney(moneyOnWay), color: "#5de8a0" },
         ].map(s => (
-          <div key={s.label} style={{ textAlign: "center" as const }}>
-            <div style={{ fontSize: 9, color: "#ffffff", letterSpacing: "0.08em", marginBottom: 3 }}>{s.label}</div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: s.color }}>{s.value}</div>
+          <div key={s.label} style={{
+            background: "linear-gradient(145deg, rgba(30,30,38,0.75), rgba(22,22,28,0.8))",
+            border: "1px solid rgba(123,108,246,0.15)",
+            borderRadius: 14,
+            padding: "1rem 1.1rem",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            position: "relative" as const,
+            overflow: "hidden",
+          }}>
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, rgba(123,108,246,0.3), transparent)" }} />
+            <div style={{
+              fontSize: 10, fontWeight: 600, letterSpacing: "0.08em",
+              textTransform: "uppercase" as const,
+              color: "rgba(255,255,255,0.3)", marginBottom: "0.4rem",
+            }}>
+              {s.label}
+            </div>
+            <div style={{
+              fontSize: 20, fontWeight: 800, fontFamily: "'Space Grotesk', sans-serif",
+              color: s.color, fontVariantNumeric: "tabular-nums",
+            }}>
+              {s.value}
+            </div>
           </div>
         ))}
       </div>
@@ -751,12 +767,17 @@ export default function EvidenceTab() {
         overflowX: "auto",
         overflowY: "auto",
         maxHeight: "calc(100vh - 340px)",
-        borderRadius: 16,
-        border: "1px solid #1a1a1a",
+        background: "linear-gradient(145deg, rgba(30,30,38,0.75), rgba(22,22,28,0.8))",
+        border: "1px solid rgba(123,108,246,0.15)",
+        borderRadius: 18,
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        position: "relative" as const,
         scrollbarWidth: "thin" as const,
-        scrollbarColor: "#2a2a2a #0a0a0a",
+        scrollbarColor: "rgba(123,108,246,0.3) transparent",
         WebkitOverflowScrolling: "touch",
       }}>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, rgba(123,108,246,0.5), transparent)", zIndex: 1 }} />
         <table style={{
           borderCollapse: "collapse",
           width: "max-content",
@@ -764,18 +785,19 @@ export default function EvidenceTab() {
           tableLayout: "auto",
         }}>
           {/* Header */}
-          <thead style={{ position: "sticky", top: 0, zIndex: 10, background: "#0a0a0a" }}>
-            <tr style={{ background: "#0a0a0a", borderBottom: "1px solid #1f1f1f" }}>
+          <thead style={{ position: "sticky", top: 0, zIndex: 10, background: "rgba(16,14,24,0.72)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
+            <tr style={{ background: "transparent" }}>
               {COLS.map(col => (
                 <th key={col.key} style={{
                   ...cellStyle(col.width),
-                  color: "#ffffff", fontWeight: 700,
-                  fontSize: 10, letterSpacing: "0.08em",
-                  whiteSpace: "pre-line",
-                  lineHeight: 1.3, padding: "0.75rem",
-                  background: "#0a0a0a",
+                  padding: "0.85rem 1rem",
+                  fontSize: 10.5, fontWeight: 600, letterSpacing: "0.06em",
+                  textTransform: "uppercase" as const,
+                  color: "rgba(255,255,255,0.3)",
+                  whiteSpace: "nowrap" as const,
+                  background: "rgba(16,14,24,0.5)",
+                  borderBottom: "1px solid rgba(123,108,246,0.1)",
                   position: "sticky", top: 0,
-                  borderBottom: "1px solid #1f1f1f",
                 }}>
                   {col.label}
                 </th>
@@ -792,31 +814,29 @@ export default function EvidenceTab() {
                 </td>
               </tr>
             ) : (
-              filtered.map((row, idx) => {
+              filtered.map((row) => {
                 const isProfit = row.profit >= 0;
                 const hasSales = row.sell_price_total > 0;
+                const isComplete = row.status === "sold";
+                const isPartial = !isComplete && row.quantity_sold > 0;
+                const rowBg = isComplete ? "transparent" : "rgba(251,191,36,0.07)";
+                const rowAccent = isComplete
+                  ? "inset 3px 0 0 #5de8a0"
+                  : isPartial
+                    ? "inset 3px 0 0 #fbbf24"
+                    : "inset 3px 0 0 rgba(255,255,255,0.1)";
 
                 return (
                   <tr
                     key={row.id}
                     style={{
-                      background: (() => {
-                        const isComplete = row.status === "sold";
-                        const defaultBg = idx % 2 === 0 ? "#111111" : "#0d0d0d";
-                        return isComplete ? defaultBg : "rgba(251, 191, 36, 0.25)";
-                      })(),
-                      borderBottom: "1px solid #1a1a1a",
-                      transition: "background 0.15s",
+                      background: rowBg,
+                      boxShadow: rowAccent,
+                      borderBottom: "1px solid rgba(255,255,255,0.03)",
+                      transition: "background 0.12s",
                     }}
-                    onMouseEnter={e => { 
-                      const isComplete = row.status === "sold"; 
-                      if (isComplete) e.currentTarget.style.background = "#1a1a1a"; 
-                    }} 
-                    onMouseLeave={e => { 
-                      const isComplete = row.status === "sold"; 
-                      const defaultBg = idx % 2 === 0 ? "#111111" : "#0d0d0d"; 
-                      e.currentTarget.style.background = isComplete ? defaultBg : "rgba(251, 191, 36, 0.25)"; 
-                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = "rgba(123,108,246,0.05)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = rowBg; }}
                   >
                     {/* Datum nákupu */}
                     <DateCell rowId={row.id} field="event_date" value={row.event_date} width={100} />
@@ -1013,17 +1033,34 @@ export default function EvidenceTab() {
                     <EditableCell rowId={row.id} field="sell_price_total" value={row.sell_price_total > 0 ? row.sell_price_total.toFixed(2) : null} width={130} align="right" color={row.sell_price_total > 0 ? "#34d399" : "#ededed"} />
 
                     {/* Celkový zisk — READ ONLY */}
-                    <td style={{ ...cellStyle(120), textAlign: "right", color: row.profit >= 0 ? "#34d399" : "#f87171", fontWeight: 700, cursor: "default" }} title="Pouze pro čtení">
+                    <td style={{
+                      ...cellStyle(120),
+                      textAlign: "right",
+                      color: row.sell_price_total > 0 ? (isProfit ? "#5de8a0" : "#f87171") : "rgba(255,255,255,0.25)",
+                      fontWeight: 700,
+                      cursor: "default",
+                    }} title="Pouze pro čtení">
                       {row.quantity_remaining === 0
                         ? (row.sell_price_total > 0 ? `${row.profit >= 0 ? "+" : ""}${format(row.profit, row.currency as "EUR" | "CZK")}` : "—")
                         : "—"}
                     </td>
 
                     {/* Ziskovost — READ ONLY */}
-                    <td style={{ ...cellStyle(90), textAlign: "right", color: row.roi >= 0 ? "#34d399" : "#f87171", fontWeight: 600, cursor: "default" }} title="Pouze pro čtení">
-                      {row.quantity_remaining === 0
-                        ? (row.sell_price_total > 0 ? `${row.roi >= 0 ? "+" : ""}${row.roi.toFixed(1)}%` : "—")
-                        : "—"}
+                    <td style={{ ...cellStyle(90), textAlign: "right", cursor: "default" }} title="Pouze pro čtení">
+                      {row.quantity_remaining === 0 && row.sell_price_total > 0 ? (
+                        <span style={{
+                          display: "inline-block",
+                          background: isProfit ? "rgba(93,232,160,0.1)" : "rgba(248,113,113,0.1)",
+                          color: isProfit ? "#5de8a0" : "#f87171",
+                          border: `1px solid ${isProfit ? "rgba(93,232,160,0.2)" : "rgba(248,113,113,0.2)"}`,
+                          borderRadius: 6, padding: "2px 7px",
+                          fontSize: 11, fontWeight: 700,
+                        }}>
+                          {row.roi >= 0 ? "+" : ""}{row.roi.toFixed(1)}%
+                        </span>
+                      ) : (
+                        <span style={{ color: "rgba(255,255,255,0.25)" }}>—</span>
+                      )}
                     </td>
 
                     {/* Burza — DROPDOWN */}
@@ -1088,11 +1125,11 @@ export default function EvidenceTab() {
                             <span style={{
                               background: opt.bg,
                               color: opt.color,
-                              border: `1px solid ${opt.color}40`,
-                              borderRadius: 20,
-                              padding: "2px 10px",
+                              border: `1px solid ${opt.color}20`,
+                              borderRadius: 6,
+                              padding: "3px 9px",
                               fontSize: 11,
-                              fontWeight: 600,
+                              fontWeight: 700,
                               whiteSpace: "nowrap" as const,
                             }}>
                               {opt.label}

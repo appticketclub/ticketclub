@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import * as XLSX from "xlsx";
 
 type Account = {
   id: string;
@@ -34,6 +35,66 @@ function AddAccountModal({ onClose, onSave }: { onClose: () => void; onSave: () 
   const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [importError, setImportError] = useState("");
+  const [importSuccess, setImportSuccess] = useState(0);
+
+  function handleDownloadTemplate() {
+    const ws = XLSX.utils.aoa_to_sheet([
+      ["NÁZEV ÚČTU", "URL PLATFORMY", "E-MAIL", "HESLO", "POZNÁMKA"],
+      ["Email1/TM1", "https://ticketmaster.cz/", "muj@email.cz", "heslo123", "poznámka"],
+    ]);
+    ws["!cols"] = [{ wch: 20 }, { wch: 30 }, { wch: 25 }, { wch: 20 }, { wch: 30 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Účty");
+    XLSX.writeFile(wb, "sablona-ucty.xlsx");
+  }
+
+  async function handleImportFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImportError("");
+    setImportSuccess(0);
+
+    const data = await file.arrayBuffer();
+    const wb = XLSX.read(data);
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json<Record<string, string>>(ws);
+
+    if (rows.length === 0) {
+      setImportError("Soubor je prázdný nebo nemá správný formát.");
+      return;
+    }
+
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const accountType = "purchase";
+    const inserts = rows.map(row => ({
+      user_id: user.id,
+      name: String(row["NÁZEV ÚČTU"] ?? "").trim(),
+      url: String(row["URL PLATFORMY"] ?? "").trim() || null,
+      email: String(row["E-MAIL"] ?? "").trim() || null,
+      password_encrypted: String(row["HESLO"] ?? "").trim() || null,
+      notes: String(row["POZNÁMKA"] ?? "").trim() || null,
+      type: accountType,
+    })).filter(r => r.name);
+
+    if (inserts.length === 0) {
+      setImportError("Žádný řádek nemá vyplněný NÁZEV ÚČTU.");
+      return;
+    }
+
+    const { error: insertError } = await supabase.from("accounts").insert(inserts);
+    if (insertError) {
+      setImportError(insertError.message);
+    } else {
+      setImportSuccess(inserts.length);
+      onSave();
+      setTimeout(() => onClose(), 1200);
+    }
+    e.target.value = "";
+  }
 
   async function handleSave() {
     if (!name.trim()) return setError("Název účtu je povinný.");
@@ -80,6 +141,63 @@ function AddAccountModal({ onClose, onSave }: { onClose: () => void; onSave: () 
           <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", margin: 0 }}>Přidat účet</h2>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#ededed" , cursor: "pointer", fontSize: 20, lineHeight: 1 }}>×</button>
         </div>
+
+        {/* Import banner */}
+        <div style={{
+          background: "linear-gradient(135deg, rgba(123,108,246,0.08), rgba(80,60,200,0.06))",
+          border: "1px solid rgba(123,108,246,0.2)",
+          borderRadius: 14,
+          padding: "0.9rem 1rem",
+          display: "flex",
+          alignItems: "center",
+          gap: "0.75rem",
+          marginBottom: "1.25rem",
+        }}>
+          <div style={{ fontSize: 22, flexShrink: 0 }}>📊</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#e0dcff", marginBottom: 2 }}>
+              Hromadný import účtů
+            </div>
+            <div style={{ fontSize: 12, color: "rgba(240,238,255,0.4)" }}>
+              Stáhni šablonu · vyplň · nahraj zpět
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+            <button
+              onClick={handleDownloadTemplate}
+              style={{
+                display: "flex", alignItems: "center", gap: 4,
+                padding: "0.4rem 0.75rem",
+                background: "rgba(93,232,160,0.1)", border: "1px solid rgba(93,232,160,0.25)",
+                color: "#5de8a0", borderRadius: 8,
+                fontSize: 12, fontWeight: 600, cursor: "pointer",
+              }}
+            >
+              ↓ Šablona
+            </button>
+            <label style={{
+              display: "flex", alignItems: "center", gap: 4,
+              padding: "0.4rem 0.75rem",
+              background: "rgba(123,108,246,0.12)", border: "1px solid rgba(123,108,246,0.3)",
+              color: "#a89df7", borderRadius: 8,
+              fontSize: 12, fontWeight: 600, cursor: "pointer",
+            }}>
+              ↑ Nahrát
+              <input type="file" accept=".xlsx,.csv" onChange={handleImportFile} style={{ display: "none" }} />
+            </label>
+          </div>
+        </div>
+
+        {importError && (
+          <div style={{ marginBottom: "1rem", padding: "10px 14px", borderRadius: 8, background: "#2a0a0a", border: "1px solid #7f1d1d", color: "#fca5a5", fontSize: 13 }}>
+            {importError}
+          </div>
+        )}
+        {importSuccess > 0 && (
+          <div style={{ marginBottom: "1rem", padding: "10px 14px", borderRadius: 8, background: "rgba(93,232,160,0.08)", border: "1px solid rgba(93,232,160,0.3)", color: "#5de8a0", fontSize: 13 }}>
+            ✓ Importováno {importSuccess} účtů
+          </div>
+        )}
 
         {error && (
           <div style={{ marginBottom: "1rem", padding: "10px 14px", borderRadius: 8, background: "#2a0a0a", border: "1px solid #7f1d1d", color: "#fca5a5", fontSize: 13 }}>
@@ -360,6 +478,8 @@ export default function NakupniUctyTab() {
   const [detailAccount, setDetailAccount] = useState<Account | null>(null);
   const [revealedPasswords, setRevealedPasswords] = useState<Set<string>>(new Set());
   const [search, setSearch] = useState("");
+  const [selectMode, setSelectMode] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
   async function loadAccounts() {
     const supabase = createClient();
@@ -389,6 +509,24 @@ export default function NakupniUctyTab() {
     navigator.clipboard.writeText(text);
   }
 
+  function toggleSelect(id: string) {
+    setSelected(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  }
+
+  async function deleteSelected() {
+    if (selected.size === 0) return;
+    if (!confirm(`Opravdu chcete smazat ${selected.size} účtů?`)) return;
+    const supabase = createClient();
+    await supabase.from("accounts").delete().in("id", Array.from(selected));
+    setSelected(new Set());
+    setSelectMode(false);
+    loadAccounts();
+  }
+
   const filtered = accounts.filter(a =>
     a.name.toLowerCase().includes(search.toLowerCase()) ||
     (a.email?.toLowerCase().includes(search.toLowerCase()))
@@ -414,12 +552,63 @@ export default function NakupniUctyTab() {
           <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.25rem" }}>Nákupní účty</h1>
           <p style={{ fontSize: 13, color: "#ededed"  }}>{accounts.length} {accounts.length === 1 ? "účet" : accounts.length < 5 ? "účty" : "účtů"}</p>
         </div>
-        <button
-          onClick={() => setShowModal(true)}
-          style={{ padding: "0.65rem 1.25rem", background: "linear-gradient(135deg, #ffffff, #a0a0a0)", border: "none", borderRadius: 10, color: "#000", fontWeight: 700, fontSize: 13, letterSpacing: "0.05em", cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}
-        >
-          + Přidat účet
-        </button>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          {selectMode ? (
+            <>
+              <span style={{ fontSize: 13, color: "rgba(240,238,255,0.4)" }}>
+                {selected.size} vybraných
+              </span>
+              <button
+                onClick={deleteSelected}
+                disabled={selected.size === 0}
+                style={{
+                  padding: "0.65rem 1.1rem",
+                  background: selected.size > 0 ? "rgba(239,68,68,0.15)" : "rgba(255,255,255,0.04)",
+                  border: `1px solid ${selected.size > 0 ? "rgba(239,68,68,0.4)" : "rgba(255,255,255,0.08)"}`,
+                  borderRadius: 10, color: selected.size > 0 ? "#f87171" : "#666",
+                  fontWeight: 700, fontSize: 13, cursor: selected.size > 0 ? "pointer" : "default",
+                }}
+              >
+                🗑 Smazat ({selected.size})
+              </button>
+              <button
+                onClick={() => { setSelectMode(false); setSelected(new Set()); }}
+                style={{
+                  padding: "0.65rem 1.1rem",
+                  background: "transparent", border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: 10, color: "#ededed", fontSize: 13, cursor: "pointer",
+                }}
+              >
+                Zrušit
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => setSelectMode(true)}
+                style={{
+                  padding: "0.65rem 1.1rem",
+                  background: "transparent", border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: 10, color: "rgba(240,238,255,0.5)", fontSize: 13, cursor: "pointer",
+                }}
+              >
+                ☑ Označit
+              </button>
+              <button
+                onClick={() => setShowModal(true)}
+                style={{
+                  padding: "0.65rem 1.25rem",
+                  background: "linear-gradient(135deg, #ffffff, #a0a0a0)",
+                  border: "none", borderRadius: 10,
+                  color: "#000", fontWeight: 700, fontSize: 13,
+                  letterSpacing: "0.05em", cursor: "pointer",
+                }}
+              >
+                + Přidat účet
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       {accounts.length > 0 && (
@@ -448,11 +637,36 @@ export default function NakupniUctyTab() {
           {filtered.map((account) => (
             <div
               key={account.id}
-              onClick={() => setDetailAccount(account)}
-              style={{ background: "#111111", border: "1px solid #1a1a1a", borderRadius: 16, padding: "1.25rem 1.5rem", position: "relative", overflow: "hidden", transition: "border-color 0.2s", cursor: "pointer" }}
-              onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.borderColor = "#ededed"}
-              onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.borderColor = "#1a1a1a"}
+              onClick={() => {
+                if (selectMode) { toggleSelect(account.id); return; }
+                setDetailAccount(account);
+              }}
+              style={{
+                background: selected.has(account.id) ? "rgba(123,108,246,0.1)" : "#111111",
+                border: `1px solid ${selected.has(account.id) ? "rgba(123,108,246,0.4)" : "#1a1a1a"}`,
+                borderRadius: 16,
+                padding: "1.25rem 1.5rem",
+                cursor: "pointer",
+                transition: "border-color 0.15s, background 0.15s",
+                position: "relative",
+                overflow: "hidden",
+              }}
+              onMouseEnter={e => { if (!selected.has(account.id)) (e.currentTarget as HTMLDivElement).style.borderColor = "#2a2a2a"; }}
+              onMouseLeave={e => { if (!selected.has(account.id)) (e.currentTarget as HTMLDivElement).style.borderColor = "#1a1a1a"; }}
             >
+              {selectMode && (
+                <div style={{
+                  position: "absolute", top: 12, right: 12,
+                  width: 20, height: 20, borderRadius: 6,
+                  border: `2px solid ${selected.has(account.id) ? "#7b6cf6" : "rgba(255,255,255,0.2)"}`,
+                  background: selected.has(account.id) ? "#7b6cf6" : "transparent",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 11, color: "#fff", transition: "all 0.15s",
+                  zIndex: 1,
+                }}>
+                  {selected.has(account.id) ? "✓" : ""}
+                </div>
+              )}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <div style={{ width: 36, height: 36, borderRadius: 10, background: "linear-gradient(135deg, #1f1f1f, #2a2a2a)", border: "1px solid #2a2a2a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>
@@ -475,6 +689,7 @@ export default function NakupniUctyTab() {
                     )}
                   </div>
                 </div>
+                {!selectMode && (
                 <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
                   <button
                     onClick={e => { e.stopPropagation(); setEditAccount(account); }}
@@ -493,6 +708,7 @@ export default function NakupniUctyTab() {
                     ×
                   </button>
                 </div>
+                )}
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>

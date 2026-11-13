@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import UpgradeModal from "@/components/ucet/UpgradeModal";
 
 export default function Sidebar({
   activeTab,
@@ -18,157 +20,427 @@ export default function Sidebar({
   const [mobileOpen, setMobileOpen] = useState(false);
   const isProduction = typeof window !== "undefined"
     ? window.location.hostname === "app.ticketclub.vip"
-    : process.env.NEXT_PUBLIC_SITE_URL === "https://app.ticketclub.vip";
+    : process.env.NEXT_PUBLIC_SITE_URL === "`https://app.ticketclub.vip`";
 
   const navItems = [
-    { id: "uvod", label: "Úvod", icon: null },
-    { id: "ucty", label: "Účty hesla", icon: null },
-    { id: "evidence", label: "Evidence", icon: null },
-    ...(!isProduction ? [{ id: "detaily", label: "Detaily N&P", icon: null }] : []),
-    { id: "kalendar", label: "Kalendář", icon: null },
-    { id: "ai-statistiky", label: "AI statistiky", icon: null },
-    { id: "doporucene-akce", label: "Nadcházející akce", icon: null },
-    { id: "kalkulacka", label: "Kalkulačka", icon: null },
-    ...(!isProduction ? [{ id: "bannery", label: "P&L bannery", icon: null }] : []),
-    ...(isAdmin ? [{ id: "tym-statistiky", label: "Štatistiky týmu", icon: null }] : []),
+    { id: "uvod", label: "Úvod", icon: "◈" },
+    { id: "ucty", label: "Účty hesla", icon: "⊡" },
+    { id: "evidence", label: "Evidence", icon: "≡" },
+    ...([]),
+    { id: "kalendar", label: "Kalendář", icon: "▦" },
+    { id: "ai-statistiky", label: "AI statistiky", icon: "◎" },
+    { id: "doporucene-akce", label: "Nadcházející akce", icon: "◇" },
+    { id: "kalkulacka", label: "Kalkulačka", icon: "⊟" },
+    ...([]),
+    ...(isAdmin ? [{ id: "upozornenia", label: "Upozornenia", icon: "🔔" }] : []),
+    ...(isAdmin ? [{ id: "tym-statistiky", label: "Štatistiky týmu", icon: "⊕" }] : []),
   ];
+
+  const [plan, setPlan] = useState<"free" | "scale" | null>(null);
+  const [showUpgrade, setShowUpgrade] = useState(false);
+  const [evidenceCount, setEvidenceCount] = useState<number | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const el = document.querySelector(".sidebar-scroll-area") as HTMLElement;
+    if (!el) return;
+    const handler = () => setScrolled(el.scrollTop > 10);
+    el.addEventListener("scroll", handler);
+    return () => el.removeEventListener("scroll", handler);
+  }, []);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      Promise.all([
+        supabase
+          .from("subscriptions")
+          .select("plan")
+          .eq("user_id", user.id)
+          .single(),
+        supabase
+          .from("purchases")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id),
+      ]).then(([subRes, countRes]) => {
+        setPlan(subRes.data?.plan === "scale" ? "scale" : "free");
+        setEvidenceCount(countRes.count ?? 0);
+      });
+    });
+  }, []);
 
   return (
     <>
-      {/* Mobile hamburger button */}
+      <style>{`
+        .sidebar-nav-btn:hover {
+          background: rgba(123, 108, 246, 0.08) !important;
+          color: #a89df7 !important;
+        }
+        .sidebar-back-link:hover {
+          color: #a89df7 !important;
+        }
+        @media (max-width: 768px) {
+          .mobile-hamburger { display: flex !important; }
+          .sidebar { position: fixed !important; left: 0 !important; top: 65px !important; z-index: 160 !important; transform: translateX(-100%); transition: transform 0.25s ease !important; }
+          .sidebar.sidebar-open { transform: translateX(0) !important; }
+        }
+      `}</style>
+
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
+        className="mobile-hamburger"
         style={{
           display: "none",
           position: "fixed", top: 16, left: 16, zIndex: 200,
-          background: "#111111", border: "1px solid #2a2a2a",
+          background: "rgba(16,16,22,0.8)", border: "1px solid rgba(123,108,246,0.2)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
           borderRadius: 8, padding: "8px 10px", cursor: "pointer", color: "#fff",
+          alignItems: "center",
         }}
-        className="mobile-hamburger"
       >
         ☰
       </button>
 
-      {/* Overlay */}
       {mobileOpen && (
-        <div onClick={() => setMobileOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 150 }} />
+        <div
+          onClick={() => setMobileOpen(false)}
+          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 150 }}
+        />
       )}
 
-      {/* Sidebar */}
-      <aside className={`sidebar ${mobileOpen ? "sidebar-open" : ""}`} style={{
-        width: collapsed ? 0 : 240,
-        minWidth: collapsed ? 0 : 240,
-        background: "#0a0a0a",
-        borderRight: "1px solid #1a1a1a",
-        padding: collapsed ? "1.5rem 0" : "1.5rem 1rem",
-        display: "flex",
-        flexDirection: "column",
-        gap: "0.25rem",
-        minHeight: "calc(100vh - 65px)",
-        overflow: "hidden",
-        transition: "width 0.25s ease, min-width 0.25s ease, padding 0.25s ease",
-      }}>
-      <p style={{ 
-        fontSize: 11, 
-        fontWeight: 600, 
-        letterSpacing: "0.1em", 
-        color: "#ffffff", 
-        padding: collapsed ? "0 0" : "0 0.75rem", 
-        marginBottom: "0.5rem",
-        opacity: collapsed ? 0 : 1,
-        transition: "opacity 0.15s ease",
-      }}>
-        SEZNAM NÁKUPŮ
-      </p>
+      <aside
+        className={`sidebar ${mobileOpen ? "sidebar-open" : ""}`}
+        style={{
+          width: collapsed ? 0 : 240,
+          minWidth: collapsed ? 0 : 240,
+          background: scrolled ? "rgba(10,10,16,0.7)" : "rgba(10,10,16,0.8)",
+          borderRight: "1px solid rgba(123,108,246,0.18)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          padding: collapsed ? "1.5rem 0" : "1.5rem 0.875rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: 0,
+          position: "sticky",
+          top: 73,
+          height: "calc(100vh - 73px)",
+          overflow: "hidden",
+          transition: "width 0.25s ease, min-width 0.25s ease, padding 0.25s ease, background 0.3s ease",
+        }}
+      >
+        <p style={{
+          fontSize: 10,
+          fontWeight: 700,
+          letterSpacing: "0.12em",
+          color: "rgba(255,255,255,0.3)",
+          padding: collapsed ? "0" : "0 0.75rem",
+          marginBottom: "0.75rem",
+          opacity: collapsed ? 0 : 1,
+          transition: "opacity 0.15s ease",
+          textTransform: "uppercase",
+          flexShrink: 0,
+        }}>
+          Navigácia
+        </p>
 
-      {navItems.map((item) => {
-        const isActive = activeTab === item.id;
-        return (
-          <button
-            key={item.id}
-            onClick={() => { onTabChange(item.id); setMobileOpen(false)}}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.75rem",
-              padding: "0.6rem 0.75rem",
-              borderRadius: 10,
-              fontSize: 14,
-              fontWeight: isActive ? 600 : 400,
-              color: isActive ? "#34d399" : "#ffffff",
-              background: isActive ? "#1a1a1a" : "transparent",
-              border: isActive ? "1px solid #2a2a2a" : "1px solid transparent",
-              cursor: "pointer",
-              textAlign: "left",
-              width: "100%",
-              transition: "all 0.15s",
-              opacity: collapsed ? 0 : 1,
-              pointerEvents: collapsed ? "none" : "auto",
-            }}
-            onMouseEnter={e => {
-              if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = "#34d399";
-            }}
-            onMouseLeave={e => {
-              if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = "#ffffff";
-            }}
-          >
-            {item.label}
-            {isActive && ( 
-              <span style={{ 
-                marginLeft: "auto",
-                color: "#ffffff", 
-                fontSize: 18, 
-                fontWeight: 700, 
-                lineHeight: 1 
-              }}>›</span> 
-            )}
-          </button>
-        );
-      })}
+        {/* NAV ITEMS — scrollovateľná oblasť */}
+        <div className="sidebar-scroll-area" style={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: "auto",
+          overflowX: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.2rem",
+        }}>
 
-      <div style={{ 
-        marginTop: "auto", 
-        paddingTop: "1rem", 
-        borderTop: "1px solid #1a1a1a",
-        display: "flex", 
-        flexDirection: "column",
-        gap: "0.5rem",
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", justifyContent: "space-between" }}>
-          <Link
-            href="/dostupne-sluzby"
-            style={{
-              display: "flex", alignItems: "center", gap: "0.75rem",
-              padding: "0.6rem 0.75rem", borderRadius: 10,
-              fontSize: 13, color: "#ffffff", textDecoration: "none",
-              opacity: collapsed ? 0 : 1,
-              transition: "opacity 0.15s ease",
-              pointerEvents: collapsed ? "none" : "auto",
-            }}
-            onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.color = "#34d399"}
-            onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.color = "#ffffff"}
-          >
-            ← Zpět na přehled
-          </Link>
-          <button 
-            onClick={() => setCollapsed(!collapsed)} 
-            style={{ 
-              background: "none", 
-              border: "none", 
-              color: "#ffffff", 
-              cursor: "pointer", 
-              fontSize: 36, 
-              padding: 4, 
-              display: "flex", 
-              alignItems: "center", 
-            }} 
-            title={collapsed ? "Otvoriť menu" : "Skryť menu"} 
-          > 
-            {collapsed ? "→" : "←"} 
-          </button>
+        {navItems.map((item) => {
+          const isActive = activeTab === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => { onTabChange(item.id); setMobileOpen(false); }}
+              className="sidebar-nav-btn"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.65rem",
+                padding: "0.55rem 0.75rem",
+                borderRadius: 10,
+                fontSize: 13.5,
+                fontWeight: isActive ? 600 : 400,
+                color: isActive ? "#c4baff" : "#ffffff",
+                background: isActive
+                  ? "linear-gradient(135deg, rgba(123,108,246,0.22), rgba(89,52,196,0.12))"
+                  : "transparent",
+                border: isActive
+                  ? "1px solid rgba(123,108,246,0.45)"
+                  : "1px solid transparent",
+                boxShadow: isActive
+                  ? "0 0 12px rgba(123,108,246,0.15), inset 0 1px 0 rgba(255,255,255,0.05)"
+                  : "none",
+                cursor: "pointer",
+                textAlign: "left",
+                width: "100%",
+                transition: "all 0.15s",
+                opacity: collapsed ? 0 : 1,
+                pointerEvents: collapsed ? "none" : "auto",
+                position: "relative",
+              }}
+            >
+              {isActive && (
+                <span style={{
+                  position: "absolute",
+                  left: 0,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  width: 3,
+                  height: "60%",
+                  background: "linear-gradient(180deg, #a78bfa, #7b6cf6, #5934c4)",
+                  boxShadow: "0 0 8px rgba(123,108,246,0.8)",
+                  borderRadius: "0 2px 2px 0",
+                }} />
+              )}
+              <span style={{
+                fontSize: 14,
+                opacity: isActive ? 1 : 0.5,
+                color: isActive ? "#7b6cf6" : "inherit",
+                flexShrink: 0,
+                width: 16,
+                textAlign: "center",
+              }}>
+                {item.icon}
+              </span>
+              <span style={{ flex: 1 }}>{item.label}</span>
+
+              {item.id === "evidence" && evidenceCount !== null && evidenceCount > 0 && (
+                <span style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  color: isActive ? "#c4baff" : "#ffffff",
+                  background: isActive ? "rgba(123,108,246,0.25)" : "rgba(255,255,255,0.07)",
+                  border: isActive ? "1px solid rgba(123,108,246,0.3)" : "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 6,
+                  padding: "1px 6px",
+                  flexShrink: 0,
+                  lineHeight: "16px",
+                  minWidth: 20,
+                  textAlign: "center",
+                }}>
+                  {evidenceCount}
+                </span>
+              )}
+
+              {isActive && !(item.id === "evidence" && evidenceCount !== null && evidenceCount > 0) && (
+                <span style={{
+                  width: 7,
+                  height: 7,
+                  borderRadius: "50%",
+                  background: "#7b6cf6",
+                  flexShrink: 0,
+                  boxShadow: "0 0 10px 2px rgba(123,108,246,0.8)",
+                }} />
+              )}
+            </button>
+          );
+        })}
+
+        {/* Sekcia PRO funkce */}
+        <div style={{
+          marginTop: "1rem",
+          paddingTop: "1rem",
+          borderTop: "1px solid rgba(123,108,246,0.1)",
+        }}>
+          {!collapsed && (
+            <div style={{
+              fontSize: 9, fontWeight: 700, letterSpacing: "0.12em",
+              textTransform: "uppercase" as const,
+              color: "rgba(255,255,255,0.2)",
+              padding: "0 0.75rem",
+              marginBottom: "0.4rem",
+            }}>
+              PRO funkce
+            </div>
+          )}
+
+          {[
+            { id: "sales-tracker", label: "Sales Tracker", icon: "📈" },
+            { id: "refresh-bot", label: "Refresh Bot", icon: "🔄" },
+            { id: "chrome-launcher", label: "Chrome Launcher", icon: "🚀" },
+          ].map(item => {
+            const isActive = activeTab === item.id;
+            const userIsPro = plan === "scale";
+            return (
+              <button
+                key={item.id}
+                onClick={() => onTabChange(item.id)}
+                title={item.label}
+                style={{
+                  width: "100%",
+                  display: "flex", alignItems: "center", gap: "0.6rem",
+                  padding: "0.6rem 0.75rem",
+                  borderRadius: 10,
+                  border: isActive
+                    ? "1px solid rgba(123,108,246,0.3)"
+                    : "1px solid transparent",
+                  background: isActive
+                    ? "linear-gradient(135deg, rgba(123,108,246,0.2), rgba(100,80,240,0.1))"
+                    : "transparent",
+                  cursor: "pointer",
+                  textAlign: "left" as const,
+                  transition: "all 0.15s",
+                  marginBottom: 2,
+                }}
+                onMouseEnter={e => {
+                  if (!isActive) e.currentTarget.style.background = "rgba(123,108,246,0.07)";
+                }}
+                onMouseLeave={e => {
+                  if (!isActive) e.currentTarget.style.background = "transparent";
+                }}
+              >
+                <span style={{ fontSize: 14, flexShrink: 0 }}>{item.icon}</span>
+                {!collapsed && (
+                  <>
+                    <span style={{
+                      fontSize: 13, fontWeight: 500, flex: 1,
+                      color: userIsPro ? "#ffffff" : "#a89df7",
+                    }}>
+                      {item.label}
+                    </span>
+                    {!userIsPro && (
+                      <span style={{
+                        fontSize: 9, fontWeight: 800,
+                        background: "linear-gradient(135deg, #7b6cf6, #9d8ff5)",
+                        color: "#fff",
+                        padding: "2px 6px", borderRadius: 4,
+                        letterSpacing: "0.05em", flexShrink: 0,
+                      }}>
+                        PRO
+                      </span>
+                    )}
+                  </>
+                )}
+              </button>
+            );
+          })}
         </div>
-      </div>
-    </aside>
+        </div>
+
+        {/* FOOTER — vždy na spodku */}
+        <div style={{
+          flexShrink: 0,
+          paddingTop: "1rem",
+          borderTop: "1px solid rgba(123,108,246,0.1)",
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.5rem",
+        }}>
+          {!collapsed && plan !== null && (
+            <div style={{
+              marginBottom: "0.75rem",
+              borderRadius: 14,
+              overflow: "hidden",
+              position: "relative",
+              background: plan === "scale"
+                ? "linear-gradient(135deg, rgba(123,108,246,0.18), rgba(89,52,196,0.08))"
+                : "linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02))",
+              border: plan === "scale"
+                ? "1px solid rgba(123,108,246,0.35)"
+                : "1px solid rgba(255,255,255,0.08)",
+              padding: "0.85rem 1rem",
+              boxShadow: plan === "scale" ? "0 0 20px rgba(123,108,246,0.1)" : "none",
+            }}>
+              {/* Top glow line */}
+              <div style={{
+                position: "absolute", top: 0, left: 0, right: 0, height: 1,
+                background: plan === "scale"
+                  ? "linear-gradient(90deg, transparent, rgba(123,108,246,0.7), transparent)"
+                  : "linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)",
+              }} />
+
+              {/* Badge + plan name */}
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: plan === "scale" ? "0.4rem" : "0.65rem" }}>
+                <span style={{
+                  fontSize: 9, fontWeight: 800, letterSpacing: "0.1em",
+                  padding: "2px 7px", borderRadius: 5,
+                  background: plan === "scale"
+                    ? "linear-gradient(135deg, #7b6cf6, #9d8ff7)"
+                    : "rgba(255,255,255,0.08)",
+                  color: plan === "scale" ? "#fff" : "rgba(255,255,255,0.4)",
+                  boxShadow: plan === "scale" ? "0 0 8px rgba(123,108,246,0.4)" : "none",
+                }}>
+                  {plan === "scale" ? "PRO" : "FREE"}
+                </span>
+                <span style={{
+                  fontSize: 12, fontWeight: 600,
+                  color: plan === "scale" ? "#c4baff" : "rgba(255,255,255,0.35)",
+                }}>
+                  TicketClub {plan === "scale" ? "Pro" : "Free"}
+                </span>
+              </div>
+
+              {plan === "free" && (
+                <button
+                  onClick={() => setShowUpgrade(true)}
+                  style={{
+                    display: "block", width: "100%", textAlign: "center",
+                    fontSize: 11, fontWeight: 700,
+                    padding: "6px 0", borderRadius: 8, border: "none",
+                    background: "linear-gradient(135deg, #7b6cf6, #9d8ff7)",
+                    color: "#fff", cursor: "pointer",
+                    boxShadow: "0 0 14px rgba(123,108,246,0.35)",
+                    letterSpacing: "0.04em",
+                    transition: "opacity 0.15s",
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+                >
+                  Upgradovať →
+                </button>
+              )}
+            </div>
+          )}
+
+          {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} />}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <Link
+              href="/dostupne-sluzby"
+              className="sidebar-back-link"
+              style={{
+                display: "flex", alignItems: "center", gap: "0.5rem",
+                padding: "0.55rem 0.75rem", borderRadius: 10,
+                fontSize: 12.5, color: "rgba(255,255,255,0.4)", textDecoration: "none",
+                opacity: collapsed ? 0 : 1,
+                transition: "opacity 0.15s ease, color 0.15s",
+                pointerEvents: collapsed ? "none" : "auto",
+              }}
+            >
+              ← Zpět na přehled
+            </Link>
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              style={{
+                background: "rgba(123,108,246,0.1)",
+                border: "1px solid rgba(123,108,246,0.2)",
+                borderRadius: 8,
+                color: "#7b6cf6",
+                cursor: "pointer",
+                fontSize: 14,
+                padding: "6px 10px",
+                display: "flex",
+                alignItems: "center",
+                transition: "background 0.15s",
+                boxShadow: "0 0 12px rgba(123,108,246,0.2)",
+              }}
+              title={collapsed ? "Otvoriť menu" : "Skryť menu"}
+            >
+              {collapsed ? "→" : "←"}
+            </button>
+          </div>
+        </div>
+      </aside>
     </>
   );
 }

@@ -64,14 +64,14 @@ export default function SalesTrackerClient() {
   }
 
   return (
-    <div style={{ maxWidth: 900, margin: "0 auto", padding: "2rem 1rem" }}>
+    <div style={{ maxWidth: 900, margin: "0 auto", padding: "2rem 1rem", background: "#0a0a10", position: "relative" }}>
       <h1 style={{ fontSize: "1.75rem", fontWeight: 800, color: "#fff", marginBottom: "0.5rem" }}>Sales Tracker</h1>
       <p style={{ color: "#ededed", fontSize: 14, marginBottom: "1.5rem" }}>Zadejte Viagogo URL akce pro zobrazení statistik prodeje.</p>
 
       {/* PRO upgrade banner */}
       {isProUser === false && (
         <div style={{
-          background: "linear-gradient(135deg, #1a1a2e, #16213e)",
+          background: "linear-gradient(145deg, #1e1e26, #19191f)",
           border: "1px solid rgba(168,85,247,0.3)",
           borderRadius: 16,
           padding: "1.25rem 1.5rem",
@@ -97,7 +97,7 @@ export default function SalesTrackerClient() {
             }}
             style={{
               padding: "0.6rem 1.25rem",
-              background: "linear-gradient(135deg, #a855f7, #7c3aed)",
+              background: "linear-gradient(135deg, #7b6cf6, #9d8ff7)",
               border: "none",
               borderRadius: 10,
               color: "#fff",
@@ -119,7 +119,7 @@ export default function SalesTrackerClient() {
           onChange={e => setUrl(e.target.value)}
           onKeyDown={e => e.key === "Enter" && handleSearch()}
           placeholder="https://www.viagogo.com/..."
-          style={{ flex: 1, padding: "0.75rem 1rem", background: "#1a1a1a", border: "1px solid #2a2a2a", borderRadius: 10, color: "#fff", fontSize: 14, outline: "none" }}
+          style={{ flex: 1, padding: "0.75rem 1rem", background: "#1e1e26", border: "1px solid rgba(123,108,246,0.2)", borderRadius: 10, color: "#fff", fontSize: 14, outline: "none" }}
         />
         <button
           onClick={handleSearch}
@@ -143,7 +143,7 @@ export default function SalesTrackerClient() {
           {/* Tracker switcher */}
           <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem" }}>
             {[
-              { key: "ticksights", label: "Sales tracker" },
+              { key: "ticksights", label: "Sales Tracker" },
               { key: "eventory", label: "Sales Tracker (Eventory)" },
             ].map(tab => (
               <button
@@ -350,7 +350,7 @@ function EventorySection({ data }: { data: any }) {
                     <XAxis dataKey="date" tick={{ fill: "#525252", fontSize: 10 }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fill: "#525252", fontSize: 10 }} axisLine={false} tickLine={false} width={45} />
                     <Tooltip
-                      contentStyle={{ background: "#111", border: "1px solid #2a2a2a", borderRadius: 8, fontSize: 12 }}
+                      contentStyle={{ background: "#111", border: "1px solid rgba(123,108,246,0.2)", borderRadius: 8, fontSize: 12 }}
                       labelStyle={{ color: "#fff" }}
                       formatter={tooltipFormatter}
                     />
@@ -368,7 +368,7 @@ function EventorySection({ data }: { data: any }) {
                     <YAxis tick={{ fill: "#525252", fontSize: 10 }} axisLine={false} tickLine={false} width={55}
                       tickFormatter={v => ["avg_price_sold", "avg_price_available", "highest_price"].includes(activeChart) ? `${v} ${currency}` : fmt(v)} />
                     <Tooltip
-                      contentStyle={{ background: "#111", border: "1px solid #2a2a2a", borderRadius: 8, fontSize: 12 }}
+                      contentStyle={{ background: "#111", border: "1px solid rgba(123,108,246,0.2)", borderRadius: 8, fontSize: 12 }}
                       labelStyle={{ color: "#fff" }}
                       formatter={tooltipFormatter}
                     />
@@ -600,7 +600,7 @@ function TickSightsSection({ data }: { data: any }) {
                 tickFormatter={v => activeChart === "avg_price" ? `${v} ${currency}` : fmt(v)}
               />
               <Tooltip
-                contentStyle={{ background: "#111", border: "1px solid #2a2a2a", borderRadius: 8, fontSize: 12 }}
+                contentStyle={{ background: "#111", border: "1px solid rgba(123,108,246,0.2)", borderRadius: 8, fontSize: 12 }}
                 labelStyle={{ color: "#fff" }}
                 formatter={(v: any) => activeChart === "avg_price" ? [`${fmt(v, 2)} ${currency}`, ""] : [fmt(v), ""]}
               />
